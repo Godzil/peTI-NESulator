@@ -1,0 +1,7 @@
+07/10/2007  V0.30 part 2
+      - Remerge old PPU debug utilities in real plugin form                  [ ]
+      - Change the make util for UNIX. Maybe cmake ?                         [ ]
+      - Cleanup os/win32 folder                                              [ ]
+      - Thinks about a better svn repository (Maybe a dedibox is a good choice?)
+                                                                             [ ]
+                                                                             

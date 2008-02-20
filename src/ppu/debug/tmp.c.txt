@@ -1,0 +1,45 @@
+   if (ppu.DisplayPalette)
+    {
+        textout(Buffer, font, "Bg Palette", 0, 247, 5);
+        textout(Buffer, font, "Sprt Palette", 90, 247, 5);
+
+        rect(Buffer, 0, 255, 4 * 20 + 2, 255 + 4 * 20 + 2, GetColor(0));
+        rect(Buffer, 90, 255, 90 + 4 * 20 + 2, 255 + 4 * 20 + 2, GetColor(0));
+        for (i = 0; i < 16; i++)
+        {
+            rectfill(Buffer, 1 + (i % 4) * 20, 256 + (i / 4) * 20, 1 + (i % 4) * 20 + 20, 256 + (i / 4) * 20 + 20, GetColor(ppu.Memory[0x3F00 + i]));
+            rectfill(Buffer, 91 + (i % 4) * 20, 256 + (i / 4) * 20, 91 + (i % 4) * 20 + 20, 256 + (i / 4) * 20 + 20, GetColor(ppu.Memory[0x3F10 + i]));
+        }
+    }
+
+
+    for (i = 0; i < 240; i++)
+    {
+      _putpixel(Buffer, 257 + 0, i, 48);        
+      
+      _putpixel(Buffer, 257 + 1, i, ((ppu.TimedTmpPtr[y]*4))&0xFF);
+      _putpixel(Buffer, 257 + 2, i, ((ppu.TimedTmpPtr[y]*4)>>8)&0xFF);
+      _putpixel(Buffer, 257 + 3, i, ((ppu.TimedTmpPtr[y]*4)>>16)&0xFF);      
+      
+      _putpixel(Buffer, 257 + 4, i, ((ppu.TmpVScroll*4))&0xFF);
+      _putpixel(Buffer, 257 + 5, i, ((ppu.TmpVScroll*4)>>8)&0xFF);
+      _putpixel(Buffer, 257 + 6, i, ((ppu.TmpVScroll*4)>>16)&0xFF);
+      
+      _putpixel(Buffer, 257 + 7, i, ((ppu.TimedHScroll[i]*4)) & 0xFF);
+      _putpixel(Buffer, 257 + 8, i, ((ppu.TimedHScroll[i]*4)>>8) & 0xFF);
+      _putpixel(Buffer, 257 + 9, i, ((ppu.TimedHScroll[i]*4)>>16)& 0xFF);
+
+      _putpixel(Buffer, 257 + 10, i, 48); 
+    }
+
+    if (IRQScanHit != -1)
+    {
+        line(Buffer, 257+12, IRQScanHit, 257+22, IRQScanHit, 10);
+        line(Buffer, 257+12, IRQScanHit, 257+18, IRQScanHit-3, 10);
+        line(Buffer, 257+12, IRQScanHit, 257+18, IRQScanHit+3, 10);
+    }
+
+NoDraw:
+    textprintf(Buffer, font, 5, 340, GetColor(4), "FPS : %d   IPS : %d", FPS, IPS);
+    textprintf(Buffer, font, 5, 3, GetColor(4), "FPS : %d (CPU@~%2.2fMhz : %d%%)", FPS, (float) (((float) IPS) / 1000000.0), (int) ((((float) IPS) / 1770000.0) * 100.0));
+#endif

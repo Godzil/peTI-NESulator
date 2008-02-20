@@ -1,0 +1,105 @@
+05/10/2007  V0.30 part 2 ... In progress ...
+      - Start rewrite of mapper manager. The goal, like for plugin manager, is
+        to allow in the future to have plugins or mapper in external libraries.
+      - New sound layer using Allegro. Not really accurate, but more portable.
+        A lot of work has to be done on this (especialy because the actual sound
+        is really bad.)
+	  
+03/05/2007  V0.30 part 1
+      - Started the process of PPU total rewrite.
+      - Bg seem to draw fine, sprite is under the way
+      - Add new test rom
+      - Blargg sprite_ram test sucessfully ^^
+      - Correct a lot of bug in implementation of a lot of things.
+      - Try to make it accurate as much as possible...
+	  - All Blargg PPU test pass with success (in fact only timing is not good,
+	    but it's enought good to let Battletoad work correctly... Maybe it's 
+		sprite0 related)
+	  
+03/04/2007  V0.29
+      - Totaly new memory manager
+      - Simple sound support (only on UNIX, but maybe Windows & DOS can support 
+        it)
+      - New plugin manager (a gamegenie plugin like is under development)
+      - New mapper manager
+      - Large bug correction on mappers (MMC3 now behave correclty)
+      - Large bug correction on larges things (like Signal handler now exit 
+        correctly if a signal occure when in signal)
+      - Output now much simpler & readable
+      - New cart opening & internal strictures
+      - A very good speed boost with the new memory manager (it's incredible, 
+        without speed limitation I can now go near 300/350fps!)
+      - Large part of code reorganisation (needed for the new memory manager and
+        plugin manager)
+      - And an incredible number of modification/bug correction and more and 
+        more...
+      - Switch to SVN source control
+      - New command line parser (now it no more a stupid command line parser)
+      - Palette is no more externalized. (removing some path bad behaviour with
+        Mac/unix/Windows version) 
+      - Corrections on paddle emulation, now should work near perfect.
+
+21/02/2007 V0.28
+      - Internal support for mapper #65 (Irem h3001) but not actually active.
+      - Some new debug options
+
+19/02/2007 V0.27 Internal release
+      - Correction of a blocking bug in the memory module.
+      - The mapper MMC3 now work at nearly 99%. Only IRQ emulation is not as
+        good as I want..
+      - Bug correction on 8x16 sprite support
+      - Now the crashdump generate a file instead of displaying on screen.
+      - The crashdump is more complete
+      
+21/10/2004  V0.26
+	  - J'ai rien changé de plus mais now fullspeed !! (ou presque, c'est incompréhensible)
+	  - MMC3 en voie de finalisation (reste a débugguer)
+	  - Inteception des erreurs du systemes pour l'aide au crash report (cf LisezMoi.txt)
+	  - Changement dans la gestion de la mémoire (qq bugs on du donc se glisser :/ )
+
+19/10/2004  V0.25
+      - Le MMC1 est fonctionel a 99% (manque juste le support des cartouche de 1024Ko)
+      - Support des sprites 8x16 OK
+      - Support de la couleur et des Attribute Tables fonctionnel a 100%
+      - Changement dans l'affichage des sprites (1 passe au lieu de deux)
+      - Un peu plus lent :'(
+      - Version MacOS X
+      - Reorganisation du code sources (pour eviter le garbage lié au différentes versions)
+      - Derniere version avec le code actuelle du PPU (le recodage va commencer)
+      - Toujours l'erreur dans SMB1 :| (me demande si le fichier a pas été abimé) (non il est nickel)
+      - amélioration du support des miroirs
+      - Gestion (et sauvegarde automatique) des jeux a sauvegarde par batterie !! (zelda1, zelda2 fonctionnent !)
+      - Support du mapper AOROM (bonne partie des jeux RARE dont BattleToad)
+	  
+12/10/2004  V0.2 allegé(oui oui) nommé "Blocks.nes edition"
+      - Le support du PPU a été amélioré (Sprite0 detect "perfect" pour nestress et ajout du sprite limiter bit)
+      - Le nouveau PPU a été inséré dans le code 68k
+      - /slap nerick pour essayer de faire avancer la date de 2042 !!
+      - et d'autre bricoles que j'ai pu oublier
+
+13/07/2004  V0.2 (Et oui plus d'1 an apres !!)
+      - Le scrolling est near perfect :)
+      - Support de la couleur #love#
+      - MMC1 fonctionnel a 90% (manque juste la gestion de la VROM, mais bon MM2 l'utilise pas ^^)
+      - Quelque nouvelles fonctionnalitées, cf lisez moi (affichage des name tables, palette, déplacement de l'affichage du fps)
+      - Un (plus ?) nouveau bug (on ne peut plus jouer a smb1 :'( )
+
+23/05/2003  V0.1 Prealpha
+      - Nouveau mapper supporté ! et d'autres en préparations :)
+      - La version distribué est dorenavent une version Release plus en Debug
+
+22/05/2003  V0.1 Prealpha - Interne uniquement
+      - Nouvelle implémentation du PPU, devrait etre plus proche de l'original
+        et il est un peu plus rapide. (2 FPS de gagné sur mon P233 :) )
+      - Le scrolling marche :D (enfin presque pbm de timing ?)
+      - Le joystick est la :D on peu jouer maintenant :D
+
+21/05/2003  V0.0 prealpha release 2
+      - Maintenant le FPS et IPS sont affiché.
+
+19/05/2003  v0.0 prealpha
+	  - Premiere version public, ne sert que de démonstration.
+	  
+--------------------------------------------------------------------------------
+$Id: Changements.txt 29 2007-04-03 14:34:02Z mtrapier $
+--------------------------------------------------------------------------------

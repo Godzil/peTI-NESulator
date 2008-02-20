@@ -1,0 +1,233 @@
+﻿<---------------------------------------------------------------------------------->
+                                  TI-NESulator
+                               Version 0.26 beta
+
+                           Par Manoël TRAPIER aka Godzil
+                             godzil at godzil point net
+
+1 -> #include <disclamer.h>
+
+L'utilisation de se logiciel se fait a vos risque et périls. Il s'agit d'une pars
+d'une version non terminée, et en cours de dévellopement, et la diffusion n'a été
+faite que pour permettre le teste, et la démonstration de se que sera le logiciel
+final.
+
+Je ne peut donc être tenu pour responsable en cas de problème lié a l'utilisation 
+ou posession de se logiciel. 
+
+Vous êtes libre de l'utiliser à partir du moment au se logiciel n'a pas été modifié
+que sa soit de manière binaire, ou par désassemblage. Si vous trouver une version
+modifié ou fourni avec des fichiers illégaux, veuillez me le faire savoir. Vous
+trouverez comment me contacter dans la suite de se fichier.
+
+Vous êtes libre aussi de le distribuer tant que les fichiers contenus dans le
+paquetage original sont laissé intouché (les fichiers Changements.txt LisezMoi.txt
+et TINes.exe)
+
+Information légales :
+NES, Famicon, Nintendo Entertainment System, Nintendo sont des marques déposé de
+Nintendo France, Nintendo of america et Nintendo Company, Ltd.
+Tout les titres et marques apparaisant dans se fichier texte sont la propriété de
+leurs auteurs respectifs.
+
+N'oubliez pas aussi que la posession de ROM (Fichier binaire représentant le
+contenue d'une cartouche) sans en posseder l'originale (la cartouche) est absolument
+illégale, que vous la gardiez 24 heures ou seulement 30 secondes
+
+
+2 -> Qu'est-ce que TI-NESulator ?
+
+TI-NESulator est un émulateur de la console Nintendo Entertainment System
+(connunément appelé NES) fabriqué par Nintendo au milieu des année 80. L'originalité
+de cet emulateur est que sa plateforme de fonctionnement principal est les
+calculatrices TI-89 et TI-92+ de chez Texas Instrument. Ses calculatrices on la
+particularité de posseder un microprocesseur 68000 de chez motorola, qui est pour
+se genre de plateforme relativement puissant et programmer un emulateur, meme de
+NES, sur ses machine est un véritable défit.
+Tant au niveau matériel que mémoire, la NES et les TI-68k sont completements
+différents. 
+La NES utilise une version légérement personalisé du microprocesseur 6502 
+fonctionnant a environ 1.7Mhz.
+
+Vous avez actuellement une version spéciale (comprendre pas faite pour 
+calculatrices TI.) Cette version ne me sert qu'a mettre en oeuvre de nouvelles
+choses dans la version TI de l'émulateur (notemment a cause d'un gros manque 
+de debuggueur C dans le monde TI.)
+
+Cette version est et sera toujours plus avancé que la version TI dans le sens ou
+elle me sert a expérimenter les nouveaux hardware émulé et a finaliser le hardware
+deja emuler. Une fois fonctionnant d'un maniere convenable sur le portage Windows,
+les mises a jours sont faites dans la version TI. Mais la version Windows au final
+contiendra plus de fonctionnalité que la version TI (support des palletes, de la 
+couleur, voir meme le son etc...)
+
+
+3 -> Utilisation de TI-NESulator
+
+[A faire.]
+
+Version courte :
+
+C:\TINes\>TINES jeux.nes
+
+Utilisation du Joystick :
+
+Manette NES		Clavier
+
+HAUT			HAUT
+BAS			BAS
+GAUCHE			GAUCHE
+DROITE			DROITE
+A			W
+B			S
+START			ENTER
+SELECT			P
+
+--------------------------
+
+Autres touches :
+R			identique a l'apuis du bouton Reset de la console
+
+
+1-2			A un effet, mais vous risque de pas le voir ;)
+3			Affiche les Name Tables
+4			Affiche les Tables d'attributs (de couleur)
+5			Affiche les palettes
+6                       Affiche la table des sprites
+
+--------------------------
+
+Il faut noter aussi qu'afficher ces tables ralenti considérablement la vitesse de 
+l'émulateur
+
+4 -> Compatibilité
+	
+TI-NESulator version Win32 est normalement compatible avec tous les Windows (95, 98,
+Me, NT 4, 2000, XP)
+TI-NESulator version .X (MacOS X) est normalement compatible toutes version de OS X
+(.1.x .2.x .3.x)
+L'émulateur émule actuellement avec les mappers :
+
+	- 0 aucun mapper (Super Mario Bros 1, Donkey Kong, ...)
+
+	- 1 MMC1 (a 99%, Megaman 2, Zelda1 & 2, Final Fantasy 1, ...)
+
+	- 2 UNROM (MegaMan, Final fantasy 2, ...) 
+
+	- 3 CNROM
+
+	- 4 *NOUVEAU* MMC3 (Super mario Bross 2 & 3, MegaMan 3 à 6, ...)
+
+	- 7 *NOUVEAU* AOROM (Battletoad, ...)
+
+Les mappers marqué comme *NOUVEAU* sont ceux qui on été ajouté dans la derniere 
+version disponible. Merci de faire un rapport détaillé si vous rencontrer des 
+problèmes avec.
+
+
+5 -> A faire
+
+* Optimisation du coeur de l'émulation du CPU de la NES.
+
+* Son ?
+
+* Supprimer les printf et les remplacer par l'affichage dans une console (prochaine
+  maj) pour eviter les soucis sur
+
+  - PC: car la console n'est pas forcement ouverte tout le temps
+  - Unix: pour la meme raison
+  - MacOS: aussi (%))
+  - TI: pasqu'on peut pas avoir les deux en meme temps.
+
+* Recoder le ppu (gestion de l'affichage)
+
+6 -> Question Réponses
+
+Q: Pourquoi le jeu xxx ne fonctionne pas ?
+R: TI-NESulator est actuellement en cours de dévellopement. Beaucoup de jeux ne 
+sont pas supporté.
+
+Q: Vous dites que certain de jeux ne sont pas supporté, mais si j'essaye xxx, il 
+marche ! Pourquoi ?
+R: Ceci est du a une des particularité du Hardware de la NES/Famicon. Le hardware 
+de base de la console est assé limité, et la mémoire est aussi tres limité. pour 
+palier à ses limitations, certains jeux utilise ce qu'on appele des Mappers, qui
+permettent notemment d'avoir des jeux plus gros, et qui sont implémenté dans la
+cartouche du jeu. Malheureusement supporter tout ses mappers font grossir
+l'emulateur, et certain on un fonctionnement qui est malheureusement encore
+inconnu. N'oubliez pas non plus que TI-NESulator est encore en dévellopement.
+Certain mapper connu ne sont pas encore implémenté.
+
+Q: Oui puis-je trouver le jeux xxxx ?
+R: Désolé, je ne donne aucun lien menant, ni aucune ROM de jeux commerciaux.
+N'oubliez pas que les personnes vous disant que vous avez le droit de ne garder que
+24h une ROM, vous raconte absolument n'importe quoi. Il est absolument *ILLEGAL* de
+posseder la ROM d'un jeu que vous ne possedez pas officiellement.
+
+Q: XXX donne l'air de fonctionner, pourtant il ne reagis pas au touches
+R: Cet emulateur n'est pas parfait. Certain jeux/demo demandent un fonctionnement
+tres proche de celui de la console originale, ce que TI-NESulator est encore loin
+d'arriver a faire
+
+Q:J'ai des problèmes graphiques avec XXXX
+R:Cf réponse-ci dessus
+
+Q: C'est lent :(
+R: Désolé. Le code est toujours en cours de devellopement. Si vous trouvez trop lent,
+attendez la prochaine version une surprise vous y attendra peut-etre !
+
+7 -> En cas de problème
+
+a) Un jeu indiqué compatible ne fonctionne pas (ie "Mapper non supporté")
+
+Alors plusieurs possibilité, soit vous avez une autre version du jeu officielle 
+ou non, cela peut changer par exemple le mapper utilisé par le jeux, soit vous
+avez recuperer un "bad dump", c'est a dire plus simplement une rom foireuse.
+
+Dans ces deux cas essayez d'en recuperer une autre version.
+
+b) TI-NESulator à planté !!
+Si cela arrive regulierement pour le meme jeu et au meme endroit faites moi un
+crash report avec les information que TI-NESulator vous met dans la console
+(pour pouvoir la copier tranquillement il faut lancer a partir d'une console
+et pas faire glisser la rom sur l'executable)
+
+N'oubliez pas de préciser le nom complet du jeu, la taille du fichier et toutes
+les infos que vous trouverez pertinante (manipulation a faire etc...)
+
+
+8 -> Remerciement
+
+PpHd			pour PreOS, et SMA :)
+TiMad			Membre de la XTeam sans lequel XLib existerait pas.
+nEUrOO			Membre de la XTeam sans lequel XLib existerait pas.
+
+Loopy, Y0Shi, 
+Marrat Fayzullin,
+et bcp d'autre  pour la documentation technique sur la NES
+
+Ainsi que tout ceux que j'ai pu oublier
+
+9 -> Litérature
+
+[A faire.]
+
+mais lien rapide :
+
+http://www.nesdev.org
+
+10 -> Comment me contacter ?
+s
+Vous pouvez me contacter grace au forum yAronet 
+http://www.yaronet.com
+
+Et surtout grace au lien suivant :
+http://www.yaronet.com/posts.php?sl=&s=2339
+
+Vous pouvez aussi me joindre par mail en m'écrivant à "godzil chez godzil point net"
+Vous pouvez aussi essayer de visiter un de mes sites :
+http://www.godzil.net
+
+--------------------------------------------------------------------------------
+$Id: LisezMoi.txt 17 2007-03-27 09:25:23Z mtrapier $
+--------------------------------------------------------------------------------

@@ -3,7 +3,7 @@
  *  plugins.c
  *
  *  Created by Manoel TRAPIER on 02/04/07.
- *  Copyright (c) 2003-2007 986Corp. All rights reserved.
+ *  Copyright (c) 2003-2008 986Corp. All rights reserved.
  *
  *  $LastChangedDate$
  *  $Author$

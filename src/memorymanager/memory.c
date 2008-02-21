@@ -3,7 +3,7 @@
  *  memory.c - Taken from the Quick6502 project
  *
  *  Created by Manoël Trapier on 18/09/06.
- *  Copyright 2003-2007 986 Corp. All rights reserved.
+ *  Copyright 2003-2008 986 Corp. All rights reserved.
  *
  *  $LastChangedDate: 2007-05-02 18:37:41 +0200 (mer, 02 mai 2007) $
  *  $Author: mtrapier $

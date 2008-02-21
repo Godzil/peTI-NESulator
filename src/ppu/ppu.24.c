@@ -5,7 +5,7 @@
  *  Define and emulate the PPU (Picture Processing Unit) of the real NES
  * 
  *  Created by Manoel TRAPIER.
- *  Copyright (c) 2003-2007 986Corp. All rights reserved.
+ *  Copyright (c) 2003-2008 986Corp. All rights reserved.
  *
  *  $LastChangedDate: 2007-04-06 17:17:01 +0200 (ven, 06 avr 2007) $
  *  $Author: mtrapier $
@@ -16,7 +16,8 @@
 
 #include <allegro.h>
 #include <stdio.h>
-#include <stdlib.h>
+#include <stdlib.h>
+
 #include "ppu.h"
 #include "memory.h"
 #include "M6502.h"

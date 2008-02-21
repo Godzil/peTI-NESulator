@@ -1025,7 +1025,7 @@ int main(int argc, char *argv[])
    
    Reset6502(&MainCPU);
    
-   MainCPU.Trace = 0;
+   MainCPU.Trace = 1;
    
    if (START_DEBUG)
       MainCPU.Trace = 1;

@@ -3,7 +3,7 @@
  *  types.h - Taken from the Quick6502 project
  *
  *  Created by Manoël Trapier on 18/09/06.
- *  Copyright 2003-2007 986 Corp. All rights reserved.
+ *  Copyright 2003-2008 986 Corp. All rights reserved.
  *
  *  $LastChangedDate: 2007-03-28 15:50:50 +0200 (mer, 28 mar 2007) $
  *  $Author: mtrapier $

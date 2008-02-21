@@ -5,7 +5,7 @@
  *  Define and emulate the PPU (Picture Processing Unit) of the real NES
  * 
  *  Created by Manoel TRAPIER.
- *  Copyright (c) 2003-2007 986Corp. All rights reserved.
+ *  Copyright (c) 2003-2008 986Corp. All rights reserved.
  *
  *  $LastChangedDate: 2007-04-26 18:47:34 +0200 (jeu, 26 avr 2007) $
  *  $Author: mtrapier $

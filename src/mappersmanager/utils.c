@@ -3,7 +3,7 @@
  *  mappers.c
  *
  *  Created by Manoel TRAPIER.
- *  Copyright (c) 2003-2007 986Corp. All rights reserved.
+ *  Copyright (c) 2003-2008 986Corp. All rights reserved.
  *
  *  $LastChangedDate: 2007-05-31 18:00:41 +0200 (jeu, 31 mai 2007) $
  *  $Author: mtrapier $

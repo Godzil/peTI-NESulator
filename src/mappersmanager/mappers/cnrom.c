@@ -3,7 +3,7 @@
  *  cnrom.c
  *
  *  Created by Manoel TRAPIER.
- *  Copyright (c) 2003-2007 986Corp. All rights reserved.
+ *  Copyright (c) 2003-2008 986Corp. All rights reserved.
  *
  *  $LastChangedDate: 2007-04-16 01:55:35 +0200 (lun, 16 avr 2007) $
  *  $Author: godzil $

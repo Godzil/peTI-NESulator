@@ -3,7 +3,7 @@
  *  TI-NESulator.X
  *
  *  Created by Manoël Trapier on 25/10/07.
- *  Copyright 2007 986 Corp. All rights reserved.
+ *  Copyright 2007-2008 986 Corp. All rights reserved.
  *
  */
 

@@ -3,12 +3,12 @@
  *  main.c
  *
  *  Created by Manoel TRAPIER.
- *  Copyright (c) 2003-2007 986Corp. All rights reserved.
+ *  Copyright (c) 2003-2008 986Corp. All rights reserved.
  *
- *  $LastChangedDate: 2007-05-31 18:02:16 +0200 (jeu, 31 mai 2007) $
- *  $Author: mtrapier $
- *  $HeadURL: file:///media/HD6G/SVNROOT/trunk/TI-NESulator/src/main.c $
- *  $Revision: 58 $
+ *  $LastChangedDate$
+ *  $Author$
+ *  $HeadURL$
+ *  $Revision$
  *
  */
 
@@ -72,11 +72,11 @@ double APU_BASEFREQ = 1.7897725;
 #define V_MAJOR 0
 #define V_MINOR 30
 
-#define VS_ID              "$Id: main.c 58 2007-05-31 16:02:16Z mtrapier $"
-#define VS_REVISION        "$Revision: 58 $"
-#define VS_LASTCHANGEDDATE "$LastChangedDate: 2007-05-31 18:02:16 +0200 (jeu, 31 mai 2007) $"
-#define VS_HEADURL         "$HeadURL: file:///media/HD6G/SVNROOT/trunk/TI-NESulator/src/main.c $"
-#define VS_AUTHOR          "$Author: mtrapier $"
+#define VS_ID              "$Id$"
+#define VS_REVISION        "$Revision$"
+#define VS_LASTCHANGEDDATE "$LastChangedDate$"
+#define VS_HEADURL         "$HeadURL$"
+#define VS_AUTHOR          "$Author$"
 
 #define MAXLASTOP 42
 
@@ -659,7 +659,7 @@ int main(int argc, char *argv[])
     /* Print the banner */
    printf("--------------------------------------------------------------------------------\n"
           "Welcome to TI-NESulator v%d.%d - by Godzil\n"
-          "Copyright 2003-2007 TRAPIER Manoel (godzil@godzil.net)\n"
+          "Copyright 2003-2008 TRAPIER Manoel (godzil@godzil.net)\n"
           "%s\n%s\n%s\n"
           "--------------------------------------------------------------------------------\n\n", 
           V_MAJOR,

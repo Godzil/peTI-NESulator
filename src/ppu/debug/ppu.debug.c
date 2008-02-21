@@ -218,7 +218,7 @@ void ppu_dumpOneNameTable(unsigned short nametable, int xd, int yd)
 
 void ppu_dumpOneAttributeTable(unsigned short nametable, int xd, int yd)
 {
-    int x, y, x1, y1, Color, AttrByte;
+    int x, x1, y1, Color, AttrByte;
     for (x = 0; x < 0x40; x++)
     {
         AttrByte = PPU_Rd(nametable + 0x23C0 + x);

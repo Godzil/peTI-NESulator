@@ -19,7 +19,7 @@
 
 typedef struct Plugin_
 {   
-    byte *name;
+    char *name;
     
     PluginInit init;
     PluginDeinit deinit;
@@ -55,9 +55,15 @@ void plugin_list()
 int plugin_load(int id)
 {
     Plugin *ptr = &(Plugins[0]);
+    int i = id;
     
-    for ( ; id == 0 && ptr != NULL; id -- )
-        ptr ++;
+    printf("%s(%d)", __func__, id);
+    
+    for ( ; i > 1 && ptr->name != NULL; i -- )
+    {
+        printf("%d - %s\n", i, ptr->name);
+        ptr ++;        
+    }
 
     if (ptr == NULL)
         return -1;

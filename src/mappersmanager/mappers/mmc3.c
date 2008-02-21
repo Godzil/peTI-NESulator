@@ -12,6 +12,10 @@
  *
  */
 
+#include "mmc3.h"
+
+extern unsigned short ScanLine;
+
 unsigned short mmc3_command;
 
 unsigned char mmc3_irq_counter;
@@ -43,8 +47,6 @@ void mmc3_MapperDump(FILE *fp)
 
 int mmc3_InitMapper(NesCart * cart) 
 {
-    int i;
-
     set_prom_bank_16k(0x8000, 0);
     set_prom_bank_16k(0xC000, GETLAST16KBANK(cart));
 
@@ -75,8 +77,6 @@ int mmc3_InitMapper(NesCart * cart)
     
     mmc3_first_prom_page = 0x8000;
     mmc3_second_prom_page = 0xA000; 
-    //mmc3_first_prom_page = 0; // Set it to 0x8000
-
     
     /* Register mapper write hook */
     set_page_wr_hook(0x80, mmc3_MapperWrite80Hook);
@@ -92,7 +92,6 @@ int mmc3_InitMapper(NesCart * cart)
     set_page_writeable(0xE0, true);
 
     return 0;
-    
 } 
 
 void mmc3_MapperWrite80Hook(byte addr, byte Value)
@@ -249,8 +248,6 @@ void mmc3_MapperWriteA0Hook(byte addr, byte Value)
     }
       
 }
-
-extern unsigned short ScanLine;
 
 void mmc3_MapperWriteC0Hook(byte addr, byte Value)
 {

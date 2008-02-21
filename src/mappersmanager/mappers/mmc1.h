@@ -1,9 +1,14 @@
 /*
+ *  MMC1 Mapper - The TI-NESulator Project
  *  mmc1.h
- *  TI-NESulator.X
  *
- *  Created by Manoël Trapier on 02/12/07.
- *  Copyright 2007 986 Corp. All rights reserved.
+ *  Created by Manoel TRAPIER.
+ *  Copyright (c) 2003-2007 986Corp. All rights reserved.
+ *
+ *  $LastChangedDate: 2007-05-02 18:37:41 +0200 (mer, 02 mai 2007) $
+ *  $Author: mtrapier $
+ *  $HeadURL: file:///media/HD6G/SVNROOT/trunk/TI-NESulator/src/mmc1.h $
+ *  $Revision: 50 $
  *
  */
 
@@ -13,4 +18,3 @@
 int mmc1_InitMapper  (NesCart *cart);
 int mmc1_MapperIRQ   (int cycledone);
 void mmc1_MapperDump ();
-void mmc1_MapperWriteHook(register byte Addr, register byte Value); 

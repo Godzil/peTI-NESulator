@@ -1,6 +1,6 @@
 /*
  *  CNROM Mapper - The TI-NESulator Project
- *  cnrom.h
+ *  cnrom.c
  *
  *  Created by Manoel TRAPIER.
  *  Copyright (c) 2003-2007 986Corp. All rights reserved.
@@ -11,6 +11,8 @@
  *  $Revision: 39 $
  *
  */
+
+#include "cnrom.h"
 
 unsigned char cnrom_load_bank;
 

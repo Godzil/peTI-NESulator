@@ -16,6 +16,5 @@
 #include <mappers/manager.h>
 
 int iremh3001_InitMapper(NesCart * cart);
-int iremh3001_MapperWriteHook(register word Addr, register byte Value);
 void iremh3001_MapperDump(FILE *fp);
 int iremh3001_MapperIRQ(int cycledone);

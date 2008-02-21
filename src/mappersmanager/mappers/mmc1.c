@@ -14,9 +14,6 @@
 
 #include "norom.h"
 
-#include <ppu/ppu.h>
-#include <memory/manager.h>
-
 unsigned char MMC1_reg0;
 
 unsigned char MMC1_reg1;
@@ -51,7 +48,6 @@ unsigned char mmc1_CurrentBank;
 #define MMC1_REG1_DEFAULT 0
 #define MMC1_REG2_DEFAULT 0
 #define MMC1_REG3_DEFAULT 0
-
 
 void mmc1_MapperWriteReg0(register byte Addr, register byte Value);
 void mmc1_MapperWriteReg1(register byte Addr, register byte Value);

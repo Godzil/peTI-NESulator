@@ -23,6 +23,10 @@
 #include <mappers/manager.h>
 #include <memory/manager.h>
 
+#define __TINES_PPU_INTERNAL__
+#include <ppu/ppu.memory.h>
+#undef __TINES_PPU_INTERNAL__
+
 extern NesCart *Cart;
 
 extern char MapperWantIRQ;

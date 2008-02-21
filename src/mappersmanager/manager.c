@@ -19,7 +19,7 @@ MapperWriteHook mapper_hook;
 typedef struct Mapper_
 {   
    byte id;
-   byte *name;
+   char *name;
 
    MapperInit      init;
    MapperIRQ       irq;

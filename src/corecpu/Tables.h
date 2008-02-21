@@ -18,8 +18,8 @@
  *  $HeadURL: file:///media/HD6G/SVNROOT/trunk/TI-NESulator/src/Tables.h $
  *  $Revision: 52 $
  */
- 
-static byte Cycles[256] = 
+
+static byte Cycles[256] =  
 {
        7, 6, 2, 1, 5, 3, 5, 5, 3, 2, 2, 1, 6, 4, 6, 2, 
        2, 5, 5, 1, 5, 4, 6, 5, 2, 4, 2, 1, 6, 4, 6, 2, 

@@ -20,6 +20,7 @@
 #include <sys/mman.h>
 #include <sys/time.h>
 #include <time.h>
+#include <ctype.h>
 
 #ifndef WIN32
 
@@ -41,7 +42,7 @@ int HBLANK_TIME     = 140;
 double APU_BASEFREQ = 1.7734474;
 #elif !ISPAL && ISNTSC
 int VBLANK_TIME     = 20;
-int HBLANK_TIME     = 119;
+int HBLANK_TIME     = 115; //119;
 double APU_BASEFREQ = 1.7897725;
 //#define VBLANK_TIME 20
 //#define HBLANK_TIME 260
@@ -69,7 +70,7 @@ double APU_BASEFREQ = 1.7897725;
 #include <palette.h>
 
 #define V_MAJOR 0
-#define V_MINOR 29
+#define V_MINOR 30
 
 #define VS_ID              "$Id: main.c 58 2007-05-31 16:02:16Z mtrapier $"
 #define VS_REVISION        "$Revision: 58 $"
@@ -117,8 +118,6 @@ PALETTE pal;
 
 short IRQScanHit = -1;
 
-NesCart *Cart;
-
 /* palette */
 unsigned long ColorPalette[ 8 * 63 ];
 
@@ -126,130 +125,130 @@ unsigned long ColorPalette[ 8 * 63 ];
 
 void CloseHook(void)
 {
-   WantClosing = 1;
+    WantClosing = 1;
 }
 
 void ips_fps_counter(void)
 {
-   FPS = frame;
-   IPS = icount;
-   frame = 0;
-   icount = 0;
+    FPS = frame;
+    IPS = icount;
+    frame = 0;
+    icount = 0;
 }
 
 END_OF_FUNCTION(ips_fps_counter);
 
 void SaveSaveRam(char *name)
 {
-   FILE *fp;
-   int i;
-   char fname[512];
-   //byte car;
-   strcpy(fname, name);
-   strcat(fname, ".svt");
-   if ((fp = fopen(fname, "wb")))
-   {
-      printf("Saving savestate '%s'\n", fname);
-      for( i = 0x60; i < 0x80; i++)
-      {
-         fwrite(get_page_ptr(i), 1, 0x100, fp);
-      }
-      
-      fclose(fp);
-   }
+    FILE *fp;
+    int i;
+    char fname[512];
+    //byte car;
+    strcpy(fname, name);
+    strcat(fname, ".svt");
+    if ((fp = fopen(fname, "wb")))
+    {
+        printf("Saving savestate '%s'\n", fname);
+        for( i = 0x60; i < 0x80; i++)
+        {
+            fwrite(get_page_ptr(i), 1, 0x100, fp);
+        }
+        
+        fclose(fp);
+    }
 }
 
 void LoadSaveRam(char *name)
 {
-   FILE *fp;
-   int i;
-   char fname[512];
-   
-   strcpy(fname, name);
-   strcat(fname, ".svt");
-   if ((fp = fopen(fname, "rb")))
-   {
-      printf("Loading savestate '%s'\n", fname);
-      for( i = 0x60; i < 0x80; i++)
-      {
-         fread(get_page_ptr(i), 1, 0x0100, fp);
-      }    
-      fclose(fp);
-      
-   }
+    FILE *fp;
+    int i;
+    char fname[512];
+    
+    strcpy(fname, name);
+    strcat(fname, ".svt");
+    if ((fp = fopen(fname, "rb")))
+    {
+        printf("Loading savestate '%s'\n", fname);
+        for( i = 0x60; i < 0x80; i++)
+        {
+            fread(get_page_ptr(i), 1, 0x0100, fp);
+        }    
+        fclose(fp);
+        
+    }
 }
 
 
 void LoadPalette(char *filename, PALETTE pal)
 {
-   FILE *fp;
-   
-   unsigned char r, v, b, i;
-   printf("%s: try to load pallette file '%s'", __func__, filename);
-   if ((fp = fopen(filename, "rb")) != NULL)
-   {
-      
-      for (i = 0; i < 64; i++)
-      {
-         
-         fread(&r, 1, 1, fp);
-         fread(&v, 1, 1, fp);
-         fread(&b, 1, 1, fp);
-         
-         /*            r = (r * 64) / 255;
-          v = (v * 64) / 255;
-          b = (b * 64) / 255;*/
-         
-         
+    FILE *fp;
+    
+    unsigned char r, v, b, i;
+    printf("%s: try to load pallette file '%s'", __func__, filename);
+    if ((fp = fopen(filename, "rb")) != NULL)
+    {
+        
+        for (i = 0; i < 64; i++)
+        {
+            
+            fread(&r, 1, 1, fp);
+            fread(&v, 1, 1, fp);
+            fread(&b, 1, 1, fp);
+            
+/*            r = (r * 64) / 255;
+            v = (v * 64) / 255;
+            b = (b * 64) / 255;*/
+            
+
 #ifdef USE_24BITS            
-         ColorPalette[i + (0 * 63)] = SET_RGB(r,v,b);
-         
-         /* Red emphase */
-         ColorPalette[i + (1 * 63)] = SET_RGB(r + 10, v - 05, b - 05);
-         
-         /* Green emphase */
-         ColorPalette[i + (2 * 63)] = SET_RGB(r - 05, v + 10, b - 05);
-         
-         /* Red + green emphase */
-         ColorPalette[i + (3 * 63)] = SET_RGB(r + 05, v + 05, b - 10);
-         
-         /* Blue emphase */
-         ColorPalette[i + (4 * 63)] = SET_RGB(r - 05, v - 05, b + 10);
-         
-         /* Red + blue emphase */
-         ColorPalette[i + (5 * 63)] = SET_RGB(r + 05, v - 10, b + 05);
-         
-         /* Blue + green emphase */
-         ColorPalette[i + (6 * 63)] = SET_RGB(r - 10, v + 05, b + 05);
-         
-         /* Red + Green + Blue emphase */
-         ColorPalette[i + (7 * 63)] = SET_RGB(r + 00, v + 00, b + 00);*/
+            ColorPalette[i + (0 * 63)] = SET_RGB(r,v,b);
+            
+            /* Red emphase */
+            ColorPalette[i + (1 * 63)] = SET_RGB(r + 10, v - 05, b - 05);
+            
+            /* Green emphase */
+            ColorPalette[i + (2 * 63)] = SET_RGB(r - 05, v + 10, b - 05);
+            
+            /* Red + green emphase */
+            ColorPalette[i + (3 * 63)] = SET_RGB(r + 05, v + 05, b - 10);
+            
+            /* Blue emphase */
+            ColorPalette[i + (4 * 63)] = SET_RGB(r - 05, v - 05, b + 10);
+            
+            /* Red + blue emphase */
+            ColorPalette[i + (5 * 63)] = SET_RGB(r + 05, v - 10, b + 05);
+            
+            /* Blue + green emphase */
+            ColorPalette[i + (6 * 63)] = SET_RGB(r - 10, v + 05, b + 05);
+            
+            /* Red + Green + Blue emphase */
+            ColorPalette[i + (7 * 63)] = SET_RGB(r + 00, v + 00, b + 00);*/
 #else /* Else Use 8Bits */
-         pal[i].r = r;
-         pal[i].g = v;
-         pal[i].b = b;
-         
-         pal[i + 64].r = r;
-         pal[i + 64].g = v;
-         pal[i + 64].b = b;
-         
-         pal[i + 128].r = r;
-         pal[i + 128].g = v;
-         pal[i + 128].b = b;
-         
-         pal[i + 192].r = r;
-         pal[i + 192].g = v;
-         pal[i + 192].b = b;
+            pal[i].r = r;
+            pal[i].g = v;
+            pal[i].b = b;
+            
+            pal[i + 64].r = r;
+            pal[i + 64].g = v;
+            pal[i + 64].b = b;
+            
+            pal[i + 128].r = r;
+            pal[i + 128].g = v;
+            pal[i + 128].b = b;
+            
+            pal[i + 192].r = r;
+            pal[i + 192].g = v;
+            pal[i + 192].b = b;
 #endif
-      }
-      fclose(fp);
-      printf(" [ OK ]\n");
-   }
-   else
-   {
-      printf("Error loading palette '%s'!\n", filename);
-      exit(-1);
-   }
+        }
+        fclose(fp);
+        printf(" [ OK ]\n");
+    }
+    else
+    {
+        printf("Error loading palette '%s'!\n", filename);
+        exit(-1);
+    }
 }
 
 int DAsm(char *S, word A);
@@ -258,371 +257,390 @@ int oppos = 0;
 
 void pushop(word op)
 {
-   latestop[oppos] = op;
-   //  printf("%d\n", oppos);  
-   oppos = (oppos+1)%42;
+    latestop[oppos] = op;
+  //  printf("%d\n", oppos);  
+    oppos = (oppos+1)%42;
 }
 
 void showlastop(FILE *fp)
 {
 #ifdef DEBUG
-   int i,j;
-   char S[256];
-   i = oppos;
-   do
-   {
-      j=(DAsm(S,latestop[i])-1);
-      fprintf(fp, "0x%04X : %s\n", MainCPU.PC.W,S);
-      i = (i+1)%42;
-   }
-   while(i != oppos);
+    int i,j;
+    char S[256];
+    i = oppos;
+    do
+    {
+        j=(DAsm(S,latestop[i])-1);
+        fprintf(fp, "0x%04X : %s\n", MainCPU.PC.W,S);
+        i = (i+1)%42;
+    }
+    while(i != oppos);
 #endif
 }
 
+NesCart *Cart;
+
 void *signalhandler(int sig)
 {
-   static int state=0;
-   M6502 *R = &MainCPU;
-   byte F;
-   int J, I;
-   static char FA[8] = "NVRBDIZC";    
-   char S[128];
-   char name[512];
-   static FILE *fp = NULL;
-   sprintf(name, "crashdump-%d.txt", time(NULL));
-   if (state != 0)
-   {
-      fprintf(stderr, "\n\n\nCrashed within signal!\nEmergency exit\n");
-      exit(42);
-   }
-   state = 1;
-   
-   if (fp == NULL)
-      fp = fopen(name, "wt");
-   
-   state = 2;
-   
-   if (fp) fprintf(stderr,
-                   "\n\n\n\n\n"
-                   "#sick# TI-NESulator %d.%d #sick#\n"
-                   "see %s for more information",
-                   V_MAJOR,
-                   V_MINOR,
-                   name);
-   
-   if (!fp) fp = stderr;
-   
-   fprintf(fp,"\n\n\n\n\n"
-           "#sick# TI-NESulator %d.%d #sick# signal: ",
-           V_MAJOR,
-           V_MINOR);
-   switch(sig)
-   {
-      default:
-      case SIGABRT: fprintf(fp,"Abnormal termination"); break;
-      case SIGILL:  fprintf(fp,"Illegal instruction"); break;
-      case SIGINT:  fprintf(fp,"CTRL+C signal"); break;
-      case SIGSEGV: fprintf(fp,"Segmentation fault"); break;
-      case SIGTERM: fprintf(fp,"Termination request"); break;
-   }
-   fprintf(fp,"\nAn error occured during the excution.\n Crash report information :\n");
+    static int state=0;
+    M6502 *R = &MainCPU;
+    byte F;
+    int J, I;
+    static char FA[8] = "NVRBDIZC";    
+    char S[128];
+    char name[512];
+    static FILE *fp = NULL;
+    sprintf(name, "crashdump-%d.txt", (int)time(NULL));
+    if (state != 0)
+    {
+        fprintf(stderr, "\n\n\nCrashed within signal!\nEmergency exit\n");
+        exit(42);
+    }
+    state = 1;
+    
+    if (fp == NULL)
+        fp = fopen(name, "wt");
+    
+    state = 2;
+    
+    if (fp) fprintf(stderr,
+                    "\n\n\n\n\n"
+                    "#sick# TI-NESulator %d.%d #sick#\n"
+                    "see %s for more information",
+                    V_MAJOR,
+                    V_MINOR,
+                    name);
+                    
+    if (!fp) fp = stderr;
+
+    fprintf(fp,"\n\n\n\n\n"
+               "#sick# TI-NESulator %d.%d #sick# signal: ",
+               V_MAJOR,
+               V_MINOR);
+    switch(sig)
+    {
+    default:
+    case SIGABRT: fprintf(fp,"Abnormal termination"); break;
+    case SIGILL:  fprintf(fp,"Illegal instruction"); break;
+    case SIGINT:  fprintf(fp,"CTRL+C signal"); break;
+    case SIGSEGV: fprintf(fp,"Segmentation fault"); break;
+    case SIGTERM: fprintf(fp,"Termination request"); break;
+    }
+    fprintf(fp,"\nAn error occured during the excution.\n Crash report information :\n");
 #ifdef DEBUG
-   DAsm(S, R->PC.W);
+    DAsm(S, R->PC.W);
 #endif
-   fprintf(fp, "CPU: A:%02X  P:%02X  X:%02X  Y:%02X  S:%04X  PC:%04X  Flags:[", 
-           R->A, R->P, R->X, R->Y, R->S + 0x0100, R->PC.W);
-   for (J = 0, F = R->P; J < 8; J++, F <<= 1)
-      fprintf(fp, "%c", F & 0x80 ? FA[J] : '.');
-   fprintf(fp, "]\nCPU: ");
-   fprintf(fp, "AT PC: [%02X - %s]   AT SP: [%02X %02X %02X]\nLast execution :\n", 
+    fprintf(fp, "CPU: A:%02X  P:%02X  X:%02X  Y:%02X  S:%04X  PC:%04X  Flags:[", 
+        R->A, R->P, R->X, R->Y, R->S + 0x0100, R->PC.W);
+    for (J = 0, F = R->P; J < 8; J++, F <<= 1)
+       fprintf(fp, "%c", F & 0x80 ? FA[J] : '.');
+       fprintf(fp, "]\nCPU: ");
+       fprintf(fp, "AT PC: [%02X - %s]   AT SP: [%02X %02X %02X]\nLast execution :\n", 
            Rd6502(R->PC.W), S, 
            Rd6502(0x0100 + (byte) (R->S + 1)), 
            Rd6502(0x0100 + (byte) (R->S + 2)), 
            Rd6502(0x0100 + (byte) (R->S + 3)));
-   showlastop(fp);
-   //       fprintf(fp, "PPU: CR1: 0x%02X (NT:%d AI:%d SP:%d BP:%d SS:%d NMI:%d)\n",ppu.ControlRegister1.b, ppu.ControlRegister1.s.NameTblAddr, ppu.ControlRegister1.s.AddrIncrmt, ppu.ControlRegister1.s.SptPattern, ppu.ControlRegister1.s.BgPattern, ppu.ControlRegister1.s.SpriteSize, ppu.ControlRegister1.s.VBlank_NMI);
-   //       fprintf(fp, "PPU: CR2: 0x%02X (FBC/CI:%d SV:%d BV:%d SC:%d BC:%d DT:%d)\n",ppu.ControlRegister2.b,ppu.ControlRegister2.s.Colour,ppu.ControlRegister2.s.SpriteVisibility,ppu.ControlRegister2.s.BgVisibility,ppu.ControlRegister2.s.SpriteClipping,ppu.ControlRegister2.s.BgClipping,ppu.ControlRegister2.s.DisplayType);
-   //       fprintf(fp, "PPU: SR: 0x%02X (VB:%d S0:%d SSC:%d VWF:%d)\n", ppu.StatusRegister.b,ppu.StatusRegister.s.VBlankOccur,ppu.StatusRegister.s.Sprite0Occur,ppu.StatusRegister.s.SprtCount,ppu.StatusRegister.s.VRAMProtect);
-   //       fprintf(fp, "PPU: M:%d ST:%d VRAMPtr:0x%04X T:0x%04X\n",ppu.MirrorDir,ppu.ScreenType,ppu.VRAMAddrReg2.W,ppu.TmpVRamPtr);
-   
-   mapper_dump(fp);
-   
-   for(I = 0; I < 0xFFFF; I += 0x10)
-      fprintf(fp, "%04X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X | %c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n",
-              I,
-              Rd6502(I+0x00), Rd6502(I+0x01), Rd6502(I+0x02), Rd6502(I+0x03),
-              Rd6502(I+0x04), Rd6502(I+0x05), Rd6502(I+0x06), Rd6502(I+0x07),
-              Rd6502(I+0x08), Rd6502(I+0x09), Rd6502(I+0x0A), Rd6502(I+0x0B),
-              Rd6502(I+0x0C), Rd6502(I+0x0D), Rd6502(I+0x0E), Rd6502(I+0x0F),
-              // --- //
-              isprint(Rd6502(I+0x00))?Rd6502(I+0x00):'_',
-              isprint(Rd6502(I+0x01))?Rd6502(I+0x01):'_',
-              isprint(Rd6502(I+0x02))?Rd6502(I+0x02):'_',
-              isprint(Rd6502(I+0x03))?Rd6502(I+0x03):'_',
-              isprint(Rd6502(I+0x04))?Rd6502(I+0x04):'_',
-              isprint(Rd6502(I+0x05))?Rd6502(I+0x05):'_',
-              isprint(Rd6502(I+0x06))?Rd6502(I+0x06):'_',
-              isprint(Rd6502(I+0x07))?Rd6502(I+0x07):'_',
-              isprint(Rd6502(I+0x08))?Rd6502(I+0x08):'_',
-              isprint(Rd6502(I+0x09))?Rd6502(I+0x09):'_',
-              isprint(Rd6502(I+0x0A))?Rd6502(I+0x0A):'_',
-              isprint(Rd6502(I+0x0B))?Rd6502(I+0x0B):'_',
-              isprint(Rd6502(I+0x0C))?Rd6502(I+0x0C):'_',
-              isprint(Rd6502(I+0x0D))?Rd6502(I+0x0D):'_',
-              isprint(Rd6502(I+0x0E))?Rd6502(I+0x0E):'_',
-              isprint(Rd6502(I+0x0F))?Rd6502(I+0x0F):'_');
-   
-   DumpMemoryState(fp);
-   
-   fprintf(stderr, "\nPlease join this informations when submiting crash report\n");
-   if (fp != stderr) fclose(fp);
-   //getchar();
-   exit(-42);
+       showlastop(fp);
+//       fprintf(fp, "PPU: CR1: 0x%02X (NT:%d AI:%d SP:%d BP:%d SS:%d NMI:%d)\n",ppu.ControlRegister1.b, ppu.ControlRegister1.s.NameTblAddr, ppu.ControlRegister1.s.AddrIncrmt, ppu.ControlRegister1.s.SptPattern, ppu.ControlRegister1.s.BgPattern, ppu.ControlRegister1.s.SpriteSize, ppu.ControlRegister1.s.VBlank_NMI);
+//       fprintf(fp, "PPU: CR2: 0x%02X (FBC/CI:%d SV:%d BV:%d SC:%d BC:%d DT:%d)\n",ppu.ControlRegister2.b,ppu.ControlRegister2.s.Colour,ppu.ControlRegister2.s.SpriteVisibility,ppu.ControlRegister2.s.BgVisibility,ppu.ControlRegister2.s.SpriteClipping,ppu.ControlRegister2.s.BgClipping,ppu.ControlRegister2.s.DisplayType);
+//       fprintf(fp, "PPU: SR: 0x%02X (VB:%d S0:%d SSC:%d VWF:%d)\n", ppu.StatusRegister.b,ppu.StatusRegister.s.VBlankOccur,ppu.StatusRegister.s.Sprite0Occur,ppu.StatusRegister.s.SprtCount,ppu.StatusRegister.s.VRAMProtect);
+//       fprintf(fp, "PPU: M:%d ST:%d VRAMPtr:0x%04X T:0x%04X\n",ppu.MirrorDir,ppu.ScreenType,ppu.VRAMAddrReg2.W,ppu.TmpVRamPtr);
+       
+       //MapperDump(fp);
+       
+       for(I = 0; I < 0xFFFF; I += 0x10)
+           fprintf(fp, "%04X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X | %c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n",
+                   I,
+                   Rd6502(I+0x00), Rd6502(I+0x01), Rd6502(I+0x02), Rd6502(I+0x03),
+                   Rd6502(I+0x04), Rd6502(I+0x05), Rd6502(I+0x06), Rd6502(I+0x07),
+                   Rd6502(I+0x08), Rd6502(I+0x09), Rd6502(I+0x0A), Rd6502(I+0x0B),
+                   Rd6502(I+0x0C), Rd6502(I+0x0D), Rd6502(I+0x0E), Rd6502(I+0x0F),
+                   // --- //
+                   isprint(Rd6502(I+0x00))?Rd6502(I+0x00):'_',
+                   isprint(Rd6502(I+0x01))?Rd6502(I+0x01):'_',
+                   isprint(Rd6502(I+0x02))?Rd6502(I+0x02):'_',
+                   isprint(Rd6502(I+0x03))?Rd6502(I+0x03):'_',
+                   isprint(Rd6502(I+0x04))?Rd6502(I+0x04):'_',
+                   isprint(Rd6502(I+0x05))?Rd6502(I+0x05):'_',
+                   isprint(Rd6502(I+0x06))?Rd6502(I+0x06):'_',
+                   isprint(Rd6502(I+0x07))?Rd6502(I+0x07):'_',
+                   isprint(Rd6502(I+0x08))?Rd6502(I+0x08):'_',
+                   isprint(Rd6502(I+0x09))?Rd6502(I+0x09):'_',
+                   isprint(Rd6502(I+0x0A))?Rd6502(I+0x0A):'_',
+                   isprint(Rd6502(I+0x0B))?Rd6502(I+0x0B):'_',
+                   isprint(Rd6502(I+0x0C))?Rd6502(I+0x0C):'_',
+                   isprint(Rd6502(I+0x0D))?Rd6502(I+0x0D):'_',
+                   isprint(Rd6502(I+0x0E))?Rd6502(I+0x0E):'_',
+                   isprint(Rd6502(I+0x0F))?Rd6502(I+0x0F):'_');
+    
+       DumpMemoryState(fp);
+
+       fprintf(stderr, "\nPlease join this informations when submiting crash report\n");
+       if (fp != stderr) fclose(fp);
+       //getchar();
+       exit(-42);
 }
 
 byte Page40[256];
 
 void WrHook4000Multiplexer(byte addr, byte value)
 {
-   static byte SQ1V = 0;
-   static byte SQ2V = 0;
-   static byte TRIV = 0;
-   static byte NOIV = 0;
-   
-   static unsigned short SQ1P = 0;
-   static unsigned short SQ2P = 0;
-   static unsigned short TRIP = 0;
-   static unsigned short NOIP = 0;
-   
-   static byte Sq1_reg0 = 0;
-   static byte Sq1_reg1 = 0;
-   static byte Sq1_reg2 = 0;
-   static byte Sq1_reg3 = 0;
-   
-   static byte Sq2_reg0 = 0;
-   static byte Sq2_reg1 = 0;
-   static byte Sq2_reg2 = 0;
-   static byte Sq2_reg3 = 0;
-   
-   double SQ;
-   switch(addr)
-   {
+    static byte SQ1V = 0;
+    static byte SQ2V = 0;
+    static byte NOIV = 0;
+    
+    static unsigned short SQ1P = 0;
+    static unsigned short SQ2P = 0;
+    static unsigned short TRIP = 0;
+    static unsigned short NOIP = 0;
+    
+    static byte Sq1_reg0 = 0;
+    static byte Sq1_reg1 = 0;
+    static byte Sq1_reg2 = 0;
+    static byte Sq1_reg3 = 0;
+    
+    static byte Sq2_reg0 = 0;
+    static byte Sq2_reg1 = 0;
+    static byte Sq2_reg2 = 0;
+    static byte Sq2_reg3 = 0;
+    
+    double SQ = 0.0;
+
+    switch(addr)
+    {
 #ifdef USE_SOUND    
-      case 0x00: /* DDLE NNNN */
-         Sq1_reg0 = value;
-         if (Sq1_reg0 & 0x10)
-         {
+    case 0x00: /* DDLE NNNN */
+        Sq1_reg0 = value;
+        if (Sq1_reg0 & 0x10)
+        {
             SQ1V = 0x0F/*(0x04+(value&0x0F))& 0x0F*/;
-         }
-         else
-         {
+        }
+        else
+        {
             SQ1V = value&0x0F;
-         }
-         
-         break;
-         case 0x01: /* EPPP NSSS */        
-         Sq1_reg1 = value;
-         break;
-         case 0x02:
-         /*printf("Sq1 reg0: 0x%02X - duty:0x%X loop:0x%X env:0x%X vol:0x%X\n", 
-          Sq1_reg0,
-          (Sq1_reg0&0xC0)>>6,
-          (Sq1_reg0&0x20)>>5,
-          (Sq1_reg0&0x10)>>4,
-          Sq1_reg0&0x0F);
-          printf("Sq1 reg1: 0x%02X - sweep:0x%X period:0x%X neg:0x%X shift:0x%X\n", 
-          Sq1_reg1,
-          (Sq1_reg1&0x80)>>8,
-          (Sq1_reg1&0x70)>>4,
-          (Sq1_reg1&0x08)>>3,
-          Sq1_reg1&0x07);
-          printf("Sq1 reg2: 0x%02X\n", value);               
-          printf("Sq1 reg3: 0x%02X\n", Sq1_reg3);*/
-         SQ1P = value | ((Sq1_reg3&0x7) << 8);
-         SQ = APU_BASEFREQ * 1000 * 1000 / (SQ1P+1 /*+ 
-          (Sq1_reg1&0x80)?0:( (Sq1_reg1&0x08)?(SQ1P>>(Sq1_reg1&0x07)):(SQ1P<<(Sq1_reg1&0x07)) )*/);
-         SetSound(0,SND_MELODIC);
-         
-         //printf("SQ1V = %d - SQ = %f - SQ1P = %d\n", SQ1V, SQ, SQ1P);
-         
-         
-         //        { FILE *fp = fopen("sound.log", "at"); fprintf(fp, "%d %d %d\n", 0, SQ1P, SQ1V); fclose(fp); }
-         
-         Sound(0, (int) SQ/22, (0xFF/0x0F) * SQ1V);
-         
-         //        printf("40%02X: 0x%02X (SQ1P:%d SQ:%f (%d))\n", addr, value, SQ1P, SQ, (int) SQ);
-         Sq1_reg2 = value;
-         break;
-         
-         case 0x03:
-         Sq1_reg3 = value;
-         SQ1P = Sq1_reg2 | ((value&0x7) << 8);
-         SQ = APU_BASEFREQ * 1000 * 1000 / (SQ1P+1 /*+ 
-          (Sq1_reg1&0x80)?0:( (Sq1_reg1&0x08)?(SQ1P>>(Sq1_reg1&0x07)):(SQ1P<<(Sq1_reg1&0x07)) )*/);            
-         //        { FILE *fp = fopen("sound.log", "at"); fprintf(fp, "%d %d %d\n", 0, SQ1P, SQ1V); fclose(fp); }
-         Sound(0, (int) SQ/22, (0xFF/0x0F) * SQ1V);      
-         break;
-         
-         
-         
-         case 0x04: 
-         Sq2_reg0 = value;
-         if (Sq2_reg0 & 0x10)
-         {
+        }
+        
+        break;
+    case 0x01: /* EPPP NSSS */        
+        Sq1_reg1 = value;
+        break;
+    case 0x02:
+        /*printf("Sq1 reg0: 0x%02X - duty:0x%X loop:0x%X env:0x%X vol:0x%X\n", 
+               Sq1_reg0,
+               (Sq1_reg0&0xC0)>>6,
+               (Sq1_reg0&0x20)>>5,
+               (Sq1_reg0&0x10)>>4,
+               Sq1_reg0&0x0F);
+        printf("Sq1 reg1: 0x%02X - sweep:0x%X period:0x%X neg:0x%X shift:0x%X\n", 
+               Sq1_reg1,
+               (Sq1_reg1&0x80)>>8,
+               (Sq1_reg1&0x70)>>4,
+               (Sq1_reg1&0x08)>>3,
+               Sq1_reg1&0x07);
+        printf("Sq1 reg2: 0x%02X\n", value);               
+        printf("Sq1 reg3: 0x%02X\n", Sq1_reg3);*/
+        SQ1P = value | ((Sq1_reg3&0x7) << 8);
+       SQ = APU_BASEFREQ * 1000 * 1000 / (SQ1P+1 /*+ 
+       (Sq1_reg1&0x80)?0:( (Sq1_reg1&0x08)?(SQ1P>>(Sq1_reg1&0x07)):(SQ1P<<(Sq1_reg1&0x07)) )*/);
+        SetSound(0,SND_MELODIC);
+
+        //printf("SQ1V = %d - SQ = %f - SQ1P = %d\n", SQ1V, SQ, SQ1P);
+
+#ifdef SOUND_LOG
+        { FILE *fp = fopen("sound.log", "at"); fprintf(fp, "%d %d %d\n", 0, SQ1P, SQ1V); fclose(fp); }
+#endif
+        Sound(0, (int) SQ/22, (0xFF/0x0F) * SQ1V);
+        
+//        printf("40%02X: 0x%02X (SQ1P:%d SQ:%f (%d))\n", addr, value, SQ1P, SQ, (int) SQ);
+        Sq1_reg2 = value;
+        break;
+        
+   case 0x03:
+        Sq1_reg3 = value;
+        SQ1P = Sq1_reg2 | ((value&0x7) << 8);
+        SQ = APU_BASEFREQ * 1000 * 1000 / (SQ1P+1 /*+ 
+        (Sq1_reg1&0x80)?0:( (Sq1_reg1&0x08)?(SQ1P>>(Sq1_reg1&0x07)):(SQ1P<<(Sq1_reg1&0x07)) )*/);            
+#ifdef SOUND_LOG
+        { FILE *fp = fopen("sound.log", "at"); fprintf(fp, "%d %d %d\n", 0, SQ1P, SQ1V); fclose(fp); }
+#endif
+        Sound(0, (int) SQ/22, (0xFF/0x0F) * SQ1V);      
+        break;
+        
+        
+        
+    case 0x04: 
+        Sq2_reg0 = value;
+        if (Sq2_reg0 & 0x10)
+        {
             SQ2V = 0x0F;
             //SQ2V = (0x04+(value&0x0F))& 0x0F;
-         }
-         else
-         {
-            SQ2V = value&0x0F;        
-         }
-         
-         break;
-         case 0x05:
-         Sq2_reg1 = value;
-         break;
-         
-         case 0x06:
-         Sq2_reg2 = value;
-         
-         SQ2P = Sq2_reg2 | ((Sq2_reg3&0x7) << 8);
-         
-         SQ = APU_BASEFREQ * 1000 * 1000 / (SQ2P+1 /*+ 
-          (Sq2_reg1&0x80)?0:( (Sq2_reg1&0x08)?(SQ2P>>(Sq2_reg1&0x07)):(SQ2P<<(Sq2_reg1&0x07)) )*/);
-         
-         /*       printf("Sq2 reg0: 0x%02X - duty:0x%X loop:0x%X env:0x%X vol:0x%X\n", 
-          Sq2_reg0,
-          (Sq2_reg0&0xC0)>>6,
-          (Sq2_reg0&0x20)>>5,
-          (Sq2_reg0&0x10)>>4,
-          Sq2_reg0&0x0F);
-          printf("Sq2 reg1: 0x%02X - sweep:0x%X period:0x%X neg:0x%X shift:0x%X\n", 
-          Sq2_reg1,
-          (Sq2_reg1&0x80)>>8,
-          (Sq2_reg1&0x70)>>4,
-          (Sq2_reg1&0x08)>>3,
-          Sq2_reg1&0x07);
-          printf("Sq2 reg2: 0x%02X\n", value);               
-          printf("Sq2 reg3: 0x%02X\n", Sq2_reg3);
-          printf("SQ2V = %d - SQ = %f - SQ2P = %d\n", SQ2V, SQ, SQ2P);*/
-         
-         //        { FILE *fp = fopen("sound.log", "at"); fprintf(fp, "%d %d %d\n", 1, SQ2P, SQ2V); fclose(fp); }
-         Sound(1, (int) SQ/22, (0xFF/0x0F) * SQ2V);
-         break;
-         
-         case 0x07:
-         Sq2_reg3 = value;
-         
-         SQ2P = Sq2_reg2 | ((Sq2_reg3&0x7) << 8);
-         //SQ2P = (SQ2P & 0x00FF) | ((value&0x7) << 8);
-         SQ = APU_BASEFREQ * 1000 * 1000 / (SQ2P+1 /*+ 
-          (Sq2_reg1&0x80)?0:( (Sq2_reg1&0x08)?(SQ2P>>(Sq2_reg1&0x07)):(SQ2P<<(Sq2_reg1&0x07)) )*/);
-         //        { FILE *fp = fopen("sound.log", "at"); fprintf(fp, "%d %d %d\n", 1, SQ2P, SQ2V); fclose(fp); }        
-         Sound(1, (int) SQ/22, (0xFF/0x0F) * SQ2V);        
-         break;
-         
-         case 0x0A:
-         TRIP = (TRIP & 0xFF00) | value;
-         SQ = APU_BASEFREQ * 1000 * 1000 / TRIP;
-         //        { FILE *fp = fopen("sound.log", "at"); fprintf(fp, "%d %d %d\n", 2, TRIP, 255); fclose(fp); }
-         Sound(2, (int) SQ/22, 127);
-         break;
-         
-         case 0x0B:
-         TRIP = (TRIP & 0x00FF) | ((value&0x7) << 8);;
-         SQ = APU_BASEFREQ * 1000 * 1000 / TRIP;
-         //       { FILE *fp = fopen("sound.log", "at"); fprintf(fp, "%d %d %d\n", 2, TRIP, 255); fclose(fp); }
-         
-         Sound(2, (int) SQ/22, 127);
-         break;
-         
-         /*    case 0x0C:
-          NOIV = value & 0x0F;
-          break;
-          
-          case 0x0E:
-          NOIP = value & 0x0F;
-          SQ = APU_BASEFREQ * 1000 * 1000 / NOIP;
-          //       { FILE *fp = fopen("sound.log", "at"); fprintf(fp, "%d %d %d\n", 2, TRIP, 255); fclose(fp); }
-          SetSound(3, SND_NOISE);
-          Sound(3, (int) SQ/22, (0xFF/0x0F) * NOIV);
-          break;
-          case 0x0F:
-          
-          break;*/
-         case 0x15:
-         /* DMC, Noise, Triangle, Sq 2, Sq 1 */
-         //SetChannels(0, (value&0x01)?0x01:0);
-         /*        printf("40%02X: 0x%02X [%c%c%c%c%c]\n", addr, value,
-          (value&0x10)?'d':'.',
-          (value&0x08)?'n':'.',
-          (value&0x04)?'t':'.',
-          (value&0x02)?'2':'.',
-          (value&0x01)?'1':'.');*/
-         
-         break; 
-#endif   
-         case 0x14:
-         ppu_fillSprRamDMA(value);
-         break;
-         
-         case 0x16:
-         WritePaddle(&P1, value);
-         //WritePaddle(&P2, value);
-         break;
-         
-         case 0x17:
-         //        printf("40%02X: 0x%02X\n", addr, value);       
-         
-         break;
-         //    default:
-         //Page40[addr] = value;
-         // printf("40%02X: 0x%02X\n", addr, value);       
-         //        printf("pAPU: 0x%X @ 0x40%X\n", value, addr);
-   }
+        }
+        else
+        {
+           SQ2V = value&0x0F;        
+        }
+        
+        break;
+    case 0x05:
+        Sq2_reg1 = value;
+        break;
+        
+    case 0x06:
+        Sq2_reg2 = value;
+        
+        SQ2P = Sq2_reg2 | ((Sq2_reg3&0x7) << 8);
+        
+        SQ = APU_BASEFREQ * 1000 * 1000 / (SQ2P+1 /*+ 
+        (Sq2_reg1&0x80)?0:( (Sq2_reg1&0x08)?(SQ2P>>(Sq2_reg1&0x07)):(SQ2P<<(Sq2_reg1&0x07)) )*/);
+        
+  /*       printf("Sq2 reg0: 0x%02X - duty:0x%X loop:0x%X env:0x%X vol:0x%X\n", 
+               Sq2_reg0,
+               (Sq2_reg0&0xC0)>>6,
+               (Sq2_reg0&0x20)>>5,
+               (Sq2_reg0&0x10)>>4,
+               Sq2_reg0&0x0F);
+        printf("Sq2 reg1: 0x%02X - sweep:0x%X period:0x%X neg:0x%X shift:0x%X\n", 
+               Sq2_reg1,
+               (Sq2_reg1&0x80)>>8,
+               (Sq2_reg1&0x70)>>4,
+               (Sq2_reg1&0x08)>>3,
+               Sq2_reg1&0x07);
+        printf("Sq2 reg2: 0x%02X\n", value);               
+        printf("Sq2 reg3: 0x%02X\n", Sq2_reg3);
+        printf("SQ2V = %d - SQ = %f - SQ2P = %d\n", SQ2V, SQ, SQ2P);*/
+#ifdef SOUND_LOG
+        { FILE *fp = fopen("sound.log", "at"); fprintf(fp, "%d %d %d\n", 1, SQ2P, SQ2V); fclose(fp); }
+#endif
+        Sound(1, (int) SQ/22, (0xFF/0x0F) * SQ2V);
+        break;
+       
+    case 0x07:
+        Sq2_reg3 = value;
+        
+        SQ2P = Sq2_reg2 | ((Sq2_reg3&0x7) << 8);
+        //SQ2P = (SQ2P & 0x00FF) | ((value&0x7) << 8);
+        SQ = APU_BASEFREQ * 1000 * 1000 / (SQ2P+1 /*+ 
+        (Sq2_reg1&0x80)?0:( (Sq2_reg1&0x08)?(SQ2P>>(Sq2_reg1&0x07)):(SQ2P<<(Sq2_reg1&0x07)) )*/);
+#ifdef SOUND_LOG
+        { FILE *fp = fopen("sound.log", "at"); fprintf(fp, "%d %d %d\n", 1, SQ2P, SQ2V); fclose(fp); }
+#endif
+        Sound(1, (int) SQ/22, (0xFF/0x0F) * SQ2V);        
+        break;
+
+    case 0x0A:
+        TRIP = (TRIP & 0xFF00) | value;
+        SQ = APU_BASEFREQ * 1000 * 1000 / TRIP;
+#ifdef SOUND_LOG
+        { FILE *fp = fopen("sound.log", "at"); fprintf(fp, "%d %d %d\n", 2, TRIP, 127); fclose(fp); }
+#endif
+        Sound(2, (int) SQ/22, 127);
+        break;
+        
+    case 0x0B:
+        TRIP = (TRIP & 0x00FF) | ((value&0x7) << 8);;
+        SQ = APU_BASEFREQ * 1000 * 1000 / TRIP;
+#ifdef SOUND_LOG
+        { FILE *fp = fopen("sound.log", "at"); fprintf(fp, "%d %d %d\n", 2, TRIP, 127); fclose(fp); }
+#endif
+        Sound(2, (int) SQ/22, 127);
+        break;
    
+    case 0x0C:
+        NOIV = value & 0x0F;
+#ifdef SOUND_LOG
+        { FILE *fp = fopen("sound.log", "at"); fprintf(fp, "%d %d %d\n", 3, NOIP, NOIV); fclose(fp); }
+#endif
+        SetSound(3, SND_NOISE);
+        Sound(3, (int) SQ/22, (0xFF/0x0F) * NOIV);        
+        break;
+        
+    case 0x0E:
+        NOIP = value & 0x0F;
+        SQ = APU_BASEFREQ * 1000 * 1000 / NOIP;
+#ifdef SOUND_LOG
+        { FILE *fp = fopen("sound.log", "at"); fprintf(fp, "%d %d %d\n", 3, NOIP, NOIV); fclose(fp); }
+#endif
+        SetSound(3, SND_NOISE);
+        Sound(3, (int) SQ/22,     NOIV);
+        break;
+    case 0x0F:
+    
+        break;
+    case 0x15:
+        /* DMC, Noise, Triangle, Sq 2, Sq 1 */
+        //SetChannels(0, (value&0x01)?0x01:0);
+/*        printf("40%02X: 0x%02X [%c%c%c%c%c]\n", addr, value,
+               (value&0x10)?'d':'.',
+               (value&0x08)?'n':'.',
+               (value&0x04)?'t':'.',
+               (value&0x02)?'2':'.',
+               (value&0x01)?'1':'.');*/
+    
+        break; 
+ #endif   
+    case 0x14:
+        ppu_fillSprRamDMA(value);
+        break;
+    
+    case 0x16:
+        WritePaddle(&P1, value);
+        //WritePaddle(&P2, value);
+        break;
+    
+    case 0x17:
+//        printf("40%02X: 0x%02X\n", addr, value);       
+         if (value == 0x00)
+            Int6502(&MainCPU,INT_IRQ);
+        
+        break;
+//    default:
+        //Page40[addr] = value;
+       // printf("40%02X: 0x%02X\n", addr, value);       
+//        printf("pAPU: 0x%X @ 0x40%X\n", value, addr);
+    }
+
 }
 
 byte RdHook4000Multiplexer(byte addr)
 {
-   byte ret;
-   switch(addr)
-   {
-      case 0x16:
-         ret = ReadPaddle(&P1);
-         break;
-         
-      case 0x17:
-         ret = 0x40;
-         break;
-         
-      case 0x15:
-         ret = 0x1F;
-      default:
-         ret = 0x42;
-   }   
-   return ret;
+    byte ret;
+    switch(addr)
+    {
+    case 0x16:
+        ret = ReadPaddle(&P1);
+        break;
+    
+    case 0x17:
+        ret = 0x40;
+        break;
+        
+    case 0x15:
+        ret = 0x1F;
+    default:
+        ret = 0x42;
+    }   
+    return ret;
 }
 
 void printUsage(int argc, char *argv[])
 {
-   printf("Usage : %s game.nes [-p number][-f][-b filename.pal][ filename.nes\n"
-          "   -p: to add plugin 'number'\n"
-          "   -f: to start in FDS mode\n"
-          "   -d: to start directily into the debugguer\n"
-          "   -b: to use palette file 'filename.pal'\n",
-          argv[0]);
-   exit(0);
+    printf("Usage : %s game.nes [-p number][-f][-b filename.pal][ filename.nes\n"
+           "   -p: to add plugin 'number'\n"
+           "   -f: to start in FDS mode\n"
+           "   -d: to start directily into the debugguer\n"
+           "   -b: to use palette file 'filename.pal'\n",
+           argv[0]);
+    exit(0);
 }
 
 int main(int argc, char *argv[])
 {    
-   int i;
-   unsigned char j, k;
-   unsigned char *MemoryPage;
-   
-   /* Here we will fill the memory */
-   /*
+    int i;
+    unsigned char j, k;
+    unsigned char *MemoryPage;
+
+    /* Here we will fill the memory */
+    /*
     --------------------------------------- $10000
     Upper Bank of Cartridge ROM
     --------------------------------------- $C000
@@ -637,8 +655,8 @@ int main(int argc, char *argv[])
     2kB Internal RAM, mirrored 4 times
     --------------------------------------- $0000
     */
-   
-   /* Print the banner */
+    
+    /* Print the banner */
    printf("--------------------------------------------------------------------------------\n"
           "Welcome to TI-NESulator v%d.%d - by Godzil\n"
           "Copyright 2003-2007 TRAPIER Manoel (godzil@godzil.net)\n"
@@ -828,7 +846,7 @@ int main(int argc, char *argv[])
    }
    
    printf("Reseting main RAM...\t\t");
-   //Force the stack to be empty of zero
+   /* Force the stack to be full of zero */
    for( i = 0x100 ; i < 0x200 ; i++ ) {
       Wr6502(i, 0x00);
    }
@@ -904,7 +922,7 @@ int main(int argc, char *argv[])
    if (ppu_init() != 0)
       fatal("PPU Initialisation error..\n");   
    
-   //DumpMemoryState();
+   /* DumpMemoryState(); */
    if (Cart->Flags & iNES_4SCREEN)
    {
       ppu_setScreenMode(PPU_SCMODE_FOURSC);
@@ -998,32 +1016,12 @@ int main(int argc, char *argv[])
     
     exit(0);*/
    
-   /*    int K, L1, V = 127, L2, I;
-    
-    if(440>=48000/3) printf("Pwet\n");
-    K=48000/440;
-    L1=0;
-    V<<=7;
-    for(I=0;I<SND_BUFSIZE;I++)
-    {
-    L2=L1+K;
-    printf("L1:%d L2:%d K:%d V:%d\n", L1, L2, K, V);
-    //L1&0x8000?(L2&0x8000? V:0):(L2&0x8000? 0:-V)
-    //printf("Wave[%d] = %d\n", I,  L1&0x8000?(L2&0x8000? V:0):(L2&0x8000? 0:-V));
-    L1=L2;
-    }
-    printf("Phaser: %d\n", L1);
-    
-    
-    exit(0);*/
-   
    printf("Press ESC to pause emulation and jump to debugguer\n");
    install_int(ips_fps_counter, 1000);
    ScanLine = 0;
    
    //Do a loop every HBlank
    MainCPU.IPeriod = HBLANK_TIME;
-   //MainCPU.IPeriod = 260;
    
    Reset6502(&MainCPU);
    
@@ -1053,22 +1051,22 @@ END_OF_MAIN()
 /************************************ TO BE WRITTEN BY USER **/
 void Wr6502(register word Addr, register byte Value)
 {            /* Write to memory */
-   WriteMemory((Addr&0xFF00)>>8,Addr&0x00FF, Value);
+    WriteMemory((Addr&0xFF00)>>8,Addr&0x00FF, Value);
 }
 
 byte Rd6502(register word Addr)
 {            /* Read memory for normal use */
-   return ReadMemory((Addr&0xFF00)>>8,Addr&0x00FF);
-   
+    return ReadMemory((Addr&0xFF00)>>8,Addr&0x00FF);
+
 }
 
 extern byte *memory_pages[0xFF];
 byte Op6502(register word Addr)
 {            /* Read OpCodes */
-   byte *ptr;
-   return (ptr = memory_pages[(Addr&0xFF00)>>8])>1?ptr[Addr&0x00FF]:0;
-   
-   //return ReadMemory((Addr&0xFF00)>>8,Addr&0x00FF);
+    byte *ptr;
+    return ((ptr = memory_pages[(Addr&0xFF00)>>8])>(byte*)1)?ptr[Addr&0x00FF]:0;
+
+    //return ReadMemory((Addr&0xFF00)>>8,Addr&0x00FF);
 }
 
 /** Loop6502() ***********************************************/
@@ -1082,7 +1080,6 @@ byte Loop6502(register M6502 * R)
 {
    byte ret;
    short skey; 
-   printf("pouic\n");
    long WaitTime;
    static long delta=0;
    
@@ -1110,19 +1107,21 @@ byte Loop6502(register M6502 * R)
    if (ScanLine == 241)
       frame++;  
    
-   //if (ScanLine >= (241 + VBLANK_TIME))
-   if (ScanLine >= 262)
+   if (ScanLine >= 240 + VBLANK_TIME)
    {   /* End of VBlank Time */
       /* Sync at 60FPS */
       /* Get current time in microseconds */
       gettimeofday(&timeEnd, NULL);     
       
-      /* Calculate the waiting time, 16666 is the time of one frame in microseconds at a 60Hz rate) */
       WaitTime = (timeEnd.tv_sec) - (timeStart.tv_sec);           
       WaitTime *= 1000000;
       WaitTime += (timeEnd.tv_usec - timeStart.tv_usec);
+#if !ISPAL && ISNTSC
+      /* Calculate the waiting time, 16666 is the time of one frame in microseconds at a 60Hz rate) */
       WaitTime = 16666 - WaitTime + delta;
-      
+#elif ISPAL && !ISNTSC
+      WaitTime = 20000 - WaitTime + delta;
+#endif
       
       /* If we press Page Up, we dont we to accelerate "time" */
       if (!key[KEY_PGUP])
@@ -1227,6 +1226,6 @@ byte Loop6502(register M6502 * R)
 /************************************ TO BE WRITTEN BY USER **/
 byte Patch6502(register byte Op, register M6502 * R)
 {
-   //printf("Invalid Opcode : 0x%X @ 0x%04X !\n", Op, R->PC.W);
-   return 1;
+    //printf("Invalid Opcode : 0x%X @ 0x%04X !\n", Op, R->PC.W);
+    return 1;
 }

@@ -1,16 +1,17 @@
-/** EMULib Emulation Library *********************************/
-/**                                                         **/
-/**                         SndUnix.c                       **/
-/**                                                         **/
-/** This file contains standard sound generation routines   **/
-/** for Unix using /dev/dsp and /dev/audio.                 **/
-/**                                                         **/
-/** Copyright (C) Marat Fayzullin 1996-2002                 **/
-/**     You are not allowed to distribute this software     **/
-/**     commercially. Please, notify me, if you make any    **/
-/**     changes to this file.                               **/
-/*************************************************************/
-#include "Sound.h"
+/*
+ *  Allegro Sound Driver for EMULib Sound system - The TI-NESulator Project
+ *  SndAlleg.C
+ *
+ *  Created by Manoël Trapier
+ *  Copyright 2003-2008 986 Corp. All rights reserved.
+ *
+ *  $LastChangedDate: 2007-03-28 15:50:50 +0200 (mer, 28 mar 2007) $
+ *  $Author: mtrapier $
+ *  $HeadURL: file:///media/HD6G/SVNROOT/trunk/TI-NESulator/src/types.h $
+ *  $Revision: 25 $
+ *
+ */
+#include <Sound.h>
 
 #include <allegro.h>
 
@@ -27,7 +28,6 @@
 AUDIOSTREAM *stream;
 
 static pthread_t ThreadID;
-static int SoundFD;
 static int SoundRate    = 0;
 static int MasterVolume = 64;
 static int MasterSwitch = (1<<SND_CHANNELS)-1;
@@ -41,7 +41,7 @@ static struct
   int Freq;                       /* Channel frequency (Hz)           */
   int Volume;                     /* Channel volume (0..255)          */
 
-  signed char *Data;              /* Wave data (-128..127 each)       */
+  const signed char *Data;              /* Wave data (-128..127 each)       */
   int Length;                     /* Wave length in Data              */
   int Rate;                       /* Wave playback rate (or 0Hz)      */
   int Pos;                        /* Wave current position in Data    */  
@@ -49,7 +49,7 @@ static struct
   int Count;                      /* Phase counter                    */
 } CH[SND_CHANNELS];
 
-static void UnixSetWave(int Channel,signed char *Data,int Length,int Rate);
+static void UnixSetWave(int Channel,const signed char *Data,int Length,int Rate);
 static void UnixSetSound(int Channel,int NewType);
 static void UnixDrum(int Type,int Force);
 static void UnixSetChannels(int Volume,int Switch);
@@ -89,6 +89,7 @@ static void *DSPLoop(void *Arg)
   unsigned char *Buf;
   register int J,I,K,L,M,N,L1,L2,A1,A2,V;
   int FreqCount;
+   N = L = A2 = 0;
 
   for(J=0;J<SND_CHANNELS;J++)
   {
@@ -252,7 +253,7 @@ static void *DSPLoop(void *Arg)
             }
             CH[J].Count=L1;
             break;
-            
+              
           case SND_TRIANGLE:          /* Default Sound */
             /* Do not allow frequencies that are too high */
             if(CH[J].Freq>=SoundRate/3) break;
@@ -262,7 +263,7 @@ static void *DSPLoop(void *Arg)
             for(I=0;I<SND_BUFSIZE;I++)
             {
               L2=L1+K;
-              Wave[I]+= L1&0x2000?V:-V /*(L2&0x8000? V:0):(L2&0x8000? 0:-V)*/;
+              Wave[I]+= L1&0x8000?V:-V /*(L2&0x8000? V:0):(L2&0x8000? 0:-V)*/;
               L1=L2;
             }
             CH[J].Count=L1;
@@ -397,7 +398,7 @@ void UnixSetSound(int Channel,int NewType)
 /** waveform to be an instrument or set it to the waveform  **/
 /** own playback rate.                                      **/
 /*************************************************************/
-void UnixSetWave(int Channel,signed char *Data,int Length,int Rate)
+void UnixSetWave(int Channel,const signed char *Data,int Length,int Rate)
 {
   if((Channel<0)||(Channel>=SND_CHANNELS)||(Length<=0)) return;
 

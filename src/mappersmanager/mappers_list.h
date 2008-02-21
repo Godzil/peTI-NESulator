@@ -9,12 +9,28 @@
 
 /* This file could be generated from the mappers directory... */
 #include "mappers/norom.h"
+#include "mappers/aorom.h"
+#include "mappers/unrom.h"
+#include "mappers/cnrom.h"
+
+#include "mappers/iremh3001.h"
+
 #include "mappers/mmc1.h"
+#include "mappers/mmc3.h"
+#include "mappers/mmc4.h"
 
 Mapper Mappers[] = {
-{ 0, "No Mapper", norom_InitMapper, norom_MapperIRQ, norom_MapperDump },
-{ 1, "MMC1", mmc1_InitMapper, norom_MapperIRQ, mmc1_MapperDump },   
+{ 0 , "No Mapper", norom_InitMapper, norom_MapperIRQ, norom_MapperDump },
+{ 7 , "AOROM", aorom_InitMapper, norom_MapperIRQ, aorom_MapperDump },   
+{ 2 , "CNROM", cnrom_InitMapper, norom_MapperIRQ, cnrom_MapperDump },   
+{ 3 , "UNROM", unrom_InitMapper, norom_MapperIRQ, unrom_MapperDump },
 
+{ 1 , "MMC1", mmc1_InitMapper, norom_MapperIRQ, mmc1_MapperDump },   
+{ 4 , "MMC3", mmc3_InitMapper, mmc3_MapperIRQ, mmc3_MapperDump },   
+{ 10, "MMC4", mmc3_InitMapper, norom_MapperIRQ, mmc4_MapperDump }, 
+
+{ 65, "Irem H3001", iremh3001_InitMapper, iremh3001_MapperIRQ, iremh3001_MapperDump },   
+   
    /* EOL tag */
 { 0, NULL, NULL, NULL, NULL }
 };

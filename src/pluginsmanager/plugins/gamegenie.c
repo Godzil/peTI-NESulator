@@ -4,6 +4,7 @@
 
 #define __TINES_PLUGINS__
 #include <plugins/manager.h>
+#undef  __TINES_PLUGINS_
 
 #include <memory/manager.h>
 #include <types.h>
@@ -53,7 +54,6 @@ byte gg_RdHookPatch##d(byte addr) \
 }
 
 #define GG_MAX_PATCH 10
-
 /* Defines the rdhook patches */
 GG_RDHOOKPATCH(0)
 GG_RDHOOKPATCH(1)
@@ -68,7 +68,7 @@ GG_RDHOOKPATCH(9)
 
 void gg_SetPatch(int id, byte page, byte addr, byte value)
 {
-    func_rdhook *fptr;
+    func_rdhook fptr;
     
     if (id >= GG_MAX_PATCH)
         return;
@@ -418,7 +418,7 @@ byte gg_SelectPatch()
         if (gg_PatchUsed[i] == 0x00)
             sprintf(tmp, "Patch %d: Not used", i);
         else
-            sprintf(tmp, "Patch %d: Put 0x%02X on address 0x%02X%02X (Code: %08X)", 
+            sprintf(tmp, "Patch %d: Put 0x%02X on address 0x%02X%02X (Code: %08lX)",
                     i, gg_PatchedValue[i], gg_PatchedPage[i], gg_PatchedAddr[i],
                     gg_MakeCode((gg_PatchedPage[i]<<8) | gg_PatchedAddr[i], gg_PatchedValue[i]));
         

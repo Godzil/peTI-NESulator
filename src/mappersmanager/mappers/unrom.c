@@ -11,10 +11,12 @@
  *  $Revision: 39 $
  *
  */
- 
+
+#include "unrom.h"
+
 unsigned char unrom_load_vbank;
 
-void unrom_MapperWriteHook(register byte Addr, register byte Value);
+void unrom_MapperWriteHook(byte Addr, byte Value);
 
 int unrom_InitMapper(NesCart * cart) 
 {
@@ -39,7 +41,7 @@ int unrom_InitMapper(NesCart * cart)
 } 
 
 
-void unrom_MapperWriteHook(register byte Addr, register byte Value) 
+void unrom_MapperWriteHook(byte Addr, byte Value) 
 {    
     set_vrom_bank_8k(0x0000,Value);
     unrom_load_vbank = Value;

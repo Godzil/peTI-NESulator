@@ -833,5 +833,6 @@ break;            /* LSR a ACC */
 
 case 0x6A:
 M_ROR(R->A);
-break;            /* ROR a ACC */
+break;            /* ROR a ACC */
+
 

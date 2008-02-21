@@ -12,6 +12,8 @@
  *
  */
 
+#include "mmc4.h"
+
 byte mmc4_RegA;
 byte mmc4_RegB;
 byte mmc4_RegC;
@@ -88,7 +90,8 @@ int mmc4_InitMapper(NesCart * cart)
     set_prom_bank_16k(0x8000,0);
     set_prom_bank_16k(0xC000, GETLAST16KBANK(cart));
 
-    if (cart->VROMSize > 0)        set_vrom_bank_8k(0x0000,0);
+    if (cart->VROMSize > 0)
+        set_vrom_bank_8k(0x0000,0);
        
     /* Mapper should register itself for write hook */
     for (i = 0xA0; i < 0xB0 ; i++)

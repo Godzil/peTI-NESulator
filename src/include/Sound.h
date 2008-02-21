@@ -137,7 +137,6 @@ void MIDITicks(int N);
 /** skip initialization and be silent. Pass Verbose!=0 to   **/
 /** see initialization messages.                            **/
 /*************************************************************/
-#warning You Suck !
 int InitSound(int Rate,int Verbose);
 
 /** StopSound() **********************************************/

@@ -27,15 +27,15 @@ typedef void (*MapperDump)     ();
 
 #ifdef __TINES_MAPPERS__
 
+#include <ppu/ppu.h>
+#include <memory/manager.h>
+
 extern NesCart *Cart;
 
 /* Available functions for mappers */
 #define GETLAST08KBANK(c) ((c->PROMSize>>13)-1)
 #define GETLAST16KBANK(c) ((c->PROMSize>>14)-1)
 #define GETLAST32KBANK(c) ((c->PROMSize>>15)-1)
-
-void map_sram();     /* Map SRAM   */
-void unmap_sram();   /* Unmap SRAM */
 
 void set_vrom_bank_1k(unsigned short addr,int slot);
 void set_vrom_bank_2k(unsigned short addr,int slot);
@@ -56,5 +56,8 @@ extern int  (*mapper_irqloop) (int cyclodone);
 extern void (*mapper_dump)    (FILE *fp);
 
 #endif /* __TINES_MAPPERS__ */
+
+void map_sram();     /* Map SRAM   */
+void unmap_sram();   /* Unmap SRAM */
 
 #endif

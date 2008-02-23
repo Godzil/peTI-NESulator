@@ -11,6 +11,13 @@
 /**     commercially. Please, notify me, if you make any    **/
 /**     changes to this file.                               **/
 /*************************************************************/
+/*
+ *  $LastChangedDate$
+ *  $Author$
+ *  $HeadURL$
+ *  $Revision$
+ */
+
 #include "Sound.h"
 
 #include <stdio.h>

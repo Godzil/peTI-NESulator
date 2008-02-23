@@ -1,9 +1,14 @@
 /*
+ *  Mapper manager - The TI-NESulator Project
  *  manager.c
- *  TI-NESulator.X
  *
- *  Created by Manoël Trapier on 07/10/07.
- *  Copyright 2007-2008 986 Corp. All rights reserved.
+ *  Created by Manoel TRAPIER.
+ *  Copyright (c) 2003-2008 986Corp. All rights reserved.
+ *
+ *  $LastChangedDate$
+ *  $Author$
+ *  $HeadURL$
+ *  $Revision$
  *
  */
 

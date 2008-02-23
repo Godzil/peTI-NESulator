@@ -7,10 +7,10 @@
  *  Created by Manoel TRAPIER.
  *  Copyright (c) 2003-2008 986Corp. All rights reserved.
  *
- *  $LastChangedDate: 2007-05-31 18:02:16 +0200 (jeu, 31 mai 2007) $
- *  $Author: mtrapier $
- *  $HeadURL: file:///media/HD6G/SVNROOT/trunk/TI-NESulator/src/ppu.c $
- *  $Revision: 58 $
+ *  $LastChangedDate$
+ *  $Author$
+ *  $HeadURL$
+ *  $Revision$
  *
  */
 
@@ -757,7 +757,7 @@ E = HT
     }
 
 
-    if (scanline >= (240 + VBLANK_TIME))
+    if (scanline >= (240 + VBLANK_TIME - 1))
     {
         /*for ( i = 0; i < 256; i++)
         for ( j = 0; j < 256; j++)
@@ -773,9 +773,9 @@ E = HT
         textprintf(Buffer, font, 260, 3, 4, "FPS : %d (CPU@~%2.2fMhz : %d%%)", FPS, (float) (((float) IPS) / 1000000.0), (int) ((((float) IPS) / 1770000.0) * 100.0));  
         //printf("(SL:%d) FPS : %d   IPS : %d\n", scanline, FPS, IPS);
 
-        ppu_dumpPalette(0, 241);
-        ppu_dumpPattern(280, 150);
-        ppu_dumpNameTable(256,0);
+        //ppu_dumpPalette(0, 241);
+        //ppu_dumpPattern(280, 150);
+        //ppu_dumpNameTable(256,0);
         //ppu_dumpAttributeTable(257, 0);
 
         blit(VideoBuffer, Buffer, 0, 0, 0, 0, 256, 240);

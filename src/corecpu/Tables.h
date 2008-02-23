@@ -13,10 +13,10 @@
  /**     changes to this file.                               **/ 
  /*************************************************************/ 
 /*
- *  $LastChangedDate: 2007-05-24 15:07:13 +0200 (jeu, 24 mai 2007) $
- *  $Author: mtrapier $
- *  $HeadURL: file:///media/HD6G/SVNROOT/trunk/TI-NESulator/src/Tables.h $
- *  $Revision: 52 $
+ *  $LastChangedDate$
+ *  $Author$
+ *  $HeadURL$
+ *  $Revision$
  */
 
 static byte Cycles[256] =  

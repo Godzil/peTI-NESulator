@@ -13,10 +13,10 @@
 /**     changes to this file.                               **/ 
 /*************************************************************/ 
 /*
- *  $LastChangedDate: 2007-04-19 18:18:57 +0200 (jeu, 19 avr 2007) $
- *  $Author: mtrapier $
- *  $HeadURL: file:///media/HD6G/SVNROOT/trunk/TI-NESulator/src/Debug.c $
- *  $Revision: 43 $
+ *  $LastChangedDate$
+ *  $Author$
+ *  $HeadURL$
+ *  $Revision$
  */
 
 #include "M6502.h"

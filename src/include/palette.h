@@ -1,5 +1,10 @@
 /* Generated data file from file 'stdin' */
-
+/*
+ *  $LastChangedDate$
+ *  $Author$
+ *  $HeadURL$
+ *  $Revision$
+ */
 
 PALETTE basicPalette = {
        { 0x1E, 0x1E, 0x1E, 0x07 },

@@ -12,10 +12,10 @@
  /**     changes to this file.                               **/ 
  /*************************************************************/ 
 /*
- *  $LastChangedDate: 2007-05-31 18:01:41 +0200 (jeu, 31 mai 2007) $
- *  $Author: mtrapier $
- *  $HeadURL: file:///media/HD6G/SVNROOT/trunk/TI-NESulator/src/Codes.h $
- *  $Revision: 57 $
+ *  $LastChangedDate$
+ *  $Author$
+ *  $HeadURL$
+ *  $Revision$
  */
  
 case 0x10:
@@ -91,7 +91,7 @@ break;            /* BVS * REL */
 case 0x40:
 
 M_POP(R->P);
-R->P |= R_FLAG;
+//R->P |= R_FLAG;
 M_POP(R->PC.B.l);
 M_POP(R->PC.B.h);
 
@@ -197,7 +197,7 @@ if ((R->IRequest != INT_NONE) && ((I ^ R->P) & ~I & I_FLAG))
        R->ICount = 1;
     
 } 
-R->P = I | R_FLAG | B_FLAG;
+R->P = I /*| R_FLAG*/ | B_FLAG;
 
 break;
 

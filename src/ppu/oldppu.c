@@ -9,10 +9,10 @@
  *  Created by Manoel TRAPIER.
  *  Copyright (c) 2003-2008 986Corp. All rights reserved.
  *
- *  $LastChangedDate: 2007-03-29 12:05:12 +0200 (jeu, 29 mar 2007) $
- *  $Author: mtrapier $
- *  $HeadURL: file:///media/HD6G/SVNROOT/trunk/TI-NESulator/src/oldppu.c $
- *  $Revision: 28 $
+ *  $LastChangedDate$
+ *  $Author$
+ *  $HeadURL$
+ *  $Revision$
  *
  */
 #include <allegro.h>

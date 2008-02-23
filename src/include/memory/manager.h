@@ -2,13 +2,13 @@
  *  6502 Memory manager - The TI-NESulator Project
  *  memory.h - Taken from the Quick6502 project
  *
- *  Created by Manoël Trapier on 18/09/06.
+ *  Created by Manoel Trapier on 18/09/06.
  *  Copyright 2003-2008 986 Corp. All rights reserved.
  *
- *  $LastChangedDate: 2007-04-05 16:30:20 +0200 (jeu, 05 avr 2007) $
- *  $Author: mtrapier $
- *  $HeadURL: file:///media/HD6G/SVNROOT/trunk/TI-NESulator/src/memory.h $
- *  $Revision: 31 $
+ *  $LastChangedDate$
+ *  $Author$
+ *  $HeadURL$
+ *  $Revision$
  *
  */
 #ifndef MEMORY_H

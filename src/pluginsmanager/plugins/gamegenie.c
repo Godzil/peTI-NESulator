@@ -1,3 +1,17 @@
+/*
+ *  Code Breaker plugin - The TI-NESulator Project
+ *  gamegenie.c: Hack your games with unlimited lives of add new powers!
+ *
+ *  Created by Manoel Trapier.
+ *  Copyright 2003-2008 986 Corp. All rights reserved.
+ *
+ *  $LastChangedDate$
+ *  $Author$
+ *  $HeadURL$
+ *  $Revision$
+ *
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <allegro.h>

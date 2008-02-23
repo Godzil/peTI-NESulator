@@ -14,10 +14,10 @@
 /**     changes to this file.                               **/
 /*************************************************************/
 /*
- *  $LastChangedDate: 2007-04-16 01:55:35 +0200 (lun, 16 avr 2007) $
- *  $Author: godzil $
- *  $HeadURL: file:///media/HD6G/SVNROOT/trunk/TI-NESulator/src/M6502.c $
- *  $Revision: 39 $
+ *  $LastChangedDate$
+ *  $Author$
+ *  $HeadURL$
+ *  $Revision$
  */
  
 #include "M6502.h"
@@ -201,7 +201,7 @@ INLINE byte Op6502(register word A) { return(Page[A>>13][A&0x1FFF]); }
 void Reset6502(M6502 *R)
 {
   R->A=R->X=R->Y=0x00;
-  R->P=Z_FLAG|R_FLAG;
+  R->P=Z_FLAG;
   R->S=0xFF;
   R->PC.B.l=Rd6502(0xFFFC);
   R->PC.B.h=Rd6502(0xFFFD);   
@@ -245,7 +245,7 @@ void Int6502(M6502 *R,byte Type)
     R->ICount-=7;
     M_PUSH(R->PC.B.h);
     M_PUSH(R->PC.B.l);
-    M_PUSH(R->P&~B_FLAG);
+    M_PUSH(R->P & ~(B_FLAG|R_FLAG));
     R->P&=~D_FLAG;
     if(R->IAutoReset&&(Type==R->IRequest)) R->IRequest=INT_NONE;
     if(Type==INT_NMI) J.W=0xFFFA; else { R->P|=I_FLAG;J.W=0xFFFE; }
@@ -402,6 +402,9 @@ int DAsmCAP(char *S, word A)
    return (B - A);
    
 } 
+
+extern unsigned short ScanLine;
+
 #endif
 
 /** Run6502() ************************************************/
@@ -413,7 +416,7 @@ word Run6502(M6502 *R)
 {
   register pair J,K;
   register byte I;
-
+   byte nb_of_cycle;
   for(;;)
   {
 #ifdef DEBUG
@@ -444,21 +447,16 @@ word Run6502(M6502 *R)
      }
      
 #endif
-     
      I=Op6502(R->PC.W++);
-    R->ICount-=Cycles[I];
-    
+     nb_of_cycle = Cycles[I];
 //#ifdef DEBUG
 //    pushop(I);
 //#endif
-
     icount++;
-
     switch(I)
     {
 #include "Codes.h"
     }
-
 #ifdef TRACE_EXECUTION
      while(1)
      {
@@ -478,15 +476,18 @@ word Run6502(M6502 *R)
         
         printf("%c", F & 0x80 ? FA[J] : '.');
      
-        printf("], Stack[%02x, %02x, %02x]\n", 
-             Rd6502(0x0100 + (byte) (R->S + 1)), 
-             Rd6502(0x0100 + (byte) (R->S + 2)), 
-             Rd6502(0x0100 + (byte) (R->S + 3)));
+        printf("], Stack[%02x, %02x, %02x], %03d, %03d\n",
+               Rd6502(0x0100 + (byte) (R->S + 1)),
+               Rd6502(0x0100 + (byte) (R->S + 2)),
+               Rd6502(0x0100 + (byte) (R->S + 3)),
+		     R->ICount,
+			ScanLine
+	        );
    
         break;
      }
 #endif
-
+     R->ICount-= nb_of_cycle;
     /* If cycle counter expired... */
     if(R->ICount<=0)
     {

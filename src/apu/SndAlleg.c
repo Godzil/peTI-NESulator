@@ -2,13 +2,13 @@
  *  Allegro Sound Driver for EMULib Sound system - The TI-NESulator Project
  *  SndAlleg.C
  *
- *  Created by Manoël Trapier
+ *  Created by Manoel Trapier
  *  Copyright 2003-2008 986 Corp. All rights reserved.
  *
- *  $LastChangedDate: 2007-03-28 15:50:50 +0200 (mer, 28 mar 2007) $
- *  $Author: mtrapier $
- *  $HeadURL: file:///media/HD6G/SVNROOT/trunk/TI-NESulator/src/types.h $
- *  $Revision: 25 $
+ *  $LastChangedDate$
+ *  $Author$
+ *  $HeadURL$
+ *  $Revision$
  *
  */
 #include <Sound.h>

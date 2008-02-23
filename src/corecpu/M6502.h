@@ -12,10 +12,10 @@
 /**     changes to this file.                               **/
 /*************************************************************/
 /*
- *  $LastChangedDate: 2007-04-23 18:55:35 +0200 (lun, 23 avr 2007) $
- *  $Author: mtrapier $
- *  $HeadURL: file:///media/HD6G/SVNROOT/trunk/TI-NESulator/src/M6502.h $
- *  $Revision: 45 $
+ *  $LastChangedDate$
+ *  $Author$
+ *  $HeadURL$
+ *  $Revision$
  */
 
 #ifndef M6502_H

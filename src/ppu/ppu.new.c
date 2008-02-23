@@ -7,10 +7,10 @@
  *  Created by Manoel TRAPIER.
  *  Copyright (c) 2003-2008 986Corp. All rights reserved.
  *
- *  $LastChangedDate: 2007-04-04 18:46:30 +0200 (mer, 04 avr 2007) $
- *  $Author: mtrapier $
- *  $HeadURL: file:///media/HD6G/SVNROOT/trunk/TI-NESulator/src/ppu.c $
- *  $Revision: 30 $
+ *  $LastChangedDate$
+ *  $Author$
+ *  $HeadURL$
+ *  $Revision$
  *
  */
 

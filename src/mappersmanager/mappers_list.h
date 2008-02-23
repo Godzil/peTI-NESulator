@@ -1,9 +1,14 @@
 /*
+ *  Mapper list - The TI-NESulator Project
  *  mappers_list.h
- *  TI-NESulator.X
  *
- *  Created by Manoël Trapier on 25/10/07.
- *  Copyright 2007-2008 986 Corp. All rights reserved.
+ *  Created by Manoel TRAPIER on 25/10/07.
+ *  Copyright (c) 2003-2008 986Corp. All rights reserved.
+ *
+ *  $LastChangedDate$
+ *  $Author$
+ *  $HeadURL$
+ *  $Revision$
  *
  */
 

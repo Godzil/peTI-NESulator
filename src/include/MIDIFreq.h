@@ -11,6 +11,12 @@
 /**     commercially. Please, notify me, if you make any    **/
 /**     changes to this file.                               **/
 /*************************************************************/
+/*
+ *  $LastChangedDate$
+ *  $Author$
+ *  $HeadURL$
+ *  $Revision$
+ */
 
 { -36, 8063 },{ -12, 8063 },{  -3, 8298 },{   3, 8358 },
 {   8, 8201 },{  12, 8063 },{  15, 8054 },{  17, 8238 },

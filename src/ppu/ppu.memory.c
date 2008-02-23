@@ -2,7 +2,7 @@
  *  PPU Memory manager - The TI-NESulator Project
  *  ppu.memory.c - Inspired from the memory manager of the Quick6502 Project.
  *
- *  Created by Manoël Trapier on 12/04/07.
+ *  Created by Manoel Trapier on 12/04/07.
  *  Copyright 2003-2008 986 Corp. All rights reserved.
  *
  *  $LastChangedDate$

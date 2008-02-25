@@ -1,65 +1,64 @@
-ï»¿<---------------------------------------------------------------------------------->
+<------------------------------------------------------------------------------>
                                   TI-NESulator
-                               Version 0.26 beta
+						 Version 0.30.2 beta
 
-                           Par ManoÃ«l TRAPIER aka Godzil
+                           Par Manoel TRAPIER aka Godzil
                              godzil at godzil point net
 
 1 -> #include <disclamer.h>
 
-L'utilisation de se logiciel se fait a vos risque et pÃ©rils. Il s'agit d'une pars
-d'une version non terminÃ©e, et en cours de dÃ©vellopement, et la diffusion n'a Ã©tÃ©
-faite que pour permettre le teste, et la dÃ©monstration de se que sera le logiciel
-final.
+L'utilisation de se logiciel se fait a vos risque et pŽrils. Il s'agit d'une
+pars d'une version non terminŽe, et en cours de dŽvellopement, et la diffusion
+n'a ŽtŽ faite que pour permettre le teste, et la dŽmonstration de se que sera le
+logiciel final.
 
-Je ne peut donc Ãªtre tenu pour responsable en cas de problÃ¨me liÃ© a l'utilisation 
-ou posession de se logiciel. 
+Je ne peut donc tre tenu pour responsable en cas de problme liŽ ˆ
+l'utilisation ou posession de se logiciel. 
 
-Vous Ãªtes libre de l'utiliser Ã  partir du moment au se logiciel n'a pas Ã©tÃ© modifiÃ©
-que sa soit de maniÃ¨re binaire, ou par dÃ©sassemblage. Si vous trouver une version
-modifiÃ© ou fourni avec des fichiers illÃ©gaux, veuillez me le faire savoir. Vous
-trouverez comment me contacter dans la suite de se fichier.
+Vous tes libre de l'utiliser ˆ partir du moment au se logiciel n'a pas ŽtŽ
+modifiŽ que sa soit de manire binaire, ou par dŽsassemblage. Si vous trouver
+une version modifiŽ ou fourni avec des fichiers illŽgaux, veuillez me le faire
+savoir. Vous trouverez comment me contacter dans la suite de se fichier.
 
-Vous Ãªtes libre aussi de le distribuer tant que les fichiers contenus dans le
-paquetage original sont laissÃ© intouchÃ© (les fichiers Changements.txt LisezMoi.txt
-et TINes.exe)
+Vous tes libre aussi de le distribuer tant que les fichiers contenus dans le
+paquetage original sont laissŽ intouchŽ.
 
-Information lÃ©gales :
-NES, Famicon, Nintendo Entertainment System, Nintendo sont des marques dÃ©posÃ© de
+Information lŽgales :
+NES, Famicon, Nintendo Entertainment System, Nintendo sont des marques dŽposŽ de
 Nintendo France, Nintendo of america et Nintendo Company, Ltd.
-Tout les titres et marques apparaisant dans se fichier texte sont la propriÃ©tÃ© de
-leurs auteurs respectifs.
+Tout les titres et marques apparaisant dans se fichier texte sont la propriŽtŽ
+de leurs auteurs respectifs.
 
-N'oubliez pas aussi que la posession de ROM (Fichier binaire reprÃ©sentant le
-contenue d'une cartouche) sans en posseder l'originale (la cartouche) est absolument
-illÃ©gale, que vous la gardiez 24 heures ou seulement 30 secondes
+N'oubliez pas aussi que la posession de ROM (Fichier binaire reprŽsentant le
+contenue d'une cartouche) sans en posseder l'originale (la cartouche) est
+absolument illŽgale, que vous la gardiez 24 heures ou seulement 30 secondes
 
 
 2 -> Qu'est-ce que TI-NESulator ?
 
-TI-NESulator est un Ã©mulateur de la console Nintendo Entertainment System
-(connunÃ©ment appelÃ© NES) fabriquÃ© par Nintendo au milieu des annÃ©e 80. L'originalitÃ©
-de cet emulateur est que sa plateforme de fonctionnement principal est les
-calculatrices TI-89 et TI-92+ de chez Texas Instrument. Ses calculatrices on la
-particularitÃ© de posseder un microprocesseur 68000 de chez motorola, qui est pour
-se genre de plateforme relativement puissant et programmer un emulateur, meme de
-NES, sur ses machine est un vÃ©ritable dÃ©fit.
-Tant au niveau matÃ©riel que mÃ©moire, la NES et les TI-68k sont completements
-diffÃ©rents. 
-La NES utilise une version lÃ©gÃ©rement personalisÃ© du microprocesseur 6502 
-fonctionnant a environ 1.7Mhz.
+TI-NESulator est un Žmulateur de la console Nintendo Entertainment System
+(connunŽment appelŽ NES) fabriquŽ par Nintendo au milieu des annŽe 80.
+L'originalitŽ de cet emulateur est que sa plateforme de fonctionnement principal
+est les calculatrices TI-89 et TI-92+ de chez Texas Instrument. Ses
+calculatrices on la particularitŽ de posseder un microprocesseur 68000 de chez
+motorola, qui est pour se genre de plateforme relativement puissant et
+programmer un emulateur, meme de NES, sur ses machine est un vŽritable dŽfit
+tant au niveau matŽriel que mŽmoire, la NES et les TI-68k sont completements
+diffŽrents. 
+La NES utilise une version lŽgŽrement personalisŽ du microprocesseur 6502 
+fonctionnant ˆ environ 1.7Mhz.
 
-Vous avez actuellement une version spÃ©ciale (comprendre pas faite pour 
+Vous avez actuellement une version spŽciale (comprendre pas faite pour 
 calculatrices TI.) Cette version ne me sert qu'a mettre en oeuvre de nouvelles
-choses dans la version TI de l'Ã©mulateur (notemment a cause d'un gros manque 
+choses dans la version TI de l'Žmulateur (notemment a cause d'un gros manque 
 de debuggueur C dans le monde TI.)
 
-Cette version est et sera toujours plus avancÃ© que la version TI dans le sens ou
-elle me sert a expÃ©rimenter les nouveaux hardware Ã©mulÃ© et a finaliser le hardware
-deja emuler. Une fois fonctionnant d'un maniere convenable sur le portage Windows,
-les mises a jours sont faites dans la version TI. Mais la version Windows au final
-contiendra plus de fonctionnalitÃ© que la version TI (support des palletes, de la 
-couleur, voir meme le son etc...)
+Cette version est et sera toujours plus avancŽ que la version TI dans le sens ou
+elle me sert a expŽrimenter les nouveaux hardware ŽmulŽ et a finaliser le 
+hardware deja emuler. Une fois fonctionnant d'un maniere convenable sur le
+portage Windows, les mises a jours sont faites dans la version TI. Mais la
+version Windows au final contiendra plus de fonctionnalitŽ que la version TI
+(support des palletes, de la couleur, voir meme le son etc...)
 
 
 3 -> Utilisation de TI-NESulator
@@ -86,7 +85,7 @@ SELECT			P
 --------------------------
 
 Autres touches :
-R			identique a l'apuis du bouton Reset de la console
+R			identique ˆ l'apuis du bouton Reset de la console
 
 
 1-2			A un effet, mais vous risque de pas le voir ;)
@@ -97,136 +96,109 @@ R			identique a l'apuis du bouton Reset de la console
 
 --------------------------
 
-Il faut noter aussi qu'afficher ces tables ralenti considÃ©rablement la vitesse de 
-l'Ã©mulateur
+Il faut noter aussi qu'afficher ces tables ralentisent considŽrablement la
+vitesse de l'Žmulateur
 
-4 -> CompatibilitÃ©
+4 -> CompatibilitŽ
 	
-TI-NESulator version Win32 est normalement compatible avec tous les Windows (95, 98,
-Me, NT 4, 2000, XP)
-TI-NESulator version .X (MacOS X) est normalement compatible toutes version de OS X
-(.1.x .2.x .3.x)
-L'Ã©mulateur Ã©mule actuellement avec les mappers :
+TI-NESulator version Win32 est normalement compatible avec tous les Windows
+(95, 98,Me, NT 4, 2000, XP)
+TI-NESulator version .X (MacOS X) est normalement compatible toutes version
+ de OS X (.1.x .2.x .3.x)
+ 
+L'Žmulateur Žmule actuellement avec les mappers :
 
 	- 0 aucun mapper (Super Mario Bros 1, Donkey Kong, ...)
-
 	- 1 MMC1 (a 99%, Megaman 2, Zelda1 & 2, Final Fantasy 1, ...)
-
 	- 2 UNROM (MegaMan, Final fantasy 2, ...) 
-
 	- 3 CNROM
+	- 4 MMC3 (Super mario Bross 2 & 3, MegaMan 3 ˆ 6, ...)
+	- 7 AOROM (Battletoad, ...)
 
-	- 4 *NOUVEAU* MMC3 (Super mario Bross 2 & 3, MegaMan 3 Ã  6, ...)
+Les mappers marquŽ comme *NOUVEAU* sont ceux qui on ŽtŽ ajoutŽ dans la derniere 
+version disponible. Merci de faire un rapport dŽtaillŽ si vous rencontrer des 
+problmes avec.
 
-	- 7 *NOUVEAU* AOROM (Battletoad, ...)
-
-Les mappers marquÃ© comme *NOUVEAU* sont ceux qui on Ã©tÃ© ajoutÃ© dans la derniere 
-version disponible. Merci de faire un rapport dÃ©taillÃ© si vous rencontrer des 
-problÃ¨mes avec.
-
-
-5 -> A faire
-
-* Optimisation du coeur de l'Ã©mulation du CPU de la NES.
-
-* Son ?
-
-* Supprimer les printf et les remplacer par l'affichage dans une console (prochaine
-  maj) pour eviter les soucis sur
-
-  - PC: car la console n'est pas forcement ouverte tout le temps
-  - Unix: pour la meme raison
-  - MacOS: aussi (%))
-  - TI: pasqu'on peut pas avoir les deux en meme temps.
-
-* Recoder le ppu (gestion de l'affichage)
-
-6 -> Question RÃ©ponses
+5 -> Question RŽponses
 
 Q: Pourquoi le jeu xxx ne fonctionne pas ?
-R: TI-NESulator est actuellement en cours de dÃ©vellopement. Beaucoup de jeux ne 
-sont pas supportÃ©.
+R: TI-NESulator est actuellement en cours de dŽvellopement. Beaucoup de jeux ne 
+sont pas supportŽ.
 
-Q: Vous dites que certain de jeux ne sont pas supportÃ©, mais si j'essaye xxx, il 
+Q: Vous dites que certain de jeux ne sont pas supportŽ, mais si j'essaye xxx, il 
 marche ! Pourquoi ?
-R: Ceci est du a une des particularitÃ© du Hardware de la NES/Famicon. Le hardware 
-de base de la console est assÃ© limitÃ©, et la mÃ©moire est aussi tres limitÃ©. pour 
-palier Ã  ses limitations, certains jeux utilise ce qu'on appele des Mappers, qui
-permettent notemment d'avoir des jeux plus gros, et qui sont implÃ©mentÃ© dans la
-cartouche du jeu. Malheureusement supporter tout ses mappers font grossir
-l'emulateur, et certain on un fonctionnement qui est malheureusement encore
-inconnu. N'oubliez pas non plus que TI-NESulator est encore en dÃ©vellopement.
-Certain mapper connu ne sont pas encore implÃ©mentÃ©.
+R: Ceci est du a une des particularitŽ du Hardware de la NES/Famicon. Le
+hardware de base de la console est assŽ limitŽ, et la mŽmoire est aussi tres
+limitŽ. pour palier ˆ ses limitations, certains jeux utilise ce qu'on appele des
+Mappers, qui permettent notemment d'avoir des jeux plus gros, et qui sont
+implŽmentŽ dans la cartouche du jeu. Malheureusement supporter tout ses mappers
+font grossir l'emulateur, et certain on un fonctionnement qui est
+malheureusement encore inconnu. N'oubliez pas non plus que TI-NESulator est
+encore en dŽvellopement. Certain mapper connu ne sont pas encore implŽmentŽ.
 
 Q: Oui puis-je trouver le jeux xxxx ?
-R: DÃ©solÃ©, je ne donne aucun lien menant, ni aucune ROM de jeux commerciaux.
-N'oubliez pas que les personnes vous disant que vous avez le droit de ne garder que
-24h une ROM, vous raconte absolument n'importe quoi. Il est absolument *ILLEGAL* de
-posseder la ROM d'un jeu que vous ne possedez pas officiellement.
+R: DŽsolŽ, je ne donne aucun lien menant, ni aucune ROM de jeux commerciaux.
+N'oubliez pas que les personnes vous disant que vous avez le droit de ne garder
+que 24h une ROM, vous raconte absolument n'importe quoi. Il est absolument 
+*ILLEGAL* de posseder la ROM d'un jeu que vous ne possedez pas officiellement.
 
 Q: XXX donne l'air de fonctionner, pourtant il ne reagis pas au touches
-R: Cet emulateur n'est pas parfait. Certain jeux/demo demandent un fonctionnement
-tres proche de celui de la console originale, ce que TI-NESulator est encore loin
-d'arriver a faire
+R: Cet emulateur n'est pas parfait. Certain jeux/demo demandent un
+fonctionnement tres proche de celui de la console originale, ce que TI-NESulator
+est encore loin d'arriver a faire.
 
-Q:J'ai des problÃ¨mes graphiques avec XXXX
-R:Cf rÃ©ponse-ci dessus
+Q: J'ai des problmes graphiques avec XXXX
+R: Cf rŽponse-ci dessus
 
 Q: C'est lent :(
-R: DÃ©solÃ©. Le code est toujours en cours de devellopement. Si vous trouvez trop lent,
-attendez la prochaine version une surprise vous y attendra peut-etre !
+R: DŽsolŽ. Le code est toujours en cours de devellopement. Si vous trouvez trop
+lent, attendez la prochaine version une surprise vous y attendra peut-etre !
 
-7 -> En cas de problÃ¨me
+7 -> En cas de problme
 
-a) Un jeu indiquÃ© compatible ne fonctionne pas (ie "Mapper non supportÃ©")
+a) Un jeu indiquŽ compatible ne fonctionne pas (ie "Mapper non supportŽ")
 
-Alors plusieurs possibilitÃ©, soit vous avez une autre version du jeu officielle 
-ou non, cela peut changer par exemple le mapper utilisÃ© par le jeux, soit vous
+Alors plusieurs possibilitŽ, soit vous avez une autre version du jeu officielle 
+ou non, cela peut changer par exemple le mapper utilisŽ par le jeux, soit vous
 avez recuperer un "bad dump", c'est a dire plus simplement une rom foireuse.
 
 Dans ces deux cas essayez d'en recuperer une autre version.
 
-b) TI-NESulator Ã  plantÃ© !!
+b) TI-NESulator ˆ plantŽ !!
 Si cela arrive regulierement pour le meme jeu et au meme endroit faites moi un
 crash report avec les information que TI-NESulator vous met dans la console
 (pour pouvoir la copier tranquillement il faut lancer a partir d'une console
 et pas faire glisser la rom sur l'executable)
 
-N'oubliez pas de prÃ©ciser le nom complet du jeu, la taille du fichier et toutes
+N'oubliez pas de prŽciser le nom complet du jeu, la taille du fichier et toutes
 les infos que vous trouverez pertinante (manipulation a faire etc...)
-
 
 8 -> Remerciement
 
-PpHd			pour PreOS, et SMA :)
-TiMad			Membre de la XTeam sans lequel XLib existerait pas.
-nEUrOO			Membre de la XTeam sans lequel XLib existerait pas.
-
-Loopy, Y0Shi, 
-Marrat Fayzullin,
-et bcp d'autre  pour la documentation technique sur la NES
+Loopy, Y0Shi, Marrat Fayzullin, et bcp d'autre  pour la documentation technique 
+sur la NES
 
 Ainsi que tout ceux que j'ai pu oublier
 
-9 -> LitÃ©rature
+9 -> LitŽrature
 
 [A faire.]
 
 mais lien rapide :
 
-http://www.nesdev.org
+http://nesdev.parodius.com/
+http://nesdevwiki.org/
+
 
 10 -> Comment me contacter ?
-s
-Vous pouvez me contacter grace au forum yAronet 
-http://www.yaronet.com
 
-Et surtout grace au lien suivant :
-http://www.yaronet.com/posts.php?sl=&s=2339
+Vous pouvez me contacter grace au forum yAronet: http://www.yaronet.com
 
-Vous pouvez aussi me joindre par mail en m'Ã©crivant Ã  "godzil chez godzil point net"
-Vous pouvez aussi essayer de visiter un de mes sites :
-http://www.godzil.net
+Et surtout grace au lien suivant : http://www.yaronet.com/posts.php?sl=&s=2339
+
+Vous pouvez aussi me joindre par mail en m'Žcrivant ˆ
+"godzil chez godzil point net"
+Vous pouvez aussi essayer de visiter mon site : http://www.godzil.net
 
 --------------------------------------------------------------------------------
 $Id$

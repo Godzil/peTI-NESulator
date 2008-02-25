@@ -1,3 +1,15 @@
+25/02/2008: V0.30 part 2
+      - Correct a bug in CPU emulation related with cycle count and the stupid R_FLAG
+      - Correct bugs in PAL emulation where VBlank line count was incorrect.
+      - Correct a bug with VBlank (it occured one line too late)
+      - Correct a bug with cart loading, if the file name was incorrect it crashed instead
+        exiting gently.
+      - All mappers are remerged.
+      - Unix & Windows build are totaly broken...
+      - Sprite are back! There are some bad behaviour, but they will be corrected with next versions.
+      - New SVN repository (the disk where the old one was had crashed...)
+	 - Iremh3100 is now active! (finaly)
+
 05/10/2007  V0.30 part 2 ... In progress ...
       - Start rewrite of mapper manager. The goal, like for plugin manager, is
         to allow in the future to have plugins or mapper in external libraries.

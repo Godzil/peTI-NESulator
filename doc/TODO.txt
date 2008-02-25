@@ -1,7 +1,15 @@
-07/10/2007  V0.30 part 2
+25/02/2008
+      - Finish th Quick6502 C project to merge it into TI-NESulator          [ ]
+	 - Extract graphic primitive to be less dependent of Allegro            [ ]
+	 - Rewrite sound engine                                                 [ ]
+
+07/10/2007
       - Remerge old PPU debug utilities in real plugin form                  [ ]
       - Change the make util for UNIX. Maybe cmake ?                         [ ]
       - Cleanup os/win32 folder                                              [ ]
       - Thinks about a better svn repository (Maybe a dedibox is a good choice?)
-                                                                             [ ]
-                                                                             
+                                                                             [X]
+
+--------------------------------------------------------------------------------
+$Id$
+--------------------------------------------------------------------------------

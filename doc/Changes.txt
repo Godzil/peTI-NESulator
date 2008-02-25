@@ -1,20 +1,32 @@
-05/10/2007  V0.30 part 2 ... In progress ...
-      - Start rewrite of mapper manager. The goal, like for plugin manager, is
-        to allow in the future to have plugins or mapper in external libraries.
-      - New sound layer using Allegro. Not really accurate, but more portable.
-        A lot of work has to be done on this (especialy because the actual sound
-        is really bad.)
-      - Started a new source organisation. Should be the good one this time !
+25/02/2008: V0.30 part 2
+      - Correct a bug in CPU emulation related with cycle count and the stupid R_FLAG
+      - Correct bugs in PAL emulation where VBlank line count was incorrect.
+      - Correct a bug with VBlank (it occured one line too late)
+      - Correct a bug with cart loading, if the file name was incorrect it crashed instead
+        exiting gently.
+      - All mappers are remerged.
+      - Unix & Windows build are totaly broken...
+      - Sprite are back! There are some bad behaviour, but they will be corrected with next versions.
+      - New SVN repository (the disk where the old one was had crashed...)
+	 - Iremh3100 is now active! (finaly)
+
 25/10/2007:
       - Savestate now work correctly (It was not loaded at the right time...)
       - Mapper manager seems to work correctly ok
-      - [MACOSX] Buils options are better now
-       
+      - [MACOSX] Builds options are better now
 
       - [TODO] Remerge old PPU debug utilities in real plugin form
       - [TODO] Change the make util. Maybe cmake ?
       - [TODO] Remerge all mappers with the new manager
       - [TODO] Rewrite UNIX Makefile for support new src organization.
+
+05/10/2007:
+      - Start rewrite of mapper manager. The goal, like for plugin manager, is
+        to allow in the future to have plugins or mapper in external libraries.
+      - New sound layer using Allegro. Not really accurate, but more portable.
+        A lot of work has to be done on this (especialy because the actual sound
+        is really bad.)
+      - Started a new source organisation. Should be the good one this time!
 	
 03/05/2007  V0.30 part 1
       - Started the process of PPU total rewrite.

@@ -129,7 +129,7 @@ int MIDILogging(int Switch);
 void MIDITicks(int N);
 
 //#ifdef UNIX
-#define SND_CHANNELS    16   /* Number of channels           */
+#define SND_CHANNELS    4   /* Number of channels           */
 #define SND_SAMPLESIZE  256  /* Max. SetWave() sample size   */
 #define SND_BUFSIZE     256  /* Buffer size, <= 2^SND_BITS   */
 #define SND_BITS        8    /* Number of bits in a fragment */

@@ -12,7 +12,14 @@
  *
  */
 
+/* Allegro includes */
+#ifdef __APPLE__
+#define USE_CONSOLE
+#include <Allegro/allegro.h>
+#else
+#define USE_CONSOLE
 #include <allegro.h>
+#endif
 #include "paddle.h"
 
 void InitPaddle(Paddle * pdl) 
@@ -99,7 +106,7 @@ unsigned char ReadPaddle(Paddle * pdl)
         
     case 20:
         
-           return 0x41;
+           return 0x40;
         
            break;
         
@@ -116,6 +123,6 @@ unsigned char ReadPaddle(Paddle * pdl)
            break;
         
     } 
-       return 0x40;
+   return 0x40;
     
 } 

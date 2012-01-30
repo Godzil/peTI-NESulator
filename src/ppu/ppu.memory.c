@@ -15,9 +15,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <os_dependent.h>
+
 #define __TINES_PPU_INTERNAL__
 
-#include <ppu.h>
+#include <ppu/ppu.h>
 #include <ppu/ppu.memory.h>
 
 #include <types.h>
@@ -120,7 +122,7 @@ void ppu_setPageGhost(byte page, bool value, byte ghost)
     {  
         ppu_memoryPages[page] = ppu_memoryPages[ghost];        
         ppu_memoryGhostLink[ghost] = page;
-        printf("set ghost of 0x%02X to 0x%02X (ptr: %p)\n", ghost, page, ppu_memoryGhostLink[ghost]);
+        console_printf(Console_Default, "set ghost of 0x%02X to 0x%02X (ptr: %p)\n", ghost, page, &(ppu_memoryGhostLink[ghost]));
     }
 }
 
@@ -155,7 +157,7 @@ void ppu_writeMemory(byte page, byte addr, byte value)
     {
         /* Here we will cheat with the palette miroring, since we didn't write
            as often as we read the palette, we will mirror here */
-        //printf("%s palette: color %02X new value : %02d (0x%02X%02X)\n", ((addr&0x10)< 0x10) ? "Bgnd" : "Sprt", addr&0x1F, value & 0x3F, page, addr);
+        //console_printf(Console_Default, "%s palette: color %02X new value : %02d (0x%02X%02X)\n", ((addr&0x10)< 0x10) ? "Bgnd" : "Sprt", addr&0x1F, value & 0x3F, page, addr);
         if ((addr & 0xEF) == 0x00)
         {
             ppu_memoryPages[0x3F][0x00] = value;

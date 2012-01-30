@@ -17,6 +17,8 @@
 
 #include <mappers/manager.h>
 
+#include <os_dependent.h>
+
 MapperIRQ       mapper_irqloop;
 MapperDump      mapper_dump;
 MapperWriteHook mapper_hook;
@@ -37,10 +39,10 @@ typedef struct Mapper_
 void mapper_list ()
 {
    Mapper *ptr = &(Mappers[0]);
-   printf("Available mapers:\n");
+   console_printf(Console_Default, "Available mapers:\n");
    while(ptr->name != NULL)
    {
-      printf("%d - %s\n", ptr->id, ptr->name);
+      console_printf(Console_Default, "%d - %s\n", ptr->id, ptr->name);
       ptr++;
    }
 }
@@ -48,12 +50,12 @@ void mapper_list ()
 int mapper_init (NesCart *cart)
 {
    Mapper *ptr = &(Mappers[0]);
-   printf ("Search for a compatible mapper ID #%X:\n", cart->MapperID);
+   console_printf (Console_Default, "Search for a compatible mapper ID #%X:\n", cart->MapperID);
    while (ptr->name != NULL)
    {
       if (ptr->id == cart->MapperID)
       {
-         printf ("Found mapper ID #%X - '%s'\n", ptr->id, ptr->name);
+         console_printf (Console_Default, "Found mapper ID #%X - '%s'\n", ptr->id, ptr->name);
          ptr->init (cart);
          
          mapper_irqloop = ptr->irq;

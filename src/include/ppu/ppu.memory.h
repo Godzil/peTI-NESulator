@@ -27,6 +27,8 @@ void ppu_memoryDumpState(FILE *fp);
 byte ppu_readMemory(byte page, byte addr);
 void ppu_writeMemory(byte page, byte addr, byte value);
 
+void ppu_setPageGhost(byte page, bool value, byte ghost);
+
 #else
 #error Must only be included inside the PPU code
 #endif

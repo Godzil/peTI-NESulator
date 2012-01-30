@@ -11,21 +11,30 @@
  *  $Revision$
  *
  */
- 
-#include "include/NESCarts.h"
-#include "include/mappers/manager.h"
 
+/* System Headers */
+#if !defined(__TIGCC__) && !defined(__GCC4TI__) && !defined(__GTC__)
 #include <stdlib.h>
 #include <stdio.h>
+#include <memory.h>
 
-/* Plateform dependent function */
-void *LoadFilePtr(char * filename);
+#else /* Support for TI-68k compilation */
+
+#define TIGCC_COMPAT
+#include <tigcclib.h>
+#endif
+
+/* TI-NES headers */
+#include <os_dependent.h>
+#include <NESCarts.h>
+#include <os_dependent.h>
+#include <mappers/manager.h>
 
 void DumpCartProperties(FILE *out, NesCart * cart)
 {
-    fprintf(out,
+    console_printf(Console_Verbose,
             "'%s' informations:\n"
-            "   Total ROM Size       : 0x%06X    | Total VROM Size      : 0x%06X\n"
+            "   Total ROM Size       : 0x%06lX    | Total VROM Size      : 0x%06lX\n"
             "   Mapper ID            : 0x%06X    | Mirroring ?          : %s\n"
             "   Battery ?            : %s         | 4 Screen ?           : %s   \n"
             "   PROMBanks start at   : %p  |\n"
@@ -43,12 +52,12 @@ void DumpCartProperties(FILE *out, NesCart * cart)
 
 int LoadCart(const char *filename, NesCart * cart) 
 {
-	byte buffer[6];
+    char buffer[6];
     /* Load the cart into memory */
-    cart->File = (byte *)LoadFilePtr(filename);
+    cart->File = (byte *)LoadFilePtr((char *)filename);
     
     
-    if (cart->File == -1)
+    if ((cart->File == NULL) || ((int)cart->File == -1))
       return -1;
     
 	sprintf(buffer, "%c%c%c%c", 0x4E, 0x45, 0x53, 0x1A);
@@ -56,15 +65,12 @@ int LoadCart(const char *filename, NesCart * cart)
 	/* Verify that this is a real iNES valid file */
 	if (memcmp(cart->File, buffer, 4))
 		return -1;
-	
-    if ((cart->File == NULL) || (cart->File == -1))
-        return -1;
     
     /* Before go elsewhere, verify that the header is clean !
            (aka no DiskDude! in it) */
     if (memcmp(cart->File+7, "DiskDude!", 9) == 0)
     {
-        printf("\n"
+        console_printf(Console_Warning, "\n"
                "*******************WARNING****************\n"
                "* The header of this game is not clean   *\n"
                "* (DiskDude! pollution) I will only use  *\n"
@@ -83,7 +89,7 @@ int LoadCart(const char *filename, NesCart * cart)
     }
 
     /* Now fill the structure */
-    cart->FileName = filename;
+    cart->FileName = (char *)filename;
 
     cart->PROMSize = cart->File[4] * 16 * 1024;               /* Size of PROM */
     cart->VROMSize = cart->File[5] *  8 * 1024;               /* Size of VROM */   
@@ -92,7 +98,7 @@ int LoadCart(const char *filename, NesCart * cart)
     /* We don't and we will never support trainer-ed ROM */
     if (cart->Flags & iNES_TRAINER)
     {
-        printf("\n"
+        console_printf(Console_Error, "\n"
                "********************ERROR*****************\n"
                "* This cart have an embedded trainer.    *\n"
                "* There is NO support for them.          *\n"

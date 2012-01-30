@@ -14,7 +14,7 @@
 #ifndef NESCARTS_H
 #define NESCARTS_H
 
-#include "types.h"
+#include <types.h>
 
 #define iNES_MIRROR  0x01
 #define iNES_BATTERY 0x02

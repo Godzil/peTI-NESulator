@@ -8,7 +8,7 @@
       - Unix & Windows build are totaly broken...
       - Sprite are back! There are some bad behaviour, but they will be corrected with next versions.
       - New SVN repository (the disk where the old one was had crashed...)
-	 - Iremh3100 is now active! (finaly)
+	   - Iremh3100 is now active! (finaly)
 
 05/10/2007  V0.30 part 2 ... In progress ...
       - Start rewrite of mapper manager. The goal, like for plugin manager, is

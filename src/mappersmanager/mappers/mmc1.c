@@ -139,7 +139,7 @@ void mmc1_ApplyReg0Mod()
     
     
        
-    //printf("Change to reg0 done ! (0x%x)\n\tMiror flag : %d\n\tOneScreen Flag : %d\n\tPRG Size : %d\n\tPRG Area : %d\n\tVROM Switch size : %d\n", MMC1_reg0, MMC1_reg0 & MMC1_R0_MIRROR, MMC1_reg0 & MMC1_R0_ONESCREEN, MMC1_reg0 & MMC1_R0_PRGAREA, MMC1_reg0 & MMC1_R0_PRGSIZE, MMC1_reg0 & MMC1_R0_VROMSW);
+    //console_printf(Console_Default, "Change to reg0 done ! (0x%x)\n\tMiror flag : %d\n\tOneScreen Flag : %d\n\tPRG Size : %d\n\tPRG Area : %d\n\tVROM Switch size : %d\n", MMC1_reg0, MMC1_reg0 & MMC1_R0_MIRROR, MMC1_reg0 & MMC1_R0_ONESCREEN, MMC1_reg0 & MMC1_R0_PRGAREA, MMC1_reg0 & MMC1_R0_PRGSIZE, MMC1_reg0 & MMC1_R0_VROMSW);
         
     switch (MMC1_reg0 & 0x03)
     {
@@ -191,7 +191,7 @@ void mmc1_MapperWriteReg0(register byte Addr, register byte Value)
     if (Value & 0x80) 
     {   
         MMC1_reg0 = MMC1_REG0_DEFAULT;
-        printf("MMC1: Reg0 Reset occured !\n");
+        console_printf(Console_Default, "MMC1: Reg0 Reset occured !\n");
         mmc1_ApplyReg0Mod();
     }
     else
@@ -218,7 +218,7 @@ void mmc1_MapperWriteReg1(register byte Addr, register byte Value)
     if (Value & 0x80) 
     {   
         MMC1_reg1 = MMC1_REG1_DEFAULT;
-        printf("MMC1: Reg1 Reset occured !\n");
+        console_printf(Console_Default, "MMC1: Reg1 Reset occured !\n");
     }
     else
     {
@@ -238,18 +238,18 @@ void mmc1_MapperWriteReg1(register byte Addr, register byte Value)
 
             if (Cart->VROMSize == 0)
             {
-                printf("Try to change VROM but with didn't have any VROM ! [%04X]\n", VROMBankNb);
+                console_printf(Console_Default, "Try to change VROM but with didn't have any VROM ! [%04X]\n", VROMBankNb);
                 return;
             }
                 
             if ( (MMC1_reg0 & MMC1_R0_VROMSW) != 0 )
             {    /* 4K vram */
-                //printf("Switching VROM at 0x0000 to 4k bank %d\n", VROMBankNb);
+                //console_printf(Console_Default, "Switching VROM at 0x0000 to 4k bank %d\n", VROMBankNb);
                 set_vrom_bank_4k(0x0000,VROMBankNb);
             }
             else
             {    /* 8K vram */
-                //printf("Switching VROM at 0x0000 to 8k bank %d\n", VROMBankNb>>1);
+                //console_printf(Console_Default, "Switching VROM at 0x0000 to 8k bank %d\n", VROMBankNb>>1);
                 set_vrom_bank_8k(0x0000,VROMBankNb>>1);
             }
         }
@@ -261,7 +261,7 @@ void mmc1_MapperWriteReg2(register byte Addr, register byte Value)
     if (Value & 0x80) 
     {   
         MMC1_reg2 = MMC1_REG2_DEFAULT;
-        printf("MMC1: Reg2 Reset occured !\n");
+        console_printf(Console_Default, "MMC1: Reg2 Reset occured !\n");
     }
     else
     {
@@ -279,21 +279,21 @@ void mmc1_MapperWriteReg2(register byte Addr, register byte Value)
             
             VROMBankNb = (MMC1_reg2 /* & MMC1_R2_VROMB2 */ );
             
-            //printf("Want to switch VROM at 0x1000 to 4k bank %d\n", VROMBankNb);
+            //console_printf(Console_Default, "Want to switch VROM at 0x1000 to 4k bank %d\n", VROMBankNb);
             if (Cart->VROMSize == 0)
             {
-                //printf(": No\n");
+                //console_printf(Console_Default, ": No\n");
                 return;
             }
             
             if ( (MMC1_reg0 & MMC1_R0_VROMSW) != 0 )
             {    /* 4K vram */
-                //printf("Switching VROM at 0x1000 to 4k bank %d\n", VROMBankNb);
+                //console_printf(Console_Default, "Switching VROM at 0x1000 to 4k bank %d\n", VROMBankNb);
                 set_vrom_bank_4k(0x1000,VROMBankNb);
             }
             else
             {    /* 8K vram */
-            //       printf("Switching VROM at 0x1000 to 8k bank %d\n", VROMBankNb>>1);
+            //       console_printf(Console_Default, "Switching VROM at 0x1000 to 8k bank %d\n", VROMBankNb>>1);
             //       set_vrom_bank_8k(0x1000,VROMBankNb>>1);
             }
         }
@@ -305,7 +305,7 @@ void mmc1_MapperWriteReg3(register byte Addr, register byte Value)
     if (Value & 0x80) 
     {   
         MMC1_reg3 = MMC1_REG3_DEFAULT;
-        printf("MMC1: Reg3 Reset occured !\n");
+        console_printf(Console_Default, "MMC1: Reg3 Reset occured !\n");
     }
     else
     {
@@ -329,12 +329,12 @@ void mmc1_MapperWriteReg3(register byte Addr, register byte Value)
                 if ( (MMC1_reg0 & MMC1_R0_PRGAREA) != 0 )
                 {    /* 0x8000 switch */
                     set_prom_bank_16k(0x8000,MMC1_reg3);
-                    //printf("LowBank is now %d ( 0x%p )\n", MMC1_reg3, mLBank);
+                    //console_printf(Console_Default, "LowBank is now %d ( 0x%p )\n", MMC1_reg3, mLBank);
                 }
                 else
                 {    /* 0xC000 switch */
                     set_prom_bank_16k(0xC000,MMC1_reg3);
-                    //printf("HighBank is now %d ( 0x%p )\n", MMC1_reg3, mUBank);
+                    //console_printf(Console_Default, "HighBank is now %d ( 0x%p )\n", MMC1_reg3, mUBank);
                 }
             }
             else
@@ -354,4 +354,4 @@ void mmc1_MapperWriteReg3(register byte Addr, register byte Value)
     }
 }    
         
-        //printf("MMC1: Debug (Reg:%d,Val:0x%02X,reg0:0x%02X,reg1:0x%02X,reg2:0x%02X,reg3:0x%02X)\n", MMC1_GetReg(Addr), Value, MMC1_reg0, MMC1_reg1, MMC1_reg2, MMC1_reg3);
+        //console_printf(Console_Default, "MMC1: Debug (Reg:%d,Val:0x%02X,reg0:0x%02X,reg1:0x%02X,reg2:0x%02X,reg3:0x%02X)\n", MMC1_GetReg(Addr), Value, MMC1_reg0, MMC1_reg1, MMC1_reg2, MMC1_reg3);

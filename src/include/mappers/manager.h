@@ -29,6 +29,7 @@ typedef void (*MapperDump)     ();
 
 #include <ppu/ppu.h>
 #include <memory/manager.h>
+#include <os_dependent.h>
 
 extern NesCart *Cart;
 

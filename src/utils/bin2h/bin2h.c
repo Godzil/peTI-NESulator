@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
 					infile = argv[i+1];
 					if (fpin == NULL)
 					{
-						fprintf(stderr,"Error: cannot open in file '%s'\n", argv[i+1]);
+						fprintf (stderr, "Error: cannot open in file '%s'\n", argv[i+1]);
 						exit(-1);
 					}
 					i++;
@@ -49,14 +49,14 @@ int main(int argc, char *argv[])
 					fpout = fopen(argv[i+1], "wb");
 					if (fpout == NULL)
 					{
-						fprintf(stderr,"Error: cannot open out file '%s'\n", argv[i+1]);
+						fprintf (stderr, "Error: cannot open out file '%s'\n", argv[i+1]);
 						exit(-1);
 					}
 					i++;
 					break;
 					
 				default:
-					fprintf(stderr,"Error: unknown argument: %s\n", argv[i]);
+					fprintf (stderr, "Error: unknown argument: %s\n", argv[i]);
 					exit(-1);
 				}
 			}

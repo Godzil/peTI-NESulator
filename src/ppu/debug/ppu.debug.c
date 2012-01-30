@@ -15,7 +15,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/* Allegro includes */
+#ifdef __APPLE__
+#define USE_CONSOLE
+#include <Allegro/allegro.h>
+#else
+#define USE_CONSOLE
 #include <allegro.h>
+#endif
 
 #define __TINES_PPU_INTERNAL__
 
@@ -200,7 +207,7 @@ void DebugSprites()
 
 #define GetTilePos(addr,x,y) (addr+x+(y*32))
 
-#define GetTileColor(tile,x1,y1)	( ( ppu_readMemory(((tile+y1)>>8)&0xFF, (tile+y1) & 0xFF) & (1<<(7-x1)) ) == 0 ? 0 : 1 ) | \
+#define GetTileColor(tile,x1,y1)	( ( ppu_readMemory(((tile+y1)>>8)&0xFF, (tile+y1) & 0xFF) & (1<<(7-x1)) ) == 0 ? 0 : 1 ) |\
 									( ( ppu_readMemory(((tile+y1+8)>>8) & 0xFF, (tile+y1+8) &0xFF) & (1<<(7-x1)) ) == 0 ? 0 : 1<<1 )
 
 #define PPU_Rd(addr) ppu_readMemory((addr>>8)&0xFF, addr&0xFF)									

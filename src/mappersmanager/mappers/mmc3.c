@@ -11,7 +11,6 @@
  *  $Revision$
  *
  */
-
 #include "mmc3.h"
 
 extern unsigned short ScanLine;
@@ -58,7 +57,7 @@ int mmc3_InitMapper(NesCart * cart)
     mmc3_command = -1;
 
     mmc3_irq_counter = -1;
-    mmc3_irq_enable = 1;
+    mmc3_irq_enable = 0;
     mmc3_irq_counter_reload = 0;
     
     mmc3_use_xor = 0x42;
@@ -96,7 +95,7 @@ int mmc3_InitMapper(NesCart * cart)
 
 void mmc3_MapperWrite80Hook(byte addr, byte Value)
 {
-    //printf("%s(0x%02X, 0x%02X)\n", __func__, addr, Value);
+    //console_printf(Console_Default, "%s(0x%02X, 0x%02X)\n", __func__, addr, Value);
     if (addr > 0x01)
         return;
 
@@ -133,7 +132,7 @@ void mmc3_MapperWrite80Hook(byte addr, byte Value)
 		{
     		if (!(Value & 0x40))
     		{
-		        printf("MMC3: Switch -> 8/A\n");
+              console_printf(Console_Default, "MMC3: Switch -> 8/A\n");
     		    mmc3_first_prom_page = 0x8000;
     		    mmc3_second_prom_page = 0xA000;
     		    
@@ -146,7 +145,7 @@ void mmc3_MapperWrite80Hook(byte addr, byte Value)
     		}
     		else
     		{
-    		    printf("MMC3: Switch -> C/A\n");
+    		    console_printf(Console_Default, "MMC3: Switch -> C/A\n");
     		    mmc3_first_prom_page = 0xC000;
     		    mmc3_second_prom_page = 0xA000;
     		
@@ -158,9 +157,9 @@ void mmc3_MapperWrite80Hook(byte addr, byte Value)
         	
     			//prg_bank(max_prg-1,prg1,prg0,max_prg);
     		}
-  			mmc3_last_prom_switch = (Value & 0x40);	
+          mmc3_last_prom_switch = (Value & 0x40);	
     	}
-		mmc3_command = Value & 0x07;
+     mmc3_command = Value & 0x07;
 		
 		
 
@@ -224,13 +223,13 @@ void mmc3_MapperWrite80Hook(byte addr, byte Value)
 
 void mmc3_MapperWriteA0Hook(byte addr, byte Value)
 {
-    //printf("%s(0x%02X, 0x%02X)\n", __func__, addr, Value);
+    //console_printf(Console_Default, "%s(0x%02X, 0x%02X)\n", __func__, addr, Value);
     if (addr > 0x01)
         return;
     
     if (!addr)    
     {    
-      //printf("MMC3: Select mirroring (0xA000) : 0x%X\n",Value);
+      //console_printf(Console_Default, "MMC3: Select mirroring (0xA000) : 0x%X\n",Value);
       
       if (Value & 0x1)
         ppu_setMirroring(PPU_MIRROR_HORIZTAL);
@@ -240,7 +239,7 @@ void mmc3_MapperWriteA0Hook(byte addr, byte Value)
     } 
     else
     {
-      //printf("MMC3: SaveRAM Toggle (0xA001) : 0x%X\n",Value);
+      //console_printf(Console_Default, "MMC3: SaveRAM Toggle (0xA001) : 0x%X\n",Value);
       if (Value)
           map_sram();
       else
@@ -251,7 +250,7 @@ void mmc3_MapperWriteA0Hook(byte addr, byte Value)
 
 void mmc3_MapperWriteC0Hook(byte addr, byte Value)
 {
-    //printf("%s(0x%02X, 0x%02X)\n", __func__, addr, Value);
+    //console_printf(Console_Default, "%s(0x%02X, 0x%02X)\n", __func__, addr, Value);
     if (addr > 0x01)
         return;
         
@@ -259,33 +258,33 @@ void mmc3_MapperWriteC0Hook(byte addr, byte Value)
     {
      mmc3_irq_counter_reload = Value;
      mmc3_irq_counter = Value;
-     //printf("MMC3 IRQ[%d]: SetIRQ reload to %d\n", ScanLine, Value);
+     //console_printf(Console_Default, "MMC3 IRQ[%d]: SetIRQ reload to %d\n", ScanLine, Value);
      
     }else{ /* C001 */
-      //printf("MMC3: New tmp IRQ value (0xC001) : 0x%X\n",Value);
-      //printf("MMC3 IRQ[%d]: Reset IRQ counter to val %d [Value = %d]\n", ScanLine, mmc3_irq_counter_reload, Value);
+      //console_printf(Console_Default, "MMC3: New tmp IRQ value (0xC001) : 0x%X\n",Value);
+      //console_printf(Console_Default, "MMC3 IRQ[%d]: Reset IRQ counter to val %d [Value = %d]\n", ScanLine, mmc3_irq_counter_reload, Value);
       mmc3_irq_counter = Value;
     }
 }
 
 void mmc3_MapperWriteE0Hook(byte addr, byte Value)
 {
-    //printf("%s(0x%02X, 0x%02X)\n", __func__, addr, Value);
+    //console_printf(Console_Default, "%s(0x%02X, 0x%02X)\n", __func__, addr, Value);
     if (addr > 0x01)
         return;
         
     if (!addr)
     {
-    //printf("MMC3: Writing to 0xE001 : 0x%X\n",Value);
-      //printf("MMC3 IRQ[%d]: IRQ disabled\n", ScanLine);
+      //console_printf(Console_Default, "MMC3: Writing to 0xE001 : 0x%X\n",Value);
+      //console_printf(Console_Default, "MMC3 IRQ[%d]: IRQ disabled\n", ScanLine);
       mmc3_irq_enable = 0;
       //MapperWantIRQ = 1;
       // Add a way to raise an IRQ
       
      }else{ /* E001 */
-      //printf("MMC3: Writing to 0xE001 : 0x%X\n",Value);
-      //printf("MMC3: IRQ Enabled (value : %d)\n",mmc3_irq_counter);
-      //printf("MMC3 IRQ[%d]: Enable IRQ\nr", ScanLine);
+      //console_printf(Console_Default, "MMC3: Writing to 0xE001 : 0x%X\n",Value);
+      //console_printf(Console_Default, "MMC3: IRQ Enabled (value : %d)\n",mmc3_irq_counter);
+      //console_printf(Console_Default, "MMC3 IRQ[%d]: Enable IRQ\nr", ScanLine);
       mmc3_irq_enable = 1;
     }
 }
@@ -306,7 +305,7 @@ int mmc3_MapperIRQ(int cycledone)
     
     mmc3_irq_enable = 0;
     
-    //printf("MMC3 IRQ[%d]: Tick next at %d\n", ScanLine, mmc3_irq_counter_reload);
+    //console_printf(Console_Default, "MMC3 IRQ[%d]: Tick next at %d\n", ScanLine, mmc3_irq_counter_reload);
     
     return 1;
   }

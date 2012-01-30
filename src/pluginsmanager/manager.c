@@ -15,6 +15,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <os_dependent.h>
+
 #include <plugins/manager.h>
 
 typedef struct Plugin_
@@ -44,10 +46,10 @@ void plugin_list()
 {
     Plugin *ptr = &(Plugins[0]);
     int i = 1;
-    printf("Available plugins:\n");
+    console_printf(Console_Default, "Available plugins:\n");
     while(ptr->name != NULL)
     {
-        printf("%d - %s\n", i, ptr->name);
+        console_printf(Console_Default, "%d - %s\n", i, ptr->name);
         ptr++; i++;
     }
 }
@@ -57,11 +59,11 @@ int plugin_load(int id)
     Plugin *ptr = &(Plugins[0]);
     int i = id;
     
-    printf("%s(%d)", __func__, id);
+    console_printf(Console_Default, "%s(%d)", __func__, id);
     
     for ( ; i > 1 && ptr->name != NULL; i -- )
     {
-        printf("%d - %s\n", i, ptr->name);
+        console_printf(Console_Default, "%d - %s\n", i, ptr->name);
         ptr ++;        
     }
 

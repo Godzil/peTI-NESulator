@@ -135,7 +135,7 @@ static int OpenSoundDevice(int Rate,int Verbose)
 
 #ifdef SUN_AUDIO
 
-  if(Verbose) printf("  Opening /dev/audio...");
+  if(Verbose) console_printf(Console_Default, "  Opening /dev/audio...");
   if((SoundFD=open("/dev/audio",O_WRONLY | O_NONBLOCK))==-1)
   {
     if(Verbose) puts("FAILED");
@@ -150,13 +150,13 @@ static int OpenSoundDevice(int Rate,int Verbose)
 #else /* SUN_AUDIO */
 
   /* At first, we need to open /dev/dsp: */
-  if(Verbose) printf("  Opening /dev/dsp...");
+  if(Verbose) console_printf(Console_Default, "  Opening /dev/dsp...");
   I=((SoundFD=open("/dev/dsp",O_WRONLY))<0);
 
   /* Set 8-bit sound */
   if(!I)
   { 
-    if(Verbose) printf("OK\n  Setting mode: 8bit...");
+    if(Verbose) console_printf(Console_Default, "OK\n  Setting mode: 8bit...");
     J=AFMT_U8;
     I=(ioctl(SoundFD,SNDCTL_DSP_SETFMT,&J)<0);
   }
@@ -164,7 +164,7 @@ static int OpenSoundDevice(int Rate,int Verbose)
   /* Set mono sound */
   if(!I)
   {
-    if(Verbose) printf("mono...");
+    if(Verbose) console_printf(Console_Default, "mono...");
     J=0;
     I=(ioctl(SoundFD,SNDCTL_DSP_STEREO,&J)<0);
   }
@@ -172,9 +172,9 @@ static int OpenSoundDevice(int Rate,int Verbose)
   /* Set sampling rate */
   if(!I)
   {
-    if(Verbose) printf("OK\n  Setting sampling rate: %dHz...",Rate);
+    if(Verbose) console_printf(Console_Default, "OK\n  Setting sampling rate: %dHz...",Rate);
     I=(ioctl(SoundFD,SNDCTL_DSP_SPEED,&Rate)<0);
-    if(Verbose) printf("(got %dHz)...",Rate);
+    if(Verbose) console_printf(Console_Default, "(got %dHz)...",Rate);
   } 
 
   /* Here we set the number of buffers to use */
@@ -462,7 +462,7 @@ int InitSound(int Rate,int Verbose)
   if(!(Rate=OpenSoundDevice(Rate,Verbose))) return(0);
 
   /* Create DSPLoop() thread */
-  if(Verbose) printf("  Creating thread...");
+  if(Verbose) console_printf(Console_Default, "  Creating thread...");
   if(pthread_create(&ThreadID,0,DSPLoop,0))
   { if(Verbose) puts("FAILED");return(0); }
 
@@ -480,9 +480,9 @@ int InitSound(int Rate,int Verbose)
 void TrashSound(void)
 {
   StopSound();
-  printf("%s: Kill thread...\n", __func__);
+  console_printf(Console_Default, "%s: Kill thread...\n", __func__);
   if(ThreadID)    pthread_cancel(ThreadID);
-  printf("%s: close /dev/xxx ...\n", __func__);
+  console_printf(Console_Default, "%s: close /dev/xxx ...\n", __func__);
   if(SoundFD!=-1) close(SoundFD);
 
   SoundRate = 0;

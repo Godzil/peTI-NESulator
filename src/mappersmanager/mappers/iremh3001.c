@@ -45,29 +45,29 @@ int iremh3001_InitMapper(NesCart * cart)
 
 int iremh3001_MapperWriteHook(register byte Addr, register byte Value) 
 {
-
+#if 0
   switch(Addr)
   {
   case 0x8000: /* Set 8k PROM @ 8000 */
-    printf("iremh3001: %X: change PROM to %d[%X]\n", Addr, Value, Value);
+    console_printf(Console_Default, "iremh3001: %X: change PROM to %d[%X]\n", Addr, Value, Value);
     set_prom_bank_8k(0x8000, Value);
     iremh3001_prom_slot[0] = Value;
     break;
 
   case 0x9003: /* Mirroring ??? */
-    printf("iremh3001: Mirroring[0x%X:%d] ?\n", Value, Value);
+    console_printf(Console_Default, "iremh3001: Mirroring[0x%X:%d] ?\n", Value, Value);
     break;
 
   case 0x9005: /* IRQ ??? */
-    printf("iremh3001: IRQ[0x%X:%d] ?\n", Value, Value);
+    console_printf(Console_Default, "iremh3001: IRQ[0x%X:%d] ?\n", Value, Value);
     break;
 
   case 0x9006: /* IRQ ??? */
-    printf("iremh3001: IRQ[0x%X:%d] ?\n", Value, Value);
+    console_printf(Console_Default, "iremh3001: IRQ[0x%X:%d] ?\n", Value, Value);
     break;
 
   case 0xA000: /* Set 8k PROM @ A000 */
-    printf("iremh3001: %X: change PROM to %d[%X]\n", Addr, Value, Value);
+    console_printf(Console_Default, "iremh3001: %X: change PROM to %d[%X]\n", Addr, Value, Value);
     set_prom_bank_8k(0xA000, Value);
     iremh3001_prom_slot[1] = Value;
     break;
@@ -80,23 +80,23 @@ int iremh3001_MapperWriteHook(register byte Addr, register byte Value)
   case 0xB005: /* Set 1k VROM @ 1400 */
   case 0xB006: /* Set 1k VROM @ 1800 */
   case 0xB007: /* Set 1k VROM @ 1C00 */
-    printf("iremh3001: %X: change VROM to %d[%X]\n", (Addr&0x0F)<<10, Value, Value);
+    console_printf(Console_Default, "iremh3001: %X: change VROM to %d[%X]\n", (Addr&0x0F)<<10, Value, Value);
     set_vrom_bank_1k((Addr&0xF)<<10, Value);
     iremh3001_vrom_slot[Addr&0x0F] = Value;
     break;
 
   case 0xC000: /* Set 8k PROM @ C000 */
-    printf("iremh3001: %X: change PROM to %d[%X]\n", Addr, Value, Value);
+    console_printf(Console_Default, "iremh3001: %X: change PROM to %d[%X]\n", Addr, Value, Value);
     set_prom_bank_8k(0xC000, Value);
     iremh3001_prom_slot[2] = Value;
     break;
 
   default:
-    printf("@:%X -- V:%X", Addr, Value);
+    console_printf(Console_Default, "@:%X -- V:%X", Addr, Value);
     return 0;
 
   }
-
+#endif
   return 1;
 } 
 

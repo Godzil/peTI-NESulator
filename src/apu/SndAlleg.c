@@ -13,7 +13,16 @@
  */
 #include <Sound.h>
 
+/* Allegro includes */
+#ifdef __APPLE__
+#define USE_CONSOLE
+#include <Allegro/allegro.h>
+#else
+#define USE_CONSOLE
 #include <allegro.h>
+#endif
+
+#include <os_dependent.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -265,6 +274,8 @@ static void *DSPLoop(void *Arg)
               L2=L1+K;
               Wave[I]+= L1&0x8000?V:-V /*(L2&0x8000? V:0):(L2&0x8000? 0:-V)*/;
               L1=L2;
+            
+            
             }
             CH[J].Count=L1;
             break;
@@ -314,14 +325,14 @@ int InitSound(int Rate,int Verbose)
 
   if (install_sound(DIGI_AUTODETECT, MIDI_NONE, "") != 0)
   {
-      fprintf(stderr, "%s!\n", allegro_error);
+      console_printf(Console_Error, "%s!\n", allegro_error);
       return 1;
   }
 
 
   stream = play_audio_stream(SND_BUFSIZE, 8, FALSE, Rate, 255, 128);
   if (!stream) {
-      fprintf(stderr, "Error creating audio stream!\n");
+      console_printf(Console_Error, "Error creating audio stream!\n");
       return 1;
   }
 
@@ -332,7 +343,7 @@ int InitSound(int Rate,int Verbose)
   if(!(Rate=OpenSoundDevice(Rate,Verbose))) return(0);
 
   /* Create DSPLoop() thread */
-  if(Verbose) printf("  Creating thread...");
+  if(Verbose) console_printf(Console_Default, "  Creating thread...");
   if(pthread_create(&ThreadID,0,DSPLoop,0))
   { if(Verbose) puts("FAILED");return(0); }
 
@@ -350,7 +361,7 @@ int InitSound(int Rate,int Verbose)
 void TrashSound(void)
 {
   StopSound();
-  printf("%s: Kill thread...\n", __func__);
+  console_printf(Console_Default, "%s: Kill thread...\n", __func__);
   if(ThreadID)    pthread_cancel(ThreadID);
 
   SoundRate = 0;

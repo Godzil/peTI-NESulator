@@ -11,11 +11,13 @@
  *  $Revision$
  *
  */
-
  
 #include <stdio.h>
-#include "types.h"
-#include "../include/memory/manager.h"
+#include <types.h>
+
+#include <os_dependent.h>
+
+#include <memory/manager.h>
 
 /* Private structures */
 
@@ -50,13 +52,13 @@ func_wrhook wrh_table[0x100];
 /* Public functions */
 void set_page_ptr(byte page, byte *ptr)
 {
-    LOG(printf("Set page 0x%X to ptr %p\n", page, ptr));
+    LOG(console_printf(Console_Default, "Set page 0x%X to ptr %p\n", page, ptr));
     memory_pages[page] = ptr;
 }
 
 void set_page_ptr_1k(byte page, byte *ptr)
 {   /* 1k = 4 * 256 */
-    LOG(printf("Set page(1k) 0x%X to ptr %p\n", page, ptr));
+    LOG(console_printf(Console_Default, "Set page(1k) 0x%X to ptr %p\n", page, ptr));
     memory_pages[page + 0] = ptr;
     memory_pages[page + 1] = ptr +  0x100;
     memory_pages[page + 2] = ptr + (0x100 * 2);
@@ -65,7 +67,7 @@ void set_page_ptr_1k(byte page, byte *ptr)
 
 void set_page_ptr_2k(byte page, byte *ptr)
 {
-    LOG(printf("Set page(2k) 0x%X to ptr %p\n", page, ptr));
+    LOG(console_printf(Console_Default, "Set page(2k) 0x%X to ptr %p\n", page, ptr));
     memory_pages[page + 0] = ptr;
     memory_pages[page + 1] = ptr +  0x100;
     memory_pages[page + 2] = ptr + (0x100 * 2);
@@ -78,14 +80,14 @@ void set_page_ptr_2k(byte page, byte *ptr)
 
 void set_page_ptr_4k(byte page, byte *ptr)
 {
-    LOG(printf("Set page(4k) 0x%X to ptr %p\n", page, ptr));
+    LOG(console_printf(Console_Default, "Set page(4k) 0x%X to ptr %p\n", page, ptr));
     set_page_ptr_2k(page, ptr);
     set_page_ptr_2k(page+((4 KBYTE / 256) / 2), ptr + 2 KBYTE);    
 }
 
 void set_page_ptr_8k(byte page, byte *ptr)
 {
-    LOG(printf("Set page(8k) 0x%X to ptr %p\n", page, ptr));
+    LOG(console_printf(Console_Default, "Set page(8k) 0x%X to ptr %p\n", page, ptr));
     set_page_ptr_4k(page, ptr);
     set_page_ptr_4k(page+((8 KBYTE / 256) / 2), ptr + 4 KBYTE);        
 }
@@ -195,26 +197,23 @@ func_wrhook get_page_wrhook(byte page)
     return NULL;
 }
 
-
-
-
 byte ReadMemory(byte page, byte addr)
 {
     static byte LastRetByte = 0xA5;
     byte *page_ptr;
     byte attributes;
-    LOG(printf("Read @ 0x%X-%X\n", page, addr));
+    LOG(console_printf(Console_Default, "Read @ 0x%X-%X\n", page, addr));
     /* Est-ce que la page est mappé ? && Est-ce que la page est "readable" ? */
     if ((page_ptr = memory_pages[page]) &&
           ( (attributes = memory_pages_attr[page]) & ATTR_PAGE_READABLE) )
     {
-        LOG(printf("Page is non null & readable\n"));
+        LOG(console_printf(Console_Default, "Page is non null & readable\n"));
         if ( attributes & ATTR_PAGE_HAVE_RDHOOK )
             return ( LastRetByte = rdh_table[page](addr) );
         else
             return ( LastRetByte = page_ptr[addr] );
     }
-    //printf("Trying to read @ 0x%X-%X\n", page, addr);
+    //console_printf(Console_Default, "Trying to read @ 0x%X-%X\n", page, addr);
     return LastRetByte;
 }
 
@@ -222,7 +221,7 @@ void WriteMemory(byte page, byte addr, byte value)
 {
     byte *page_ptr;
     byte attributes;
-    LOG(printf("Write 0x%x @ 0x%X-%X\n", value, page, addr));
+    LOG(console_printf(Console_Default, "Write 0x%x @ 0x%X-%X\n", value, page, addr));
     /* Est-ce que la page est mappé ? && Est-ce que la page est "writable" ? */
     if ( (page_ptr = memory_pages[page]) &&
          ( (attributes = memory_pages_attr[page]) & ATTR_PAGE_WRITEABLE) )
@@ -231,14 +230,14 @@ void WriteMemory(byte page, byte addr, byte value)
         {
 #ifdef DETECT_BUS_CONFLICT
             if ((page >= 0x80) && (memory_pages[page][addr] != value))
-                printf("WriteHook: bus conflict at %02X%02X rom:%02X write:%02X\n", page, addr, memory_pages[page][addr], value);
+                console_printf(Console_Default, "WriteHook: bus conflict at %02X%02X rom:%02X write:%02X\n", page, addr, memory_pages[page][addr], value);
 #endif
             wrh_table[page](addr, value);
         }
         else
             page_ptr[addr] = value;
     }
-    else { printf("Trying to write 0x%X @ 0x%X-%X\n", value, page, addr); }
+    else { console_printf(Console_Default, "Trying to write 0x%X @ 0x%X-%X\n", value, page, addr); }
 }
 
 void DumpMemoryState(FILE *fp)

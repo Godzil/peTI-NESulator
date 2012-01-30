@@ -193,7 +193,7 @@ void PPU_Wr(unsigned short Addr, unsigned char Value)
     else
         if (Addr >= 0x3F00)
         {
-            //printf("%s palette: color %x new value : %d (0x%x)\n", (PalAddr(Addr) < 0x10) ? "Bgnd" : "Sprt", PalAddr(Addr), Value & 0x3F, Addr);
+            //console_printf(Console_Default, "%s palette: color %x new value : %d (0x%x)\n", (PalAddr(Addr) < 0x10) ? "Bgnd" : "Sprt", PalAddr(Addr), Value & 0x3F, Addr);
             ppu.Memory[ /* 0x3F00 | PalAddr(Addr) */ Addr] = Value & 0x3F;
             if (PalAddr(Addr) == 0x10)
                 ppu.Memory[0x3F00] = Value & 0x3F;
@@ -399,7 +399,7 @@ unsigned char XScroll, YScroll;
     clear_to_color(Buffer, BgColor);
 
 /*    if (ppu.ControlRegister2.s.Colour != 0)
-        printf("ppu.ColorEmphasis : %d", ppu.ControlRegister2.s.Colour);*/
+        console_printf(Console_Default, "ppu.ColorEmphasis : %d", ppu.ControlRegister2.s.Colour);*/
 
 
     for (i = 0; i < 249; i++)
@@ -657,7 +657,7 @@ frame start (line 0) (if background or sprites are enabled):
 v=t
 */
         ppu.VRAMAddrReg2.W = ppu.TimedTmpPtr[0] | 0x2000;
-        //printf("Starting addresses : 0x%X\n",ppu.VRAMAddrReg2.W);
+        //console_printf(Console_Default, "Starting addresses : 0x%X\n",ppu.VRAMAddrReg2.W);
         
         XScroll = ppu.TimedHScroll[0];
 
@@ -982,7 +982,7 @@ t:0000 1100 0000 0000 = d:0000 0011
 
         break;
     case 1:        /* Control Register 2 */
-        //printf("PPU: new CR2 ; 0x%x\n", val);
+        //console_printf(Console_Default, "PPU: new CR2 ; 0x%x\n", val);
         ppu.ControlRegister2.b = val;
         break;
     case 3:        /* SPR-RAM Addresse Register */
@@ -1004,7 +1004,7 @@ x=d:00000111
             ppu.TmpVRamPtr = ((ppu.TmpVRamPtr & 0xFFE0) | ((val & 0xF8) >> 3));
             ppu.HScroll = val & 0x7;
 
-            //printf("%d -> 2005 w1: 0x%04X (val: 0x%02X)\n", ScanLine, ppu.TmpVRamPtr, val);
+            //console_printf(Console_Default, "%d -> 2005 w1: 0x%04X (val: 0x%02X)\n", ScanLine, ppu.TmpVRamPtr, val);
         }
         else
         {
@@ -1019,9 +1019,9 @@ t:0111 0000 0000 0000=d:0000 0111
 
             ppu.TmpVScroll = ((ppu.TmpVRamPtr & 0x700) >> 12) & 0x7;
             if (ppu.TmpVScroll != 0)
-                printf("2002: TmpVScroll == %d \n", ppu.TmpVScroll);
+                console_printf(Console_Default, "2002: TmpVScroll == %d \n", ppu.TmpVScroll);
             
-            //printf("%d -> 2005 w2: 0x%04X (val: 0x%02X)\n", ScanLine, ppu.TmpVRamPtr, val);
+            //console_printf(Console_Default, "%d -> 2005 w2: 0x%04X (val: 0x%02X)\n", ScanLine, ppu.TmpVRamPtr, val);
 
         }
         break;
@@ -1036,7 +1036,7 @@ t:1100 0000 0000 0000=0
 */
             ppu.TmpVRamPtr = ((ppu.TmpVRamPtr & 0xC0FF) | ((val&0x3F) << 8)) & 0x3FFF;
 
-            //printf("%d -> 2006 w1: 0x%04X (val: 0x%02X)\n", ScanLine, ppu.TmpVRamPtr, val);
+            //console_printf(Console_Default, "%d -> 2006 w1: 0x%04X (val: 0x%02X)\n", ScanLine, ppu.TmpVRamPtr, val);
         }
         else
         {
@@ -1049,7 +1049,7 @@ v=t
             ppu.TmpVRamPtr = ((ppu.TmpVRamPtr & 0xFF00) | (val & 0x00FF));
             ppu.VRAMAddrReg2.W = ppu.TmpVRamPtr;
 
-            //printf("%d -> 2006 w2: 0x%04X (val: 0x%02X)\n", ScanLine, ppu.TmpVRamPtr, val);
+            //console_printf(Console_Default, "%d -> 2006 w2: 0x%04X (val: 0x%02X)\n", ScanLine, ppu.TmpVRamPtr, val);
 
         }
         break;

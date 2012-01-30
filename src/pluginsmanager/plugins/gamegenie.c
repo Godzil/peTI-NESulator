@@ -14,7 +14,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <allegro.h>
+
+#include <os_dependent.h>
 
 #define __TINES_PLUGINS__
 #include <plugins/manager.h>
@@ -22,7 +23,16 @@
 
 #include <memory/manager.h>
 #include <types.h>
-#include "allegro.h"
+
+/* Allegro includes */
+#ifdef __APPLE__
+#define USE_CONSOLE
+#include <Allegro/allegro.h>
+#else
+#define USE_CONSOLE
+#include <allegro.h>
+#endif
+
 
 typedef enum gg_States_
 {
@@ -310,7 +320,7 @@ unsigned short SelectNumber(char *title, char *msg, byte size)
 
 int DispMenu(int itemc, char *itemv[], char *title)
 {
-    //printf("%s(%d, %p, \"%s\");\n", __func__, itemc, itemv, title);
+    //console_printf(Console_Default, "%s(%d, %p, \"%s\");\n", __func__, itemc, itemv, title);
     
     int selection = 0;
     int i;
@@ -428,7 +438,7 @@ byte gg_SelectPatch()
     for (i = 0; i < GG_MAX_PATCH; i++)
     {
         tmp = (char*) malloc(0x100);
-        printf("Items[%d]: %p\n", i, tmp);        
+        console_printf(Console_Default, "Items[%d]: %p\n", i, tmp);        
         if (gg_PatchUsed[i] == 0x00)
             sprintf(tmp, "Patch %d: Not used", i);
         else
@@ -456,7 +466,7 @@ byte gg_SelectPatch()
 
 void gg_PatchManager()
 {
-    printf("DTC!\n");
+    console_printf(Console_Default, "DTC!\n");
 }
 
 void gg_InitSearch()
@@ -484,7 +494,7 @@ typedef enum gg_SearchForMode_
 void gg_SearchForValue(byte value)
 {
     unsigned short addr;
-    byte oldValue;
+    //byte oldValue;
     byte currentValue;
     gg_ResultNumber = 0x00;
     for(addr = 0x000; addr < 0x800; addr ++)
@@ -494,7 +504,7 @@ void gg_SearchForValue(byte value)
             /* "Backup" the old ram */
             memcpy(gg_OldMainRAM, gg_MainRAM, 0x800);
             
-            oldValue = gg_MainRAM[addr];
+            //oldValue = gg_MainRAM[addr];
             currentValue = ReadMemory((addr&0xFF00)>>8,addr&0x00FF);
             
             if (currentValue != value)
@@ -597,7 +607,7 @@ byte gg_DisplayResults()
                 {
                     while(gg_use_MainRAM[addr] != 0xFF)
                         addr ++;
-                    printf("0x%04X [%d]\n", addr, i);
+                    console_printf(Console_Default, "0x%04X [%d]\n", addr, i);
                     tmp = (char*) malloc(0x100);
                     sprintf(tmp,"Patch: %08XAddress 0x%04X - Was: 0x%02X - Actual: 0x%02X",
                             i,
@@ -799,7 +809,7 @@ S02_MENU:
 int gg_Init()
 {
     int i;
-    printf("Initializing GG plugin...\n");
+    console_printf(Console_Default, "Initializing GG plugin...\n");
     
     plugin_install_keypressHandler('g', gg_Start);
 

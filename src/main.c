@@ -3,7 +3,7 @@
  *  main.c
  *
  *  Created by Manoel TRAPIER.
- *  Copyright (c) 2003-2008 986Corp. All rights reserved.
+ *  Copyright (c) 2003-2012 986Corp. All rights reserved.
  *
  *  $LastChangedDate$
  *  $Author$
@@ -87,6 +87,8 @@ double APU_BASEFREQ = 1.7897725;
 # error Cannot use ISPAL with ISNTSC together !
 #endif
 
+//#define MEMORY_TEST
+
 /* TI-NESulator Version */
 #define V_MAJOR 0
 #define V_MINOR 40
@@ -140,6 +142,7 @@ volatile unsigned long FPS, IPS;
 PALETTE pal;
 
 short IRQScanHit = -1;
+short SZHit = -1;
 
 /* palette */
 unsigned long ColorPalette[ 8 * 63 ];
@@ -177,6 +180,7 @@ void SaveSaveRam(char *name)
    FILE *fp;
    int i;
    char fname[512];
+   int ret;
    strcpy(fname, name);
    strcat(fname, ".svt");
    if ((fp = fopen(fname, "wb")))
@@ -184,7 +188,7 @@ void SaveSaveRam(char *name)
 	 console_printf(Console_Default, "Saving savestate '%s'\n", fname);
 	 for( i = 0x60; i < 0x80; i++)
 	 {
-	    fwrite(get_page_ptr(i), 1, 0x100, fp);
+	    ret = fwrite(get_page_ptr(i), 1, 0x100, fp);
 	 }
 	 
 	 fclose(fp);
@@ -196,7 +200,7 @@ void LoadSaveRam(char *name)
    FILE *fp;
    int i;
    char fname[512];
-   
+   int ret;
    strcpy(fname, name);
    strcat(fname, ".svt");
    if ((fp = fopen(fname, "rb")))
@@ -204,7 +208,7 @@ void LoadSaveRam(char *name)
 	 console_printf(Console_Default, "Loading savestate '%s'\n", fname);
 	 for( i = 0x60; i < 0x80; i++)
 	 {
-	    fread(get_page_ptr(i), 1, 0x0100, fp);
+	    ret = fread(get_page_ptr(i), 1, 0x0100, fp);
 	 }    
 	 fclose(fp);
 	 
@@ -215,7 +219,7 @@ void LoadSaveRam(char *name)
 void LoadPalette(char *filename, PALETTE pal)
 {
    FILE *fp;
-   
+   int ret;
    unsigned char r, v, b, i;
    console_printf(Console_Default, "%s: try to load pallette file '%s'", __func__, filename);
    if ((fp = fopen(filename, "rb")) != NULL)
@@ -224,9 +228,9 @@ void LoadPalette(char *filename, PALETTE pal)
 	 for (i = 0; i < 64; i++)
 	 {
 	    
-	    fread(&r, 1, 1, fp);
-	    fread(&v, 1, 1, fp);
-	    fread(&b, 1, 1, fp);
+	    ret = fread(&r, 1, 1, fp);
+	    ret = fread(&v, 1, 1, fp);
+	    ret = fread(&b, 1, 1, fp);
 	    
 	    /*            r = (r * 64) / 255;
 		v = (v * 64) / 255;
@@ -255,7 +259,7 @@ void LoadPalette(char *filename, PALETTE pal)
 	    ColorPalette[i + (6 * 63)] = SET_RGB(r - 10, v + 05, b + 05);
 	    
 	    /* Red + Green + Blue emphase */
-	    ColorPalette[i + (7 * 63)] = SET_RGB(r + 00, v + 00, b + 00);*/
+	    ColorPalette[i + (7 * 63)] = SET_RGB(r + 00, v + 00, b + 00);
 #else /* Else Use 8Bits */
 	    pal[i].r = r;
 	    pal[i].g = v;
@@ -284,16 +288,12 @@ void LoadPalette(char *filename, PALETTE pal)
    }
 }
 
-void *signalhandler(int sig)
+void signalhandler(int sig)
 {
-#if 0
    static int state=0;
 
-   byte F;
-   int J, I;
-   static char FA[8] = "NVRBDIZC";    
-   char S[128];
    char name[512];
+   
    static FILE *fp = NULL;
    sprintf(name, "crashdump-%d.txt", (int)time(NULL));
    if (state != 0)
@@ -332,27 +332,17 @@ void *signalhandler(int sig)
 	 case SIGTERM: fprintf(fp,"Termination request"); break;
    }
    fprintf(fp,"\nAn error occured during the excution.\n Crash report information :\n");
-#ifdef DEBUG
-   DAsm(S, R->PC.W);
-#endif
-   fprintf(fp, "CPU: A:%02X  P:%02X  X:%02X  Y:%02X  S:%04X  PC:%04X  Flags:[", 
-		 R->A, R->P, R->X, R->Y, R->S + 0x0100, R->PC.W);
-   for (J = 0, F = R->P; J < 8; J++, F <<= 1)
-	 fprintf(fp, "%c", F & 0x80 ? FA[J] : '.');
-   fprintf(fp, "]\nCPU: ");
-   fprintf(fp, "AT PC: [%02X - %s]   AT SP: [%02X %02X %02X]\nLast execution :\n", 
-           Rd6502(R->PC.W), S, 
-           Rd6502(0x0100 + (byte) (R->S + 1)), 
-           Rd6502(0x0100 + (byte) (R->S + 2)), 
-           Rd6502(0x0100 + (byte) (R->S + 3)));
-   showlastop(fp);
+
+   //quick6502_dump(cpu, fp);
+
+   //showlastop(fp);
    //       fprintf(fp, "PPU: CR1: 0x%02X (NT:%d AI:%d SP:%d BP:%d SS:%d NMI:%d)\n",ppu.ControlRegister1.b, ppu.ControlRegister1.s.NameTblAddr, ppu.ControlRegister1.s.AddrIncrmt, ppu.ControlRegister1.s.SptPattern, ppu.ControlRegister1.s.BgPattern, ppu.ControlRegister1.s.SpriteSize, ppu.ControlRegister1.s.VBlank_NMI);
    //       fprintf(fp, "PPU: CR2: 0x%02X (FBC/CI:%d SV:%d BV:%d SC:%d BC:%d DT:%d)\n",ppu.ControlRegister2.b,ppu.ControlRegister2.s.Colour,ppu.ControlRegister2.s.SpriteVisibility,ppu.ControlRegister2.s.BgVisibility,ppu.ControlRegister2.s.SpriteClipping,ppu.ControlRegister2.s.BgClipping,ppu.ControlRegister2.s.DisplayType);
    //       fprintf(fp, "PPU: SR: 0x%02X (VB:%d S0:%d SSC:%d VWF:%d)\n", ppu.StatusRegister.b,ppu.StatusRegister.s.VBlankOccur,ppu.StatusRegister.s.Sprite0Occur,ppu.StatusRegister.s.SprtCount,ppu.StatusRegister.s.VRAMProtect);
    //       fprintf(fp, "PPU: M:%d ST:%d VRAMPtr:0x%04X T:0x%04X\n",ppu.MirrorDir,ppu.ScreenType,ppu.VRAMAddrReg2.W,ppu.TmpVRamPtr);
    
    //MapperDump(fp);
-   
+#if 0   
    for(I = 0; I < 0xFFFF; I += 0x10)
 	 fprintf(fp, "%04X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X | %c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n",
 		    I,
@@ -377,12 +367,12 @@ void *signalhandler(int sig)
 		    isprint(Rd6502(I+0x0D))?Rd6502(I+0x0D):'_',
 		    isprint(Rd6502(I+0x0E))?Rd6502(I+0x0E):'_',
 		    isprint(Rd6502(I+0x0F))?Rd6502(I+0x0F):'_');
-   
+#endif   
    DumpMemoryState(fp);
    
    console_printf(Console_Error, "\nPlease join this informations when submiting crash report\n");
    if (fp != stderr) fclose(fp);
-#endif
+
    exit(-42);
 }
 
@@ -410,7 +400,6 @@ void WrHook4000Multiplexer(byte addr, byte value)
    static byte Sq2_reg3 = 0;
    
    double SQ = 0.0;
-   
    switch(addr)
    {
 #ifdef USE_SOUND    
@@ -623,8 +612,6 @@ byte RdHook4000Multiplexer(byte addr)
 	    
 	 case 0x15:
 	    ret = 0x1F;
-	    break;
-	    
 	 default:
 	    ret = 0x42;
    }   
@@ -645,7 +632,6 @@ void printUsage(int argc, char *argv[])
 int main(int argc, char *argv[])
 {    
    int i;
-   unsigned char j, k;
    unsigned char *MemoryPage;
    quick6502_cpuconfig CpuConfig;
    
@@ -665,11 +651,11 @@ int main(int argc, char *argv[])
     2kB Internal RAM, mirrored 4 times
     --------------------------------------- $0000
     */
-   console_init(Console_Default);
+   console_init(Console_Debug);
    /* Print the banner */
    console_printf(Console_Default, "--------------------------------------------------------------------------------\n"
           "Welcome to TI-NESulator v%d.%d - by Godzil\n"
-          "Copyright 2003-2008 TRAPIER Manoel (godzil@godzil.net)\n"
+          "Copyright 2003-2012 TRAPIER Manoel (godzil@godzil.net)\n"
           "%s\n%s\n%s\n"
           "--------------------------------------------------------------------------------\n\n", 
           V_MAJOR,
@@ -679,15 +665,15 @@ int main(int argc, char *argv[])
           VS_AUTHOR);
    
    console_printf(Console_Default, "Install signal handlers...\t[");
-   //    signal(SIGABRT,signalhandler);
+   signal(SIGABRT, signalhandler);
    console_printf(Console_Default, "A");
-   //    signal(SIGILL,signalhandler);
+   signal(SIGILL, signalhandler);
    console_printf(Console_Default, "I");
-   /*signal(SIGINT,signalhandler);*/
+   /*signal(SIGINT, signalhandler);*/
    console_printf(Console_Default, ".");
-   //    signal(SIGSEGV,signalhandler);
+   signal(SIGSEGV, signalhandler);
    console_printf(Console_Default, "S");
-   //    signal(SIGTERM,signalhandler);
+   signal(SIGTERM, signalhandler);
    console_printf(Console_Default, "T]\n");
    
    /*  */
@@ -812,6 +798,7 @@ int main(int argc, char *argv[])
    
 #define Value(s) (((s%0xFF) + (rand()%0xFF-128) )%0xFF)
    
+#ifdef MEMORY_TEST
    console_printf(Console_Default, "Testing memory validity...\n");
    
    map_sram();
@@ -841,12 +828,13 @@ int main(int argc, char *argv[])
       if ((k=MemoryOpCodeRead(i)) != j)
          console_printf(Console_Error, "Error opcode @ 0x%X [w:%d,r:%d]\n", i, j, k);
    }
-   
+#endif
    /* SRAM (0x6000 : 0x2000 bytes ) */
    MemoryPage = (unsigned char *)malloc (0x2000);
    
    set_page_ptr_8k(0x60, MemoryPage);
    
+#ifdef MEMORY_TEST
    for(i = 0x6000; i < 0x8000; i ++)
    {    
       if (MemoryPage[i-0x6000] != (k = MemoryRead(i)))
@@ -865,7 +853,7 @@ int main(int argc, char *argv[])
       if ((k=MemoryOpCodeRead(i)) != j)
          console_printf(Console_Error, "Error opcode @ 0x%X [w:%d,r:%d]\n", i, j, k);
    }
-   
+
    console_printf(Console_Default, "Reseting main RAM...\t\t");
 
    /* Force the stack to be full of zero */
@@ -875,6 +863,7 @@ int main(int argc, char *argv[])
    }
    
    console_printf(Console_Default, "[ OK ]\n");
+#endif
  
    Cart = malloc( sizeof (NesCart));
    if (Cart == NULL)
@@ -887,8 +876,13 @@ int main(int argc, char *argv[])
    {
       int fd;
       console_printf(Console_Default, "Loading FDS ROM...\t\t");
-	 //fd = open("../data/disksys.rom", O_RDONLY);
-	 fd = open("TI-NESulator.app/Contents/Resources/disksys.rom", O_RDONLY);
+	 fd = open("../data/disksys.rom", O_RDONLY);
+	 //fd = open("TI-NESulator.app/Contents/Resources/disksys.rom", O_RDONLY);
+      if (fd < 0)
+      {
+         console_printf(Console_Error, "Can't find FDS ROM...\n");
+         exit(-1);
+      }
       
       FDSRom = mmap(NULL, 8*1024, PROT_READ, MAP_PRIVATE, fd, 0);
       console_printf(Console_Default, "%p [ OK ]\n", FDSRom);
@@ -930,7 +924,7 @@ int main(int argc, char *argv[])
       }        
       
    }
-   
+
    unmap_sram();
    
    InitPaddle(&P1);
@@ -959,7 +953,7 @@ int main(int argc, char *argv[])
       exit(-1);
    }
    
-   DumpMemoryState();
+   DumpMemoryState(stdout);
    
    if (Cart->Flags & iNES_4SCREEN)
    {
@@ -1033,7 +1027,7 @@ int main(int argc, char *argv[])
    }
    return 0;
 }
-//END_OF_MAIN()
+END_OF_MAIN()
 
 /* Access directly to Memory pages *HACKISH* */
 extern byte *memory_pages[0xFF];
@@ -1091,7 +1085,7 @@ void Loop6502(quick6502_cpu *R)
    
    ret = 0;
    
-   if ( mapper_irqloop (ScanLine) )
+   if ( (mapper_irqloop) && ( mapper_irqloop (ScanLine) ) )
    {
       ret = Q6502_IRQ_SIGNAL;
       IRQScanHit = ScanLine;
@@ -1108,12 +1102,11 @@ void Loop6502(quick6502_cpu *R)
       ret = Q6502_NMI_SIGNAL;        
    }
    
-   if (ScanLine == 239)
-      frame++;  
-   
    if (ScanLine == (239 + VBLANK_TIME))
    {  /* End of VBlank Time */
-      
+      frame++;
+      SZHit = -1;
+      IRQScanHit = -1;
       /* Sync at 60FPS */
       /* Get current time in microseconds */
       gettimeofday(&timeEnd, NULL);     
@@ -1129,9 +1122,9 @@ void Loop6502(quick6502_cpu *R)
 #endif
       
       /* If we press Page Up, we want to accelerate "time" */
-      if (!key[KEY_PGUP])
-	  if ((WaitTime >= 0) && (WaitTime < 100000))
-	  usleep(WaitTime);
+      if ((!key[KEY_PGUP]) && (!key[KEY_Y]))
+         if ((WaitTime >= 0) && (WaitTime < 100000))
+	         usleep(WaitTime);
       
       /* Now get the time after sleep */
       gettimeofday(&timeStart, NULL);
@@ -1142,7 +1135,7 @@ void Loop6502(quick6502_cpu *R)
       delta *= 1000000;
       delta += (timeStart.tv_usec - timeEnd.tv_usec);
       delta = WaitTime - delta;
-      
+
       /* To avoid strange time warp when stoping emulation or using acceleration a lot */
       if ((delta > 10000) || (delta < -10000)) 
          delta = 0;
@@ -1153,7 +1146,6 @@ void Loop6502(quick6502_cpu *R)
       ScanLine = 0;
    else
       ScanLine++;
-   
    
    //console_printf(Console_Default, "SL:%d HBT:%d VbT:%d\n", ScanLine, HBLANK_TIME, VBLANK_TIME);
    if (keypressed())

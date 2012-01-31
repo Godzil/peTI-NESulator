@@ -355,8 +355,8 @@ void ppu_dumpPalette(int x, int y)
 {
     int i;
 
-    textout(Buffer, font, "Bg Palette", x , y, 5);
-    textout(Buffer, font, "Sprt Palette", x + 90, y, 5);
+    textout_ex(Buffer, font, "Bg Palette", x , y, 5, 0);
+    textout_ex(Buffer, font, "Sprt Palette", x + 90, y, 5, 0);
 
     rect(Buffer, x+0, y+20, x+4 * 20 + 2, y + 4 * 20 + 22, 0);
     rect(Buffer, x+90, y+20, x+90 + 4 * 20 + 2, y + 4 * 20 + 22, 0);

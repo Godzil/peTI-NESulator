@@ -32,10 +32,12 @@ Mapper Mappers[] = {
 
 { 1 , "MMC1", mmc1_InitMapper, norom_MapperIRQ, mmc1_MapperDump },   
 { 4 , "MMC3", mmc3_InitMapper, mmc3_MapperIRQ, mmc3_MapperDump },   
-{ 10, "MMC4", mmc3_InitMapper, norom_MapperIRQ, mmc4_MapperDump }, 
-
-{ 65, "Irem H3001", iremh3001_InitMapper, iremh3001_MapperIRQ, iremh3001_MapperDump },   
+{ 10, "MMC4", mmc4_InitMapper, norom_MapperIRQ, mmc4_MapperDump }, 
    
+{ 65, "Irem H3001", iremh3001_InitMapper, iremh3001_MapperIRQ, iremh3001_MapperDump },   
+
+
+{ 100, "Floppy Disk System", NULL, norom_MapperIRQ, norom_MapperDump },   
    /* EOL tag */
 { 0, NULL, NULL, NULL, NULL }
 };

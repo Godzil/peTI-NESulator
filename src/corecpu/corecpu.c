@@ -12,9 +12,12 @@
  *
  */
 
+/* TODO: Add Inst/MemAccess breakpoints */
+
 /* Depending on the OS, one of these provide the malloc function */
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
 
 #include <os_dependent.h>
@@ -26,13 +29,67 @@
 //#define TRACE_INSTRUCTIONS
 
 #ifdef TRACE_INSTRUCTIONS
-#define TRACEi(trace) do { console_printf(Console_Debug, "$%04X - ", cpu->reg_PC - 1); console_printf_d trace ; console_printf(Console_Debug, "\n"); } while(0)
-#define TRACEiE(trace) do { console_printf(Console_Debug, "$%04X - ", cpu->reg_PC - 1); console_printf_d trace ; console_printf(Console_Debug, "\n"); } while(0)
+#define TRACEi(trace) do { console_printf(Console_Debug, ">> $%04X - ", cpu->reg_PC-1); console_printf_d trace ; console_printf(Console_Debug, "\n"); } while(0)
+#define TRACEiE(trace) do { console_printf(Console_Debug, ">> $%04X - ", cpu->reg_PC-1); console_printf_d trace ; console_printf(Console_Debug, "\n"); } while(0)
 #else
 #define TRACEi(trace) { }
 //#define TRACEiE(trace) { }
-#define TRACEiE(trace) do { console_printf(Console_Debug, "$%04X - ", cpu->reg_PC - 1); console_printf_d trace ; console_printf(Console_Debug, "\n"); } while(0)
+#define TRACEiE(trace) do { console_printf(Console_Debug, ">> $%04X - ", cpu->reg_PC-1); console_printf_d trace ; console_printf(Console_Debug, "\n"); } while(0)
 #endif
+
+/*
+ * IP_ == "Instruction Parameter"
+ * nP: No parameters
+ * iM: Immediate
+ * iX: Indirect by X
+ * iY: Indirect by Y
+ * zP: Zero Page
+ * zX: Zero Page Indexec by X
+ * zY: Zero Page Indexec by Y
+ * iD: Indirect Double
+ * aB: Absolute
+ * aX: Absolute by X
+ * aY: Absolute by Y 
+ * rE: Relative
+ */
+#define IP_nP "N"
+#define IP_iM "I"
+#define IP_iX "X"
+#define IP_iY "Y"
+#define IP_zP "0"
+#define IP_zX "z"
+#define IP_zY "Z"
+#define IP_iD "D"
+#define IP_aB "A"
+#define IP_aX "x"
+#define IP_aY "y"
+#define IP_rE "R"
+
+#define IP_nPc 'N'
+#define IP_iMc 'I'
+#define IP_iXc 'X'
+#define IP_iYc 'Y'
+#define IP_zPc '0'
+#define IP_zXc 'z'
+#define IP_zYc 'Z'
+#define IP_iDc 'D'
+#define IP_aBc 'A'
+#define IP_aXc 'x'
+#define IP_aYc 'y'
+#define IP_rEc 'R'
+
+#define IPf_nP ""
+#define IPf_iM " $%02X"
+#define IPf_iX " ($%02X,X)"
+#define IPf_iY " ($%02X),Y"
+#define IPf_zP " $%02X"
+#define IPf_zX " $%02X,X"
+#define IPf_zY " $%02X,Y"
+#define IPf_iD " ($%02X%02X)"
+#define IPf_aB " $%02X%02X"
+#define IPf_aX " $%02X%02X,X"
+#define IPf_aY " $%02X%02X,Y"
+#define IPf_rE " $%02X%02X"
 
 #define _INTERNAL_QUICK6502_CORECPU_
 #include "corecpu.h"
@@ -49,15 +106,15 @@
 #define MEMORY_READ_ZP() cpu->memory_page0_read(cpu->memory_opcode_read(cpu->reg_PC++))
 
 #define MEMORY_READ_IX() cpu->memory_read( (cpu->memory_page0_read(cpu->memory_opcode_read(cpu->reg_PC  ) + cpu->reg_X    ) & 0xFF) |\
-                                           (cpu->memory_page0_read(cpu->memory_opcode_read(cpu->reg_PC++) + cpu->reg_X + 1) << 8) )
+                                           (cpu->memory_page0_read(cpu->memory_opcode_read(cpu->reg_PC  ) + cpu->reg_X + 1) << 8) ); cpu->reg_PC++
 #define MEMORY_READ_IY() cpu->memory_read( ( cpu->memory_page0_read(cpu->memory_opcode_read(cpu->reg_PC  )    ) |\
-                                            (cpu->memory_page0_read(cpu->memory_opcode_read(cpu->reg_PC++) + 1) << 8) ) + cpu->reg_Y  )
+                                            (cpu->memory_page0_read(cpu->memory_opcode_read(cpu->reg_PC  ) + 1) << 8) ) + cpu->reg_Y  ); cpu->reg_PC++
 
 #define MEMORY_READ_ZX() cpu->memory_page0_read( (cpu->memory_opcode_read(cpu->reg_PC++) + cpu->reg_X) )
 #define MEMORY_READ_ZY() cpu->memory_page0_read( (cpu->memory_opcode_read(cpu->reg_PC++) + cpu->reg_Y) )
 
-#define MEMORY_READ_AB() cpu->memory_read( ((cpu->memory_opcode_read(cpu->reg_PC++)     ) |\
-                                            (cpu->memory_opcode_read(cpu->reg_PC++) << 8) ))
+#define MEMORY_READ_AB() cpu->memory_read( ((cpu->memory_opcode_read(cpu->reg_PC  )     ) |\
+                                            (cpu->memory_opcode_read(cpu->reg_PC+1) << 8) )); cpu->reg_PC += 2
 
 #define MEMORY_READ_AX() cpu->memory_read( ((op1     ) |\
                                             (op2 << 8) ) + cpu->reg_X)
@@ -68,26 +125,26 @@
 #define MEMORY_WRITE_ZP(val) cpu->memory_page0_write(cpu->memory_opcode_read(cpu->reg_PC++), val)
 
 #define MEMORY_WRITE_IX(val) cpu->memory_write( (cpu->memory_page0_read(cpu->memory_opcode_read(cpu->reg_PC  ) + cpu->reg_X    ) & 0xFF) |\
-                                                 (cpu->memory_page0_read(cpu->memory_opcode_read(cpu->reg_PC++) + cpu->reg_X + 1) << 8)   , val)
+                                                 (cpu->memory_page0_read(cpu->memory_opcode_read(cpu->reg_PC  ) + cpu->reg_X + 1) << 8)   , val); cpu->reg_PC++
 #define MEMORY_WRITE_IY(val) cpu->memory_write( ( cpu->memory_page0_read(cpu->memory_opcode_read(cpu->reg_PC  )    ) |\
-                                                 (cpu->memory_page0_read(cpu->memory_opcode_read(cpu->reg_PC++) + 1) << 8) ) + cpu->reg_Y , val)
+                                                 (cpu->memory_page0_read(cpu->memory_opcode_read(cpu->reg_PC  ) + 1) << 8) ) + cpu->reg_Y , val); cpu->reg_PC++
 
 #define MEMORY_WRITE_ZX(val) cpu->memory_page0_write( (cpu->memory_opcode_read(cpu->reg_PC++) + cpu->reg_X), val)
 #define MEMORY_WRITE_ZY(val) cpu->memory_page0_write( (cpu->memory_opcode_read(cpu->reg_PC++) + cpu->reg_Y), val)
 
-#define MEMORY_WRITE_AB(val) cpu->memory_write( ((cpu->memory_opcode_read(cpu->reg_PC++)     ) |\
-                                                 (cpu->memory_opcode_read(cpu->reg_PC++) << 8) ), val)
+#define MEMORY_WRITE_AB(val) cpu->memory_write( ((cpu->memory_opcode_read(cpu->reg_PC  )     ) |\
+                                                 (cpu->memory_opcode_read(cpu->reg_PC+1) << 8) ), val); cpu->reg_PC += 2
 
-#define MEMORY_WRITE_AX(val) cpu->memory_write( ((cpu->memory_opcode_read(cpu->reg_PC++)     ) |\
-                                                 (cpu->memory_opcode_read(cpu->reg_PC++) << 8) ) + cpu->reg_X, val)
-#define MEMORY_WRITE_AY(val) cpu->memory_write( ((cpu->memory_opcode_read(cpu->reg_PC++)     ) |\
-                                                 (cpu->memory_opcode_read(cpu->reg_PC++) << 8) ) + cpu->reg_Y, val)
+#define MEMORY_WRITE_AX(val) cpu->memory_write( ((cpu->memory_opcode_read(cpu->reg_PC  )     ) |\
+                                                 (cpu->memory_opcode_read(cpu->reg_PC+1) << 8) ) + cpu->reg_X, val); cpu->reg_PC += 2 
+#define MEMORY_WRITE_AY(val) cpu->memory_write( ((cpu->memory_opcode_read(cpu->reg_PC  )     ) |\
+                                                 (cpu->memory_opcode_read(cpu->reg_PC+1) << 8) ) + cpu->reg_Y, val); cpu->reg_PC += 2
 
 
 #define PUSH_S(value) cpu->memory_stack_write(0x100 | (cpu->reg_S--), value)
 #define POP_S()      (cpu->memory_stack_read (0x100 | (++cpu->reg_S)       ))
 
-#ifdef NO_DECIMAL
+#ifdef Q6502_NO_DECIMAL
 
 #define ADC_OPERATION(read) do {\
    unsigned short tmp = 0; unsigned char v = read; \
@@ -110,7 +167,7 @@
 } while(0)
 
 #else
-#error Quick6502 doesn't actually support DECIMAL mode
+#error Quick6502 doesn t actually support DECIMAL mode
 #endif
 
 
@@ -346,7 +403,7 @@ void quick6502_int(quick6502_cpu *cpu, quick6502_signal signal)
        PUSH_S((cpu->reg_PC >> 8) & 0xFF   );
        PUSH_S((cpu->reg_PC     ) & 0xFF   );
        PUSH_S( cpu->reg_P                 );
-       cpu->reg_P = cpu->reg_P | Q6502_I_FLAG & ~Q6502_B_FLAG;
+       cpu->reg_P = (cpu->reg_P | Q6502_I_FLAG) & ~Q6502_B_FLAG;
 
        cpu->reg_PC = (cpu->memory_read(Q6502_NMI_LOW)) | (cpu->memory_read(Q6502_NMI_HIGH)<<8);
        
@@ -363,10 +420,10 @@ void quick6502_int(quick6502_cpu *cpu, quick6502_signal signal)
 void quick6502_dump(quick6502_cpu *cpu, FILE * fp)
 {
    short i;
-   char instr[20];
+   char instr[100];
    /* Display registers */
    fprintf(fp, 
-       "Quick6502: PC:$%04X A:$%02X X:$%02X Y:$%02X S:$%02X P:$%02X P:[%c%c%c%c%c%c%c%c]\n",
+       "## Quick6502: PC:$%04X A:$%02X X:$%02X Y:$%02X S:$%02X P:$%02X [%c%c%c%c%c%c%c%c]\n",
        cpu->reg_PC, cpu->reg_A, cpu->reg_X, cpu->reg_Y, cpu->reg_S, cpu->reg_P,
        cpu->reg_P&Q6502_N_FLAG ? 'N':'.',
        cpu->reg_P&Q6502_V_FLAG ? 'V':'.',
@@ -379,28 +436,59 @@ void quick6502_dump(quick6502_cpu *cpu, FILE * fp)
          );
 
    /* Display stack */
-   fprintf(fp, "Quick6502: Stack: [ ");
+   fprintf(fp, "## Quick6502: Stack: [ ");
    for (i = cpu->reg_S+1; i < 0x100; i++)
    {
-    fprintf(fp, "$%02X ", cpu->memory_opcode_read(0x100 | i));
+    fprintf(fp, "$%02X ", cpu->memory_read(0x100 | i));
    }
    fprintf(fp, "] Run:%c Cycle:%ld\n", cpu->running?'Y':'N', cpu->cycle_done);
+   
+   fprintf(fp, "## Quick6502: InstrMem: [ ");
+   for (i = 0; i < 0x5; i++)
+   {
+    fprintf(fp, "$%02X ", cpu->memory_opcode_read(cpu->reg_PC + i));
+   }
+   fprintf(fp, "]\n");
 
-   quick6502_getinstruction(cpu, cpu->reg_PC, instr);
-   fprintf(fp, "Quick6502: Instruction at PC: %s\n", instr);
+   quick6502_getinstruction(cpu, (1==1), cpu->reg_PC, instr, NULL);
+   fprintf(fp, "## $%04X: %s\n", cpu->reg_PC, instr);
 }
 
-/** Get current instruction name at specified address and put it into buffer */
-void quick6502_getinstruction(quick6502_cpu *cpu, unsigned short addr, char *buffer)
+typedef enum InstructionNameTag
 {
-   buffer[0] = 0;
-}
+   n_ILG = 0, n_NOP,
+   n_CLI, n_SEI, n_CLC, n_SEC, n_CLD, n_SED, n_CLV,
+   n_LDA, n_LDX, n_LDY, n_STA, n_STX, n_STY,
+   n_TXA, n_TAX, n_TAY, n_TYA, n_TSX, n_TXS,
+   n_PHA, n_PLA, n_PHP, n_PLP,
+   n_DEX, n_DEY, n_INX, n_INY, n_DEC, n_INC,
+   n_JSR, n_RTS, n_JMP, n_BRK, n_RTI, 
+   n_BCC, n_BCS, n_BEQ, n_BNE, n_BHI, n_BPL, n_BVS, n_BVC, n_BMI,
+   n_EOR, n_AND, n_BIT, n_ORA, n_ADC, n_SBC,
+   n_ROL, n_ROR, n_ASL, n_LSR,
+   n_CMP, n_CPX, n_CPY,
+} InstructionNameTag;
+
+char *InstructionName[] =
+{
+   "ILLEGAL", "NOP",
+   "CLI", "SEI", "CLC", "SEC", "CLD", "SED", "CLV",
+   "LDA", "LDX", "LDY", "STA", "STX", "STY",
+   "TXA", "TAX", "TAY", "TYA", "TSX", "TXS",
+   "PHA", "PLA", "PHP", "PLP",
+   "DEX", "DEY", "INX", "INY", "DEC", "INC",
+   "JSR", "RTS", "JMP", "BRK", "RTI",
+   "BCC", "BCS", "BEQ", "BNE", "BHI", "BPL", "BVS", "BVC", "BVS",
+   "EOR", "AND", "BIT", "ORA", "ADC", "SBC",
+   "ROL", "ROR", "ASL", "LSR",
+   "CMP", "CPX", "CPY",
+};
 
 /**
  * Free the CPU 
  *
  * This function will free the CPU only if it's not currently used, it will
- * return !0 if everything goes well and 0 if the free is impossible
+ * return 0 if everything goes well and !0 if the free is impossible
  */
 int quick6502_free(quick6502_cpu *cpu)
 {
@@ -447,52 +535,52 @@ INSTRUCTION(ILLEG)
 }
 
 /** 58 : CLI - CLear Interrupt **/
-INSTRUCTION(CLIiM)
+INSTRUCTION(CLInP)
 {
-   TRACEi(("CLC"));
+   TRACEi(("CLI"));
    cpu->reg_P &= ~Q6502_I_FLAG;
 }
 /** 78 : SEI - SEt Interrupt **/
-INSTRUCTION(SEIiM)
+INSTRUCTION(SEInP)
 {
    TRACEi(("SEI"));
    cpu->reg_P |= Q6502_I_FLAG;
 }
 
 /** 18 : CLC - CLear Carry **/
-INSTRUCTION(CLCiM)
+INSTRUCTION(CLCnP)
 {
    TRACEi(("CLC"));
    cpu->reg_P &= ~Q6502_C_FLAG;
 }
 /** 38 : SEC - SEt Carry **/
-INSTRUCTION(SECiM)
+INSTRUCTION(SECnP)
 {
    TRACEi(("SEC"));
    cpu->reg_P |= Q6502_C_FLAG;
 }
 
 /** D8 : CLD - CLear Decimal **/
-INSTRUCTION(CLDiM)
+INSTRUCTION(CLDnP)
 {
    TRACEi(("CLD"));
    cpu->reg_P &= ~Q6502_D_FLAG;
 }
 /** F8 : SED - SEt Decimal **/
-INSTRUCTION(SEDiM)
+INSTRUCTION(SEDnP)
 {
    TRACEi(("SED"));
    cpu->reg_P |= Q6502_D_FLAG;
 }
 /** B8 : CLV - CLear oVerflo **/
-INSTRUCTION(CLViM)
+INSTRUCTION(CLVnP)
 {
    TRACEi(("CLV"));
    cpu->reg_P &= ~Q6502_V_FLAG;
 }
 
 /** EA : NOP - NO oPeration **/
-INSTRUCTION(NOPiM)
+INSTRUCTION(NOPnP)
 {
    TRACEi(("NOP"));
 }
@@ -752,7 +840,7 @@ INSTRUCTION(STYaB)
 /**** Register functions ****/
 
 /** AA : TAX - Transfer A to X **/
-INSTRUCTION(TAXiM)
+INSTRUCTION(TAXnP)
 {
    TRACEi(("TAX"));
    cpu->reg_X = cpu->reg_A;
@@ -760,7 +848,7 @@ INSTRUCTION(TAXiM)
 }
 
 /** 8A : TXA - Transfer X to A **/
-INSTRUCTION(TXAiM)
+INSTRUCTION(TXAnP)
 {
    TRACEi(("TXA"));
    cpu->reg_A = cpu->reg_X;
@@ -768,7 +856,7 @@ INSTRUCTION(TXAiM)
 }
 
 /** A8 : TAY - Transfer A to Y **/
-INSTRUCTION(TAYiM)
+INSTRUCTION(TAYnP)
 {
    TRACEi(("TAY"));
    cpu->reg_Y = cpu->reg_A;
@@ -776,7 +864,7 @@ INSTRUCTION(TAYiM)
 }
 
 /** 98 : TYA - Transfer Y to A **/
-INSTRUCTION(TYAiM)
+INSTRUCTION(TYAnP)
 {
    TRACEi(("TYA"));
    cpu->reg_A = cpu->reg_Y;
@@ -784,7 +872,7 @@ INSTRUCTION(TYAiM)
 }
 
 /* BA : TSX - Transfer S to X **/
-INSTRUCTION(TSXiM)
+INSTRUCTION(TSXnP)
 {
    TRACEi(("TSX"));
    cpu->reg_X = cpu->reg_S;
@@ -792,7 +880,7 @@ INSTRUCTION(TSXiM)
 }
 
 /** 9A : TXS - Transfer X to S **/
-INSTRUCTION(TXSiM)
+INSTRUCTION(TXSnP)
 {
    TRACEi(("TXS"));
    cpu->reg_S = cpu->reg_X;
@@ -801,7 +889,7 @@ INSTRUCTION(TXSiM)
 /**** Simple register operation instructions ****/
 
 /** CA : DEX - DEcrement X **/
-INSTRUCTION(DEXiM)
+INSTRUCTION(DEXnP)
 {
    TRACEi(("DEX"));
    cpu->reg_X --;
@@ -809,7 +897,7 @@ INSTRUCTION(DEXiM)
 }
 
 /** 88 : DEY - DEcrement Y **/
-INSTRUCTION(DEYiM)
+INSTRUCTION(DEYnP)
 {
    TRACEi(("DEY"));
    cpu->reg_Y --;
@@ -817,7 +905,7 @@ INSTRUCTION(DEYiM)
 }
 
 /** E8 : INX - INcrement X **/
-INSTRUCTION(INXiM)
+INSTRUCTION(INXnP)
 {
    TRACEi(("INX"));
    cpu->reg_X ++;
@@ -825,7 +913,7 @@ INSTRUCTION(INXiM)
 }
 
 /** C8 : INY - INcrement Y **/
-INSTRUCTION(INYiM)
+INSTRUCTION(INYnP)
 {
    TRACEi(("INY"));
    cpu->reg_Y ++;
@@ -835,14 +923,14 @@ INSTRUCTION(INYiM)
 /**** Stack related instructions ****/
 
 /** 48 : PHA - PusH A */
-INSTRUCTION(PHAiM)
+INSTRUCTION(PHAnP)
 {
    TRACEi(("PHA"));
    PUSH_S(cpu->reg_A);
 }
 
 /** 68 : PLA - PuLl A */
-INSTRUCTION(PLAiM)
+INSTRUCTION(PLAnP)
 {
    TRACEi(("PLA"));
    cpu->reg_A = POP_S();
@@ -850,14 +938,14 @@ INSTRUCTION(PLAiM)
 }
 
 /** 08 : PHP - PusH P */
-INSTRUCTION(PHPiM)
+INSTRUCTION(PHPnP)
 {
    TRACEi(("PHP"));
    PUSH_S((cpu->reg_P | Q6502_R_FLAG | Q6502_B_FLAG));
 }
 
 /** 28 : PLP - PuLl P */
-INSTRUCTION(PLPiM)
+INSTRUCTION(PLPnP)
 {
    TRACEi(("PLP"));
    cpu->reg_P = POP_S() & ~(Q6502_R_FLAG | Q6502_B_FLAG);
@@ -880,10 +968,11 @@ INSTRUCTION(JSRaB)
 }
 
 /** 60 : RTS - ReTurn from Subrutine */
-INSTRUCTION(RTSiM)
+INSTRUCTION(RTSnP)
 {
    TRACEi(("RTS"));
-   cpu->reg_PC = POP_S() | (POP_S() << 8);
+   cpu->reg_PC = POP_S();
+   cpu->reg_PC |= (POP_S() << 8);
    cpu->reg_PC ++;
 }
 
@@ -891,7 +980,7 @@ INSTRUCTION(RTSiM)
 INSTRUCTION(JMPaB)
 {
    TRACEi(("JMP $%02X%02X", cpu->memory_opcode_read(cpu->reg_PC+1), cpu->memory_opcode_read(cpu->reg_PC)));
-   cpu->reg_PC = cpu->memory_opcode_read(cpu->reg_PC++) | (cpu->memory_opcode_read(cpu->reg_PC) << 8);
+   cpu->reg_PC = cpu->memory_opcode_read(cpu->reg_PC) | (cpu->memory_opcode_read(cpu->reg_PC+1) << 8);
 }
 
 /** 6C : JMP ($xxxx) - JuMP inconditionaly to ($xxxx) **/
@@ -904,7 +993,7 @@ INSTRUCTION(JMPiD)
 }
 
 /** 00 : BRK - BReaK **/
-INSTRUCTION(BRKiM)
+INSTRUCTION(BRKnP)
 {
    TRACEi(("BRK"));
    cpu->reg_PC++;
@@ -917,11 +1006,12 @@ INSTRUCTION(BRKiM)
 }
 
 /** 40 : RTI - ReTurn from Interruption **/
-INSTRUCTION(RTIiM)
+INSTRUCTION(RTInP)
 {
    TRACEi(("RTI"));
    cpu->reg_P = POP_S();
-   cpu->reg_PC = POP_S() | (POP_S() << 8);
+   cpu->reg_PC  = POP_S();
+   cpu->reg_PC |= (POP_S() << 8);
 
    if (cpu->int_pending != 0)
    {
@@ -935,7 +1025,7 @@ INSTRUCTION(BCCrE)
    TRACEi(("BCC $%04X", cpu->reg_PC + (signed char) cpu->memory_opcode_read(cpu->reg_PC) + 1));
    if (!(cpu->reg_P & Q6502_C_FLAG))
    {
-      cpu->reg_PC += (signed char) cpu->memory_opcode_read(cpu->reg_PC++) + 1;
+      cpu->reg_PC += (signed char) cpu->memory_opcode_read(cpu->reg_PC) + 1;
       /* Need to set timing */
 
       /* +1 is same page */
@@ -952,7 +1042,7 @@ INSTRUCTION(BCSrE)
    TRACEi(("BCS $%04X", cpu->reg_PC + (signed char) cpu->memory_opcode_read(cpu->reg_PC) + 1));
    if (cpu->reg_P & Q6502_C_FLAG)
    {
-      cpu->reg_PC += (signed char) cpu->memory_opcode_read(cpu->reg_PC ++) + 1;
+      cpu->reg_PC += (signed char) cpu->memory_opcode_read(cpu->reg_PC) + 1;
       /* Need to set timing */
 
       /* +1 is same page */
@@ -969,7 +1059,7 @@ INSTRUCTION(BEQrE)
    TRACEi(("BEQ $%04X", cpu->reg_PC + (signed char) cpu->memory_opcode_read(cpu->reg_PC) + 1));
    if (cpu->reg_P & Q6502_Z_FLAG)
    {
-      cpu->reg_PC += (signed char) cpu->memory_opcode_read(cpu->reg_PC ++) + 1;
+      cpu->reg_PC += (signed char) cpu->memory_opcode_read(cpu->reg_PC) + 1;
       /* Need to set timing */
 
       /* +1 is same page */
@@ -986,7 +1076,7 @@ INSTRUCTION(BMIrE)
    TRACEi(("BMI $%04X", cpu->reg_PC + (signed char) cpu->memory_opcode_read(cpu->reg_PC) + 1));
    if (cpu->reg_P & Q6502_N_FLAG)
    {
-      cpu->reg_PC += (signed char) cpu->memory_opcode_read(cpu->reg_PC ++) + 1;
+      cpu->reg_PC += (signed char) cpu->memory_opcode_read(cpu->reg_PC) + 1;
       /* Need to set timing */
 
       /* +1 is same page */
@@ -1003,7 +1093,7 @@ INSTRUCTION(BNErE)
    TRACEi(("BNE $%04X", cpu->reg_PC + (signed char) cpu->memory_opcode_read(cpu->reg_PC) + 1));
    if (!(cpu->reg_P & Q6502_Z_FLAG))
    {
-      cpu->reg_PC += (signed char) cpu->memory_opcode_read(cpu->reg_PC ++) + 1;
+      cpu->reg_PC += (signed char) cpu->memory_opcode_read(cpu->reg_PC) + 1;
       /* Need to set timing */
 
       /* +1 is same page */
@@ -1020,7 +1110,7 @@ INSTRUCTION(BPLrE)
    TRACEi(("BPL $%04X", cpu->reg_PC + (signed char) cpu->memory_opcode_read(cpu->reg_PC) + 1));
    if (!(cpu->reg_P & Q6502_N_FLAG))
    {
-      cpu->reg_PC += (signed char) cpu->memory_opcode_read(cpu->reg_PC ++) + 1;
+      cpu->reg_PC += (signed char) cpu->memory_opcode_read(cpu->reg_PC) + 1;
       /* Need to set timing */
 
       /* +1 is same page */
@@ -1037,7 +1127,7 @@ INSTRUCTION(BVCrE)
    TRACEi(("BVC $%04X", cpu->reg_PC + (signed char) cpu->memory_opcode_read(cpu->reg_PC) + 1));
    if (!(cpu->reg_P & Q6502_V_FLAG))
    {
-      cpu->reg_PC += (signed char) cpu->memory_opcode_read(cpu->reg_PC ++) + 1;
+      cpu->reg_PC += (signed char) cpu->memory_opcode_read(cpu->reg_PC) + 1;
       /* Need to set timing */
 
       /* +1 is same page */
@@ -1054,7 +1144,7 @@ INSTRUCTION(BVSrE)
    TRACEi(("BVS $%04X", cpu->reg_PC + (signed char) cpu->memory_opcode_read(cpu->reg_PC) + 1));
    if (cpu->reg_P & Q6502_V_FLAG)
    {
-      cpu->reg_PC += (signed char) cpu->memory_opcode_read(cpu->reg_PC ++) + 1;
+      cpu->reg_PC += (signed char) cpu->memory_opcode_read(cpu->reg_PC) + 1;
       /* Need to set timing */
 
       /* +1 is same page */
@@ -1515,28 +1605,28 @@ INSTRUCTION(BITaB)
 }
 
 /** 2A : ROL A **/
-INSTRUCTION(ROLiM)
+INSTRUCTION(ROLnP)
 {
    TRACEi(("ROL A"));
    ROL_OPERATION(cpu->reg_A);
 }
 
 /** 6A : ROR A **/
-INSTRUCTION(RORiM)
+INSTRUCTION(RORnP)
 {
    TRACEi(("ROR A"));
    ROR_OPERATION(cpu->reg_A);
 }
 
 /** 0A : ASL A **/
-INSTRUCTION(ASLiM)
+INSTRUCTION(ASLnP)
 {
    TRACEi(("ASL A"));
    ASL_OPERATION(cpu->reg_A);
 }
 
 /** 4A : LSR A **/
-INSTRUCTION(LSRiM)
+INSTRUCTION(LSRnP)
 {
    TRACEi(("LSR A"));
    LSR_OPERATION(cpu->reg_A);
@@ -1800,34 +1890,346 @@ INSTRUCTION(INCzX)
    NZ_FLAG_UPDATE(val);
 }
 
-/* */
-static InstructionFunction InstructionTable[256] =
+/* iM: Immediate
+ * iX: Indirect by X
+ * iY: Indirect by Y
+ * zP: Zero Page
+ * zX: Zero Page Indexec by X
+ * zY: Zero Page Indexec by Y
+ * iD: Indirect Double
+ * aB: Absolute
+ * aX: Absolute by X
+ * aY: Absolute by Y 
+ */
+ static InstructionFunction InstructionTable[256] =
+ {
+ /*         00       01       02       03       04       05       06       07       08       09       0A       0B       0C       0D       0E       0F */
+ /* 00 */ I_BRKnP, I_ORAiX, I_ILLEG, I_ILLEG, I_ILLEG, I_ORAzP, I_ASLzP, I_ILLEG, I_PHPnP, I_ORAiM, I_ASLnP, I_ILLEG, I_ILLEG, I_ORAaB, I_ASLaB, I_ILLEG,
+ /* 10 */ I_BPLrE, I_ORAiY, I_ILLEG, I_ILLEG, I_ILLEG, I_ORAzX, I_ASLzX, I_ILLEG, I_CLCnP, I_ORAaY, I_ILLEG, I_ILLEG, I_ILLEG, I_ORAaX, I_ASLaX, I_ILLEG,
+ /* 20 */ I_JSRaB, I_ANDiX, I_ILLEG, I_ILLEG, I_BITzP, I_ANDzP, I_ROLzP, I_ILLEG, I_PLPnP, I_ANDiM, I_ROLnP, I_ILLEG, I_BITaB, I_ANDaB, I_ROLaB, I_ILLEG,
+ /* 30 */ I_BMIrE, I_ANDiY, I_ILLEG, I_ILLEG, I_ILLEG, I_ANDzX, I_ROLzX, I_ILLEG, I_SECnP, I_ANDaY, I_ILLEG, I_ILLEG, I_ILLEG, I_ANDaX, I_ROLaX, I_ILLEG,
+ /* 40 */ I_RTInP, I_EORiX, I_ILLEG, I_ILLEG, I_ILLEG, I_EORzP, I_LSRzP, I_ILLEG, I_PHAnP, I_EORiM, I_LSRnP, I_ILLEG, I_JMPaB, I_EORaB, I_LSRaB, I_ILLEG,
+ /* 50 */ I_BVCrE, I_EORiY, I_ILLEG, I_ILLEG, I_ILLEG, I_EORzX, I_LSRzX, I_ILLEG, I_CLInP, I_EORaY, I_ILLEG, I_ILLEG, I_ILLEG, I_EORaX, I_LSRaX, I_ILLEG,
+ /* 60 */ I_RTSnP, I_ADCiX, I_ILLEG, I_ILLEG, I_ILLEG, I_ADCzP, I_RORzP, I_ILLEG, I_PLAnP, I_ADCiM, I_RORnP, I_ILLEG, I_JMPiD, I_ADCaB, I_RORaB, I_ILLEG,
+ /* 70 */ I_BVSrE, I_ADCiY, I_ILLEG, I_ILLEG, I_ILLEG, I_ADCzX, I_RORzX, I_ILLEG, I_SEInP, I_ADCaY, I_ILLEG, I_ILLEG, I_ILLEG, I_ADCaX, I_RORaX, I_ILLEG,
+ /* 80 */ I_ILLEG, I_STAiX, I_ILLEG, I_ILLEG, I_STYzP, I_STAzP, I_STXzP, I_ILLEG, I_DEYnP, I_ILLEG, I_TXAnP, I_ILLEG, I_STYaB, I_STAaB, I_STXaB, I_ILLEG,
+ /* 90 */ I_BCCrE, I_STAiY, I_ILLEG, I_ILLEG, I_STYzX, I_STAzX, I_STXzY, I_ILLEG, I_TYAnP, I_STAaY, I_TXSnP, I_ILLEG, I_ILLEG, I_STAaX, I_ILLEG, I_ILLEG,
+ /* A0 */ I_LDYiM, I_LDAiX, I_LDXiM, I_ILLEG, I_LDYzP, I_LDAzP, I_LDXzP, I_ILLEG, I_TAYnP, I_LDAiM, I_TAXnP, I_ILLEG, I_LDYaB, I_LDAaB, I_LDXaB, I_ILLEG,
+ /* B0 */ I_BCSrE, I_LDAiY, I_ILLEG, I_ILLEG, I_LDYzX, I_LDAzX, I_LDXzY, I_ILLEG, I_CLVnP, I_LDAaY, I_TSXnP, I_ILLEG, I_LDYaX, I_LDAaX, I_LDXaY, I_ILLEG,
+ /* C0 */ I_CPYiM, I_CMPiX, I_ILLEG, I_ILLEG, I_CPYzP, I_CMPzP, I_DECzP, I_ILLEG, I_INYnP, I_CMPiM, I_DEXnP, I_ILLEG, I_CPYaB, I_CMPaB, I_DECaB, I_ILLEG,
+ /* D0 */ I_BNErE, I_CMPiY, I_ILLEG, I_ILLEG, I_ILLEG, I_CMPzX, I_DECzX, I_ILLEG, I_CLDnP, I_CMPaY, I_ILLEG, I_ILLEG, I_ILLEG, I_CMPaX, I_DECaX, I_ILLEG,
+ /* E0 */ I_CPXiM, I_SBCiX, I_ILLEG, I_ILLEG, I_CPXzP, I_SBCzP, I_INCzP, I_ILLEG, I_INXnP, I_SBCiM, I_NOPnP, I_ILLEG, I_CPXaB, I_SBCaB, I_INCaB, I_ILLEG,
+ /* F0 */ I_BEQrE, I_SBCiY, I_ILLEG, I_ILLEG, I_ILLEG, I_SBCzX, I_INCzX, I_ILLEG, I_SEDnP, I_SBCaY, I_ILLEG, I_ILLEG, I_ILLEG, I_SBCaX, I_INCaX, I_ILLEG
+ /*         00       01       02       03       04       05       06       07       08       09       0A       0B       0C       0D       0E       0F */
+ };
+ 
+#ifdef MINE
+
+typedef enum InstructionType
 {
-/*         00       01       02       03       04       05       06       07       08       09       0A       0B       0C       0D       0E       0F */
-/* 00 */ I_BRKiM, I_ORAiX, I_ILLEG, I_ILLEG, I_ILLEG, I_ORAzP, I_ASLzP, I_ILLEG, I_PHPiM, I_ORAiM, I_ASLiM, I_ILLEG, I_ILLEG, I_ORAaB, I_ASLaB, I_ILLEG,
-/* 10 */ I_BPLrE, I_ORAiY, I_ILLEG, I_ILLEG, I_ILLEG, I_ORAzX, I_ASLzX, I_ILLEG, I_CLCiM, I_ORAaY, I_ILLEG, I_ILLEG, I_ILLEG, I_ORAaX, I_ASLaX, I_ILLEG,
-/* 20 */ I_JSRaB, I_ANDiX, I_ILLEG, I_ILLEG, I_BITzP, I_ANDzP, I_ROLzP, I_ILLEG, I_PLPiM, I_ANDiM, I_ROLiM, I_ILLEG, I_BITaB, I_ANDaB, I_ROLaB, I_ILLEG,
-/* 30 */ I_BMIrE, I_ANDiY, I_ILLEG, I_ILLEG, I_ILLEG, I_ANDzX, I_ROLzX, I_ILLEG, I_SECiM, I_ANDaY, I_ILLEG, I_ILLEG, I_ILLEG, I_ANDaX, I_ROLaX, I_ILLEG,
-/* 40 */ I_RTIiM, I_EORiX, I_ILLEG, I_ILLEG, I_ILLEG, I_EORzP, I_LSRzP, I_ILLEG, I_PHAiM, I_EORiM, I_LSRiM, I_ILLEG, I_JMPaB, I_EORaB, I_LSRaB, I_ILLEG,
-/* 50 */ I_BVCrE, I_EORiY, I_ILLEG, I_ILLEG, I_ILLEG, I_EORzX, I_LSRzX, I_ILLEG, I_CLIiM, I_EORaY, I_ILLEG, I_ILLEG, I_ILLEG, I_EORaX, I_LSRaX, I_ILLEG,
-/* 60 */ I_RTSiM, I_ADCiX, I_ILLEG, I_ILLEG, I_ILLEG, I_ADCzP, I_RORzP, I_ILLEG, I_PLAiM, I_ADCiM, I_RORiM, I_ILLEG, I_JMPiD, I_ADCaB, I_RORaB, I_ILLEG,
-/* 70 */ I_BVSrE, I_ADCiY, I_ILLEG, I_ILLEG, I_ILLEG, I_ADCzX, I_RORzX, I_ILLEG, I_SEIiM, I_ADCaY, I_ILLEG, I_ILLEG, I_ILLEG, I_ADCaX, I_RORaX, I_ILLEG,
-/* 80 */ I_ILLEG, I_STAiX, I_ILLEG, I_ILLEG, I_STYzP, I_STAzP, I_STXzP, I_ILLEG, I_DEYiM, I_ILLEG, I_TXAiM, I_ILLEG, I_STYaB, I_STAaB, I_STXaB, I_ILLEG,
-/* 90 */ I_BCCrE, I_STAiY, I_ILLEG, I_ILLEG, I_STYzX, I_STAzX, I_STXzY, I_ILLEG, I_TYAiM, I_STAaY, I_TXSiM, I_ILLEG, I_ILLEG, I_STAaX, I_ILLEG, I_ILLEG,
-/* A0 */ I_LDYiM, I_LDAiX, I_LDXiM, I_ILLEG, I_LDYzP, I_LDAzP, I_LDXzP, I_ILLEG, I_TAYiM, I_LDAiM, I_TAXiM, I_ILLEG, I_LDYaB, I_LDAaB, I_LDXaB, I_ILLEG,
-/* B0 */ I_BCSrE, I_LDAiY, I_ILLEG, I_ILLEG, I_LDYzX, I_LDAzX, I_LDXzY, I_ILLEG, I_CLViM, I_LDAaY, I_TSXiM, I_ILLEG, I_LDYaX, I_LDAaX, I_LDXaY, I_ILLEG,
-/* C0 */ I_CPYiM, I_CMPiX, I_ILLEG, I_ILLEG, I_CPYzP, I_CMPzP, I_DECzP, I_ILLEG, I_INYiM, I_CMPiM, I_DEXiM, I_ILLEG, I_CPYaB, I_CMPaB, I_DECaB, I_ILLEG,
-/* D0 */ I_BNErE, I_CMPiY, I_ILLEG, I_ILLEG, I_ILLEG, I_CMPzX, I_DECzX, I_ILLEG, I_CLDiM, I_CMPaY, I_ILLEG, I_ILLEG, I_ILLEG, I_CMPaX, I_DECaX, I_ILLEG,
-/* E0 */ I_CPXiM, I_SBCiX, I_ILLEG, I_ILLEG, I_CPXzP, I_SBCzP, I_INCzP, I_ILLEG, I_INXiM, I_SBCiM, I_NOPiM, I_ILLEG, I_CPXaB, I_SBCaB, I_INCaB, I_ILLEG,
-/* F0 */ I_BEQrE, I_SBCiY, I_ILLEG, I_ILLEG, I_ILLEG, I_SBCzX, I_INCzX, I_ILLEG, I_SEDiM, I_SBCaY, I_ILLEG, I_ILLEG, I_ILLEG, I_SBCaX, I_INCaX, I_ILLEG
-/*         00       01       02       03       04       05       06       07       08       09       0A       0B       0C       0D       0E       0F */
+   t_IMM = 0, t_IDX, t_IDY, t_ABS,
+   t_REL, t_ZEP, t_ZPX, t_ZPY,
+   t_ABX, t_ABY, t_IND, t_NOP,
+} InstructionType;
+
+static InstructionType InstructionTypeTable[256] =
+{
+/*       00     01     02     03     04     05     06     07     08     09     0A     0B     0C     0D     0E     0F */
+/* 00 */ t_NOP, t_IDX, t_IMM, t_IMM, t_IMM, t_ZEP, t_ZEP, t_IMM, t_NOP, t_IMM, t_NOP, t_IMM, t_IMM, t_ABS, t_ABS, t_IMM,
+/* 10 */ t_REL, t_IDY, t_IMM, t_IMM, t_IMM, t_ZPX, t_ZPX, t_IMM, t_NOP, t_ABY, t_IMM, t_IMM, t_IMM, t_ABX, t_ABX, t_IMM,
+/* 20 */ t_ABS, t_IDX, t_IMM, t_IMM, t_ZEP, t_ZEP, t_ZEP, t_IMM, t_NOP, t_IMM, t_NOP, t_IMM, t_ABS, t_ABS, t_ABS, t_IMM,
+/* 30 */ t_REL, t_IDY, t_IMM, t_IMM, t_IMM, t_ZPX, t_ZPX, t_IMM, t_NOP, t_ABY, t_IMM, t_IMM, t_IMM, t_ABX, t_ABX, t_IMM,
+/* 40 */ t_NOP, t_IDX, t_IMM, t_IMM, t_IMM, t_ZEP, t_ZEP, t_IMM, t_NOP, t_IMM, t_NOP, t_IMM, t_ABS, t_ABS, t_ABS, t_IMM,
+/* 50 */ t_REL, t_IDY, t_IMM, t_IMM, t_IMM, t_ZPX, t_ZPX, t_IMM, t_NOP, t_ABY, t_IMM, t_IMM, t_IMM, t_ABX, t_ABX, t_IMM,
+/* 60 */ t_NOP, t_IDX, t_IMM, t_IMM, t_IMM, t_ZEP, t_ZEP, t_IMM, t_NOP, t_IMM, t_NOP, t_IMM, t_IND, t_ABS, t_ABS, t_IMM,
+/* 70 */ t_REL, t_IDY, t_IMM, t_IMM, t_IMM, t_ZPX, t_ZPX, t_IMM, t_NOP, t_ABY, t_IMM, t_IMM, t_IMM, t_ABX, t_ABX, t_IMM,
+/* 80 */ t_IMM, t_IDX, t_IMM, t_IMM, t_ZEP, t_ZEP, t_ZEP, t_IMM, t_NOP, t_IMM, t_NOP, t_IMM, t_ABS, t_ABS, t_ABS, t_IMM,
+/* 90 */ t_REL, t_IDY, t_IMM, t_IMM, t_ZPX, t_ZPX, t_ZPY, t_IMM, t_NOP, t_ABY, t_NOP, t_IMM, t_IMM, t_ABX, t_IMM, t_IMM,
+/* A0 */ t_IMM, t_IDX, t_IMM, t_IMM, t_ZEP, t_ZEP, t_ZEP, t_IMM, t_NOP, t_IMM, t_NOP, t_IMM, t_ABS, t_ABS, t_ABS, t_IMM,
+/* B0 */ t_REL, t_IDY, t_IMM, t_IMM, t_ZPX, t_ZPX, t_ZPY, t_IMM, t_NOP, t_ABY, t_NOP, t_IMM, t_ABX, t_ABX, t_ABY, t_IMM,
+/* C0 */ t_IMM, t_IDX, t_IMM, t_IMM, t_ZEP, t_ZEP, t_ZEP, t_IMM, t_NOP, t_IMM, t_NOP, t_IMM, t_ABS, t_ABS, t_ABS, t_IMM,
+/* D0 */ t_REL, t_IDY, t_IMM, t_IMM, t_IMM, t_ZPX, t_ZPX, t_IMM, t_NOP, t_ABY, t_IMM, t_IMM, t_IMM, t_ABX, t_ABX, t_IMM,
+/* E0 */ t_IMM, t_IDX, t_IMM, t_IMM, t_ZEP, t_ZEP, t_ZEP, t_IMM, t_NOP, t_IMM, t_IMM, t_IMM, t_ABS, t_ABS, t_ABS, t_IMM,
+/* F0 */ t_REL, t_IDY, t_IMM, t_IMM, t_IMM, t_ZPX, t_ZPX, t_IMM, t_NOP, t_ABY, t_IMM, t_IMM, t_IMM, t_ABX, t_ABX, t_IMM
+/*       00     01     02     03     04     05     06     07     08     09     0A     0B     0C     0D     0E     0F */
 };
 
+static InstructionNameTag InstructionNameTable[256] =
+{
+/*       00     01     02     03     04     05     06     07     08     09     0A     0B     0C     0D     0E     0F */
+/* 00 */ n_BRK, n_ORA, n_ILG, n_ILG, n_ILG, n_ORA, n_ASL, n_ILG, n_PHP, n_ORA, n_ASL, n_ILG, n_ILG, n_ORA, n_ASL, n_ILG,
+/* 10 */ n_BPL, n_ORA, n_ILG, n_ILG, n_ILG, n_ORA, n_ASL, n_ILG, n_CLC, n_ORA, n_ILG, n_ILG, n_ILG, n_ORA, n_ASL, n_ILG,
+/* 20 */ n_JSR, n_AND, n_ILG, n_ILG, n_BIT, n_AND, n_ROL, n_ILG, n_PLP, n_AND, n_ROL, n_ILG, n_BIT, n_AND, n_ROL, n_ILG,
+/* 30 */ n_BMI, n_AND, n_ILG, n_ILG, n_ILG, n_AND, n_ROL, n_ILG, n_SEC, n_AND, n_ILG, n_ILG, n_ILG, n_AND, n_ROL, n_ILG,
+/* 40 */ n_RTI, n_EOR, n_ILG, n_ILG, n_ILG, n_EOR, n_LSR, n_ILG, n_PHA, n_EOR, n_LSR, n_ILG, n_JMP, n_EOR, n_LSR, n_ILG,
+/* 50 */ n_BVC, n_EOR, n_ILG, n_ILG, n_ILG, n_EOR, n_LSR, n_ILG, n_CLI, n_EOR, n_ILG, n_ILG, n_ILG, n_EOR, n_LSR, n_ILG,
+/* 60 */ n_RTS, n_ADC, n_ILG, n_ILG, n_ILG, n_ADC, n_ROR, n_ILG, n_PLA, n_ADC, n_ROR, n_ILG, n_JMP, n_ADC, n_ROR, n_ILG,
+/* 70 */ n_BVS, n_ADC, n_ILG, n_ILG, n_ILG, n_ADC, n_ROR, n_ILG, n_SEI, n_ADC, n_ILG, n_ILG, n_ILG, n_ADC, n_ROR, n_ILG,
+/* 80 */ n_ILG, n_STA, n_ILG, n_ILG, n_STY, n_STA, n_STX, n_ILG, n_DEY, n_ILG, n_TXA, n_ILG, n_STY, n_STA, n_STX, n_ILG,
+/* 90 */ n_BCC, n_STA, n_ILG, n_ILG, n_STY, n_STA, n_STX, n_ILG, n_TYA, n_STA, n_TXS, n_ILG, n_ILG, n_STA, n_ILG, n_ILG,
+/* A0 */ n_LDY, n_LDA, n_LDX, n_ILG, n_LDY, n_LDA, n_LDX, n_ILG, n_TAY, n_LDA, n_TAX, n_ILG, n_LDY, n_LDA, n_LDX, n_ILG,
+/* B0 */ n_BCS, n_LDA, n_ILG, n_ILG, n_LDY, n_LDA, n_LDX, n_ILG, n_CLV, n_LDA, n_TSX, n_ILG, n_LDY, n_LDA, n_LDX, n_ILG,
+/* C0 */ n_CPY, n_CMP, n_ILG, n_ILG, n_CPY, n_CMP, n_DEC, n_ILG, n_INY, n_CMP, n_DEX, n_ILG, n_CPY, n_CMP, n_DEC, n_ILG,
+/* D0 */ n_BNE, n_CMP, n_ILG, n_ILG, n_ILG, n_CMP, n_DEC, n_ILG, n_CLD, n_CMP, n_ILG, n_ILG, n_ILG, n_CMP, n_DEC, n_ILG,
+/* E0 */ n_CPX, n_SBC, n_ILG, n_ILG, n_CPX, n_SBC, n_INC, n_ILG, n_INX, n_SBC, n_NOP, n_ILG, n_CPX, n_SBC, n_INC, n_ILG,
+/* F0 */ n_BEQ, n_SBC, n_ILG, n_ILG, n_ILG, n_SBC, n_INC, n_ILG, n_SED, n_SBC, n_ILG, n_ILG, n_ILG, n_SBC, n_INC, n_ILG,
+/*       00     01     02     03     04     05     06     07     08     09     0A     0B     0C     0D     0E     0F */
+};
+
+/** Get current instruction name at specified address and put it into buffer */
+int quick6502_getinstruction(quick6502_cpu *cpu, char interpret,
+                             unsigned short addr, char *buffer, int *strlength)
+{
+   int len = 0, curlen;
+   int readbyte = 1;
+   char *str = buffer;
+
+   uint8_t opcode = cpu->memory_opcode_read(addr);
+
+   uint8_t  value_u8;
+   uint16_t value_u16;
+   
+   curlen = sprintf(str, "%s", InstructionName[InstructionNameTable[opcode]]);
+   str += curlen; len += curlen;
+   
+   switch(InstructionTypeTable[opcode])
+   {
+   default: /* Nothing to do */
+   case t_NOP:
+      break;
+      
+   case t_IMM: 
+      curlen = sprintf(str, " #$%02X", cpu->memory_opcode_read(addr + 1));
+      str += curlen; len += curlen;
+
+      /* Nothing to interpret.. Really */
+
+      readbyte += 2;
+
+      break;
+
+   case t_IDX:
+      curlen = sprintf(str, " ($%02X, X)", cpu->memory_opcode_read(addr + 1));
+      str += curlen; len += curlen;
+
+      if (interpret)
+      {
+         value_u8 = cpu->memory_opcode_read( addr + 1 );
+         value_u16 = value_u8 + cpu->reg_X;
+      
+         curlen = sprintf(str, " ; ($%02X + $%02X) -> ($%02X) -> $%02X%02X",
+                           value_u8, cpu->reg_X,
+                           value_u16 & 0xFF,
+                           cpu->memory_page0_read(value_u16),
+                           cpu->memory_page0_read(value_u16 + 1));
+         str += curlen; len += curlen;
+      }
+
+      readbyte += 1;
+      break;
+      
+   case t_IDY:
+      curlen = sprintf(str, " ($%02X), Y", cpu->memory_opcode_read(addr + 1));
+      str += curlen; len += curlen;
+
+      if (interpret)
+      {
+         value_u8 = cpu->memory_opcode_read( addr + 1 );
+         value_u16 = (cpu->memory_page0_read(value_u8 + 1) << 8) |
+                     (cpu->memory_page0_read(value_u8) );
+         
+         curlen = sprintf(str, " ; ($%02X) + $%02X -> $%04X + $%02X -> $%04X",
+                          value_u8, cpu->reg_Y,
+                          value_u16, cpu->reg_Y,
+                          value_u16 + cpu->reg_Y
+                         );
+         str += curlen; len += curlen;
+      }
+
+      readbyte += 1;
+      break;
+
+   case t_ABS:
+      curlen = sprintf(str, " $%02X%02X", cpu->memory_opcode_read(addr + 2),
+                                          cpu->memory_opcode_read(addr + 1));
+      str += curlen; len += curlen;
+
+      /* Nothing to interpret.. Really */
+
+      readbyte += 2;
+      break;
+
+   case t_REL:
+      value_u16 = 2 + addr + (signed char) cpu->memory_opcode_read(addr + 1);
+      curlen = sprintf(str, " $%04X", value_u16);
+      str += curlen; len += curlen;
+
+      /* Nothing to interpret.. Really */
+
+      readbyte += 1;
+      break;
+
+   case t_ZEP:
+      curlen = sprintf(str, " $%02X", cpu->memory_opcode_read(addr + 1));
+      str += curlen; len += curlen;
+
+      /* Nothing to interpret.. Really */
+
+      readbyte += 1;
+      break;
+
+   case t_ZPX:
+      curlen = sprintf(str, " $%02X, X", cpu->memory_opcode_read(addr + 1));
+      str += curlen; len += curlen;
+
+      if (interpret)
+      {
+         curlen = sprintf(str, " ; $%02X + $%02x -> $%02X",
+                          cpu->memory_opcode_read(addr + 1), cpu->reg_X,
+                          (cpu->memory_opcode_read(addr + 1) + cpu->reg_X) & 0xFF);
+         str += curlen; len += curlen;
+      }
+
+      readbyte += 1;
+      break;
+
+   case t_ZPY:
+      curlen = sprintf(str, " $%02X, Y", cpu->memory_opcode_read(addr + 1));
+      str += curlen; len += curlen;
+
+      if (interpret)
+      {
+         curlen = sprintf(str, " ; $%02X + $%02x -> $%02X",
+                          cpu->memory_opcode_read(addr + 1), cpu->reg_Y,
+                          (cpu->memory_opcode_read(addr + 1) + cpu->reg_Y) & 0xFF);
+         str += curlen; len += curlen;
+      }
+
+      readbyte += 1;
+      break;
+
+   case t_ABX:
+      curlen = sprintf(str, " $%02X%02X, X", cpu->memory_opcode_read(addr + 2),
+                                             cpu->memory_opcode_read(addr + 1));
+      str += curlen; len += curlen;
+
+      if (interpret)
+      {
+         value_u16 = (cpu->memory_opcode_read(addr + 2) << 8) | 
+                     cpu->memory_opcode_read(addr + 1);
+         curlen = sprintf(str, " ; $%04X + $%02X -> $%04X", value_u16,
+                          cpu->reg_X, value_u16 + cpu->reg_X);
+         str += curlen; len += curlen;
+      }
+
+      readbyte += 2;
+      break;
+
+   case t_ABY:
+      curlen = sprintf(str, " $%02X%02X, Y", cpu->memory_opcode_read(addr + 2),
+                                             cpu->memory_opcode_read(addr + 1));
+      str += curlen; len += curlen;
+
+      if (interpret)
+      {
+         value_u16 = (cpu->memory_opcode_read(addr + 2) << 8) | 
+                     cpu->memory_opcode_read(addr + 1);
+         curlen = sprintf(str, " ; $%04X + $%02X -> $%04X", value_u16,
+                           cpu->reg_Y, value_u16 + cpu->reg_Y);
+         str += curlen; len += curlen;
+      }
+
+      readbyte += 2;
+      break;
+
+   case t_IND:
+      curlen = sprintf(str, " ($%02X%02X)", cpu->memory_opcode_read(addr + 2),
+                                            cpu->memory_opcode_read(addr + 1));
+      str += curlen; len += curlen;
+
+      if (interpret)
+      {
+         value_u16 = (cpu->memory_opcode_read(addr + 2) << 8) | 
+                     cpu->memory_opcode_read(addr + 1);
+         value_u16 = cpu->memory_read(value_u16) | 
+                    (cpu->memory_read(   ( value_u16 & 0xFF00 )     | 
+                                       ( ( value_u16 + 1 ) & 0x00FF ) ) << 8 );
+         curlen = sprintf(str, " ; ($%02X%02X) -> $%04X", 
+                               cpu->memory_opcode_read(addr + 2),
+                               cpu->memory_opcode_read(addr + 1),
+                               cpu->memory_opcode_read(addr));
+         str += curlen; len += curlen;
+      }
+
+      readbyte += 2;
+      break;
+   }
+   
+   if (strlength != NULL)
+      *strlength = len;
+   
+   return readbyte;
+}
+
+#else
+static char InstructionParameters[256][10] =
+{
+/*         00           01           02           03           04           05           06           07           08           09           0A           0B           0C           0D           0E           0F         */
+/* 00 */ IP_iM "BRK", IP_iX "ORA", IP_iM "ILG", IP_iM "ILG", IP_iM "ILG", IP_zP "ORA", IP_zP "ASL", IP_iM "ILG", IP_iM "PHP", IP_iM "ORA", IP_iM "ASL", IP_iM "ILG", IP_iM "ILG", IP_aB "ORA", IP_aB "ASL", IP_iM "ILG",
+/* 10 */ IP_rE "BPL", IP_iY "ORA", IP_iM "ILG", IP_iM "ILG", IP_iM "ILG", IP_zX "ORA", IP_zX "ASL", IP_iM "ILG", IP_iM "CLC", IP_aY "ORA", IP_iM "ILG", IP_iM "ILG", IP_iM "ILG", IP_aX "ORA", IP_aX "ASL", IP_iM "ILG",
+/* 20 */ IP_aB "JSR", IP_iX "AND", IP_iM "ILG", IP_iM "ILG", IP_zP "BIT", IP_zP "AND", IP_zP "ROL", IP_iM "ILG", IP_iM "PLP", IP_iM "AND", IP_iM "ROL", IP_iM "ILG", IP_aB "BIT", IP_aB "AND", IP_aB "ROL", IP_iM "ILG",
+/* 30 */ IP_rE "BMI", IP_iY "AND", IP_iM "ILG", IP_iM "ILG", IP_iM "ILG", IP_zX "AND", IP_zX "ROL", IP_iM "ILG", IP_iM "SEC", IP_aY "AND", IP_iM "ILG", IP_iM "ILG", IP_iM "ILG", IP_aX "AND", IP_aX "ROL", IP_iM "ILG",
+/* 40 */ IP_iM "RTI", IP_iX "EOR", IP_iM "ILG", IP_iM "ILG", IP_iM "ILG", IP_zP "EOR", IP_zP "LSR", IP_iM "ILG", IP_iM "PHA", IP_iM "EOR", IP_iM "LSR", IP_iM "ILG", IP_aB "JMP", IP_aB "EOR", IP_aB "LSR", IP_iM "ILG",
+/* 50 */ IP_rE "BVC", IP_iY "EOR", IP_iM "ILG", IP_iM "ILG", IP_iM "ILG", IP_zX "EOR", IP_zX "LSR", IP_iM "ILG", IP_iM "CLI", IP_aY "EOR", IP_iM "ILG", IP_iM "ILG", IP_iM "ILG", IP_aX "EOR", IP_aX "LSR", IP_iM "ILG",
+/* 60 */ IP_iM "RTS", IP_iX "ADC", IP_iM "ILG", IP_iM "ILG", IP_iM "ILG", IP_zP "ADC", IP_zP "ROR", IP_iM "ILG", IP_iM "PLA", IP_iM "ADC", IP_iM "ROR", IP_iM "ILG", IP_iD "JMP", IP_aB "ADC", IP_aB "ROR", IP_iM "ILG",
+/* 70 */ IP_rE "BVS", IP_iY "ADC", IP_iM "ILG", IP_iM "ILG", IP_iM "ILG", IP_zX "ADC", IP_zX "ROR", IP_iM "ILG", IP_iM "SEI", IP_aY "ADC", IP_iM "ILG", IP_iM "ILG", IP_iM "ILG", IP_aX "ADC", IP_aX "ROR", IP_iM "ILG",
+/* 80 */ IP_iM "ILG", IP_iX "STA", IP_iM "ILG", IP_iM "ILG", IP_zP "STY", IP_zP "STA", IP_zP "STX", IP_iM "ILG", IP_iM "DEY", IP_iM "ILG", IP_iM "TXA", IP_iM "ILG", IP_aB "STY", IP_aB "STA", IP_aB "STX", IP_iM "ILG",
+/* 90 */ IP_rE "BCC", IP_iY "STA", IP_iM "ILG", IP_iM "ILG", IP_zX "STY", IP_zX "STA", IP_zY "STX", IP_iM "ILG", IP_iM "TYA", IP_aY "STA", IP_iM "TXS", IP_iM "ILG", IP_iM "ILG", IP_aX "STA", IP_iM "ILG", IP_iM "ILG",
+/* A0 */ IP_iM "LDY", IP_iX "LDA", IP_iM "LDX", IP_iM "ILG", IP_zP "LDY", IP_zP "LDA", IP_zP "LDX", IP_iM "ILG", IP_iM "TAY", IP_iM "LDA", IP_iM "TAX", IP_iM "ILG", IP_aB "LDY", IP_aB "LDA", IP_aB "LDX", IP_iM "ILG",
+/* B0 */ IP_rE "BCS", IP_iY "LDA", IP_iM "ILG", IP_iM "ILG", IP_zX "LDY", IP_zX "LDA", IP_zY "LDX", IP_iM "ILG", IP_iM "CLV", IP_aY "LDA", IP_iM "TSX", IP_iM "ILG", IP_aX "LDY", IP_aX "LDA", IP_aY "LDX", IP_iM "ILG",
+/* C0 */ IP_iM "CPY", IP_iX "CMP", IP_iM "ILG", IP_iM "ILG", IP_zP "CPY", IP_zP "CMP", IP_zP "DEC", IP_iM "ILG", IP_iM "INY", IP_iM "CMP", IP_iM "DEX", IP_iM "ILG", IP_aB "CPY", IP_aB "CMP", IP_aB "DEC", IP_iM "ILG",
+/* D0 */ IP_rE "BNE", IP_iY "CMP", IP_iM "ILG", IP_iM "ILG", IP_iM "ILG", IP_zX "CMP", IP_zX "DEC", IP_iM "ILG", IP_iM "CLD", IP_aY "CMP", IP_iM "ILG", IP_iM "ILG", IP_iM "ILG", IP_aX "CMP", IP_aX "DEC", IP_iM "ILG",
+/* E0 */ IP_iM "CPX", IP_iX "SBC", IP_iM "ILG", IP_iM "ILG", IP_zP "CPX", IP_zP "SBC", IP_zP "INC", IP_iM "ILG", IP_iM "INX", IP_iM "SBC", IP_iM "NOP", IP_iM "ILG", IP_aB "CPX", IP_aB "SBC", IP_aB "INC", IP_iM "ILG",
+/* F0 */ IP_rE "BEQ", IP_iY "SBC", IP_iM "ILG", IP_iM "ILG", IP_iM "ILG", IP_zX "SBC", IP_zX "INC", IP_iM "ILG", IP_iM "SED", IP_aY "SBC", IP_iM "ILG", IP_iM "ILG", IP_iM "ILG", IP_aX "SBC", IP_aX "INC", IP_iM "ILG"
+/*         00           01           02           03           04           05           06           07           08           09           0A           0B           0C           0D           0E           0F         */
+};
+
+/** Get current instruction name at specified address and put it into buffer */
+int quick6502_getinstruction(quick6502_cpu *cpu, char interpret,
+                             unsigned short addr, char *buffer, int *strlength)
+{
+   unsigned char instr = cpu->memory_opcode_read(cpu->reg_PC);
+   unsigned char *instrText = InstructionParameters[instr];
+   
+   buffer += strlen(strcpy(buffer, instrText[1]));
+   switch(instrText[0])
+   {
+      case IP_nPc: default: break;
+      case IP_iMc: buffer += strlen(sprintf(buffer, IPf_iM, cpu->memory_opcode_read(cpu->reg_PC + 1))); break;
+      case IP_iXc: buffer += strlen(sprintf(buffer, IPf_iX, cpu->memory_opcode_read(cpu->reg_PC + 1))); break;
+      case IP_iYc: buffer += strlen(sprintf(buffer, IPf_iY, cpu->memory_opcode_read(cpu->reg_PC + 1))); break;
+      case IP_zPc: buffer += strlen(sprintf(buffer, IPf_zP, cpu->memory_opcode_read(cpu->reg_PC + 1))); break;
+      case IP_zXc: buffer += strlen(sprintf(buffer, IPf_zX, cpu->memory_opcode_read(cpu->reg_PC + 1))); break;
+      case IP_zYc: buffer += strlen(sprintf(buffer, IPf_zY, cpu->memory_opcode_read(cpu->reg_PC + 1))); break;
+      case IP_iDc: buffer += strlen(sprintf(buffer, IPf_iD, cpu->memory_opcode_read(cpu->reg_PC + 2), cpu->memory_opcode_read(cpu->reg_PC + 1))); break;
+      case IP_aBc: buffer += strlen(sprintf(buffer, IPf_aB, cpu->memory_opcode_read(cpu->reg_PC + 2), cpu->memory_opcode_read(cpu->reg_PC + 1))); break;
+      case IP_aXc: buffer += strlen(sprintf(buffer, IPf_aX, cpu->memory_opcode_read(cpu->reg_PC + 2), cpu->memory_opcode_read(cpu->reg_PC + 1))); break;
+      case IP_aYc: buffer += strlen(sprintf(buffer, IPf_aY, cpu->memory_opcode_read(cpu->reg_PC + 2), cpu->memory_opcode_read(cpu->reg_PC + 1))); break;
+      case IP_rEc: buffer += strlen(sprintf(buffer, IPf_rE, cpu->reg_PC + (signed char) cpu->memory_opcode_read(cpu->reg_PC) + 1)); break;
+   }
+   
+   *buffer = 0;
+}
+
+#endif
 
 static inline int quick6502_exec_one(quick6502_cpu *cpu)
 {
-   register byte opcode = cpu->memory_opcode_read(cpu->reg_PC++);
+   register byte opcode = cpu->memory_opcode_read(cpu->reg_PC);
    
+   //char instr[100];
+   //quick6502_dump(cpu, stdout);
+   cpu->reg_PC++;
    TRACEi(("Quick6502: PC:$%04X A:$%02X X:$%02X Y:$%02X S:$%02X P:$%02X P:[%c%c%c%c%c%c%c%c]",
            cpu->reg_PC, cpu->reg_A, cpu->reg_X, cpu->reg_Y, cpu->reg_S, cpu->reg_P,
            cpu->reg_P&Q6502_N_FLAG ? 'N':'.',
@@ -1837,9 +2239,12 @@ static inline int quick6502_exec_one(quick6502_cpu *cpu)
            cpu->reg_P&Q6502_D_FLAG ? 'D':'.',
            cpu->reg_P&Q6502_I_FLAG ? 'I':'.',
            cpu->reg_P&Q6502_Z_FLAG ? 'Z':'.',
-           cpu->reg_P&Q6502_C_FLAG ? 'C':'.'));
-   
+           cpu->reg_P&Q6502_C_FLAG ? 'C':'.'));  
    InstructionTable[opcode](cpu);
+   //printf("--------------------------------------------------------------\n");
+   /*quick6502_getinstruction(cpu, (1==1), cpu->reg_PC, instr, NULL);
+   printf("%04X: %s\n", cpu->reg_PC, instr);*/
+ 
    cpu->cycle_done += CycleTable[opcode];
    if (cpu->page_crossed) { cpu->cycle_done++; cpu->page_crossed = 0; }
    if (cpu->int_pending != 0)

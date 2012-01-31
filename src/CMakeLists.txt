@@ -38,6 +38,9 @@ endif (APPLE)
 # Link & Compile flags
 ##########################
 
+set (CMAKE_C_FLAGS "-Wall -Wextra -Wno-unused-parameter -Werror ${PLATFORM_FLAGS}")
+set (CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-unused-parameter -Werror ${PLATFORM_FLAGS}")
+
 add_definitions (-DNO_DECIMAL -DFAST_RDOP)
 
 SET ( CMAKE_EXE_LINKER_FLAGS "-mmacosx-version-min=10.4")
@@ -105,10 +108,10 @@ if (TARGET_TI68k)
 elseif (APPLE AND ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
    add_subdirectory(os/macos)
 elseif (UNIX)
-   add_subdirectory(os/win32)
+   add_subdirectory(os/unix)
 else (TARGET_TI68k)
    #So we target UNIX like OS
-   add_subdirectory(os/unix)
+   add_subdirectory(os/win32)
 endif (TARGET_TI68k)
 
 
@@ -126,7 +129,7 @@ endif (USE_EFENCE)
 
 if (USE_ALLEGRO)
    target_link_libraries(tines debug alld-main)
-   target_link_libraries(tines optimized alleg-main)
+   #   target_link_libraries(tines)
    if (APPLE)
       find_library(COCOALIB Cocoa)
       target_link_libraries(tines ${COCOALIB})

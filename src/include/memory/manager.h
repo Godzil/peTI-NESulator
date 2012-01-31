@@ -63,6 +63,6 @@ void InitMemory();
 byte ReadMemory(byte page, byte addr);
 void WriteMemory(byte page, byte addr, byte value);
 
-void DumpMemoryState();
+void DumpMemoryState(FILE *fp);
 
 #endif

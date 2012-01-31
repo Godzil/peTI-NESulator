@@ -55,7 +55,7 @@ void aorom_MapperWriteHook(register byte Addr, register byte Value)
 
         aorom_load_bank = BankNb;
 
-        //console_printf(Console_Default, "aorom: Asking bank %d (giving %d & %d) - mirror is %d\n",BankNb,BankNb,(Value<<1)+1,Value&0x0F);
+        console_printf(Console_Default, "aorom: Asking bank %d - NT is 0x%04X\n",BankNb,(Value&0x10)?0x2400:0x2000);
         set_prom_bank_32k(0x8000,BankNb);
 } 
 

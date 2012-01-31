@@ -36,7 +36,7 @@ struct SndDriverStruct SndDriver =
   (void (*)(int,int))0,
   (void (*)(int,int))0,
   (void (*)(int,int,int))0,
-  (void (*)(int,const signed char *,int,int))0,
+  (void (*)(int,signed char *,int,int))0,
   (const signed char *(*)(int))0
 };
 
@@ -167,7 +167,7 @@ void SetChannels(int Volume,int Switch)
 /** waveform to be an instrument or set it to the waveform  **/
 /** own playback rate.                                      **/
 /*************************************************************/
-void SetWave(int Channel,const signed char *Data,int Length,int Rate)
+void SetWave(int Channel,signed char *Data,int Length,int Rate)
 {
   if((Channel<0)||(Length<=0)) return;
 

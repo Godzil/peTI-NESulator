@@ -27,6 +27,7 @@ byte mmc4_RegF;
 #define LOG(s) { }  
 #endif
 
+/* MAPPER WARNING: This mapper need to attach to the PPU memory... Need more work on this parts.. */
 
 void mmc4_MapperWriteRegA(register byte Addr, register byte Value)
 {
@@ -85,13 +86,13 @@ void mmc4_MapperDump(FILE *fp)
 int mmc4_InitMapper(NesCart * cart) 
 {
     int i;
-    
-    set_prom_bank_16k(0x8000,0);
+
+    set_prom_bank_16k(0x8000, 0);
     set_prom_bank_16k(0xC000, GETLAST16KBANK(cart));
 
     if (cart->VROMSize > 0)
         set_vrom_bank_8k(0x0000,0);
-       
+    
     /* Mapper should register itself for write hook */
     for (i = 0xA0; i < 0xB0 ; i++)
     {

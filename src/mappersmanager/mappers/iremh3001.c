@@ -116,7 +116,7 @@ void iremh3001_MapperDump(FILE *fp)
         iremh3001_vrom_slot[4], 
         iremh3001_vrom_slot[5],
         iremh3001_vrom_slot[6],
-        iremh3001_prom_slot[7]);
+        iremh3001_vrom_slot[7]);
 }
 
 

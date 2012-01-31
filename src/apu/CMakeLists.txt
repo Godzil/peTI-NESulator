@@ -9,4 +9,5 @@
 # $HeadURL$
 # $Revision$
 
-add_library(apu SndAlleg.c Sound.c)
+add_library(apu SndUnixT.c Sound.c)
+#add_library(apu SndAlleg.c Sound.c)

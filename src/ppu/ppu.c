@@ -25,6 +25,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 #define __TINES_PPU_INTERNAL__
 #include <ppu/ppu.h>
@@ -47,6 +48,7 @@ volatile extern unsigned long IPS, FPS;
 
 extern unsigned long ColorPalette[ 9 * 63 ];
 extern short IRQScanHit;
+extern short SZHit;
 
 BITMAP *VideoBuffer; /* The ppu will only write pixel to this, and then bliting 
                         this on the screen "surface" */
@@ -272,8 +274,9 @@ int ppu_init()
 
 void ppu_updateSpriteScanlineTable()
 {
-    int i, line, j, k;
-    volatile int sprite_x, sprite_y, sprite_idx, sprite_attr;
+    int32_t i,j,k;
+    int line;
+    volatile int32_t sprite_x, sprite_y, sprite_idx, sprite_attr;
 
     int curline;
 
@@ -312,11 +315,11 @@ void ppu_updateSpriteScanlineTable()
             if (((sprite_x+8) < 0) && ((sprite_x-8) > 256))
                 continue; /* this sprite isn't either displayable */
             /* Now test if this sprite can be put in the sprite list */            
-            for (j = 0; j <= PPU_NbSpriteByScanLine[curline]; j++)
+            for (j = 0; j <= (int32_t)PPU_NbSpriteByScanLine[curline]; j++)
             {
                 /* sprite are ordered by their y value, so, the first time that
                    we have lower y value is where we need to put the sprite */
-                if (sprite_x < PPU_SCANLINESPRITE_GET_X(PPU_SpriteByScanLine[curline][j]))
+                if (sprite_x < (int32_t)PPU_SCANLINESPRITE_GET_X(PPU_SpriteByScanLine[curline][j]))
                 {
                     /* move the j eme item and next to the right in the list, trashing
                        if needed the rightest item. */
@@ -477,20 +480,22 @@ _AAA BCDD DDDE EEEE
 
 int ppu_hblank(int scanline)
 {
-    int i, j;
+    uint32_t i, j;
     byte pixelColor = 0x42;
     byte BgColor = 0x42;
     byte SpriteColor = 0x42;
-    unsigned short addr;
+    uint16_t addr;
     byte value;
-    unsigned short tmp_HHT = 0;
-    unsigned short tmp_VVTFV = 0;
-    unsigned long CurrentSprite;
+    uint16_t tmp_HHT = 0;
+    uint16_t tmp_VVTFV = 0;
+    uint32_t CurrentSprite;
     byte SpriteVFlip;
       
     if (scanline == 0)
     {
       ppu_bgColor =  ppu_readMemory(0x3F,00);
+
+      rectfill(Buffer, 256, 0, 277, 260, ppu_bgColor);
 
       if ((ppu_spriteVisibility != 0) || (ppu_backgroundVisibility != 0))
           ppu_updateCounters();
@@ -621,7 +626,12 @@ int ppu_hblank(int scanline)
                         if ((PPU_SCANLINESPRITE_GET_ATTRS(CurrentSprite) & 0x04) &&
                             (SpriteColor != 0x00) && (BgColor != 0x00))
                         {
-                           ppu_spriteZeroHit = 1;
+                           if (!ppu_spriteZeroHit)
+                           {
+                             ppu_spriteZeroHit = (ppu_backgroundVisibility)?1:0;
+                             if (ppu_spriteZeroHit)
+                                 SZHit = scanline;
+                           }
                         }
                      if ( ( (PPU_SCANLINESPRITE_GET_ATTRS(CurrentSprite) & PPU_SPRITE_FLAGS_BGPRIO) && (BgColor == 0x0000)) ||
                          (!(PPU_SCANLINESPRITE_GET_ATTRS(CurrentSprite) & PPU_SPRITE_FLAGS_BGPRIO)) )
@@ -644,7 +654,6 @@ int ppu_hblank(int scanline)
                ppu_scanlineSpriteOverflow = 1;
             
        //blit(VideoBuffer, screen, 0, scanline, 0, scanline, 256, 1);
-
 
         if (ppu_backgroundVisibility == 1)
         {
@@ -697,13 +706,26 @@ E = HT
     if (scanline == 239)
     {
          ppu_inVBlankTime = 1;
-
-       textprintf(Buffer, font, 260, 3, 4, "FPS : %ld (CPU@~%2.2fMhz : %d%%)", FPS, (float) (((float) IPS) / 1000000.0), (int) ((((float) IPS) / 1770000.0) * 100.0));  
+       textprintf_ex(Buffer, font, 260, 3, 4, 0, "FPS : %ld (CPU@~%2.2fMhz : %d%%)", FPS, (float) (((float) IPS) / 1000000.0), (int) ((((float) IPS) / 1770000.0) * 100.0));  
        
         blit(VideoBuffer, Buffer, 0, 0, 0, 0, 256, 240);
         blit(Buffer, screen, 0, 0, 0, 0, 512+256, 512);
 
         return ppu_execNMIonVBlank;
+    }
+    
+    if (scanline == SZHit)
+    {
+       line(Buffer, 257, scanline, 267, scanline, 0x12);
+       line(Buffer, 257, scanline, 260, scanline-2, 0x12);
+       line(Buffer, 257, scanline, 260, scanline+2, 0x12);
+    }
+
+    if (scanline == IRQScanHit)
+    {
+       line(Buffer, 267, scanline, 277, scanline, 0x13);
+       line(Buffer, 267, scanline, 270, scanline-2, 0x13);
+       line(Buffer, 267, scanline, 270, scanline+2, 0x13);
     }
 
     if (key[KEY_B])
@@ -712,8 +734,7 @@ E = HT
         blit(Buffer, screen, 0, 0, 0, 0, 512 + 256, 480);
     }
 
-
-    if (scanline == (239 + VBLANK_TIME))
+    if (scanline == (239 + VBLANK_TIME)+0)
     {
         ppu_inVBlankTime = 0;
         ppu_spriteZeroHit = 0;

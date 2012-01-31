@@ -9,4 +9,4 @@
 # $HeadURL$
 # $Revision$
 
-add_library(oslib loadfile.c)
+add_library(oslib loadfile.c graphics.c sound.c io.c)

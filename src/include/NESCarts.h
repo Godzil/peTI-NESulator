@@ -14,6 +14,7 @@
 #ifndef NESCARTS_H
 #define NESCARTS_H
 
+#include <stdint.h>
 #include <types.h>
 
 #define iNES_MIRROR  0x01
@@ -23,14 +24,14 @@
 
 typedef struct NesCart_
 {  
-    unsigned long PROMSize, /* Size of PROM */
-                  VROMSize; /* Size of VROM */
-    char MapperID;          /* Mapper Type */
-    byte Flags;
-    char *FileName;
-    byte *File;             /* Pointer on the file in memory */
-    byte *PROMBanks;        /* Pointer on the first PROM */
-    byte *VROMBanks;        /* Pointer on the first VROM */
+    uint32_t PROMSize, /* Size of PROM */
+             VROMSize; /* Size of VROM */
+    char     MapperID;          /* Mapper Type */
+    uint8_t  Flags;
+    char    *FileName;
+    uint8_t *File;             /* Pointer on the file in memory */
+    uint8_t *PROMBanks;        /* Pointer on the first PROM */
+    uint8_t *VROMBanks;        /* Pointer on the first VROM */
 } NesCart;
 
 void DumpCartProperties();

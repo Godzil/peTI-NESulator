@@ -18,21 +18,22 @@
 /* M6502 configuration
  *
  * Supported DEFINEs :
- * NO_DECIMAL     Quick6502 will not support BDC arithemtic (used for NES)
- * CMOS_6502     Quick6502 will act as a CMOS 6502 (Not actually used)
+ * Q6502_NO_DECIMAL     Quick6502 will not support BDC arithemtic (used for NES)
+ * Q6502_CMOS           Quick6502 will act as a CMOS 6502 (Not actually used)
+ * Q6502_DEBUGGER       Quick6502 will be build with debugguer support. Add some KB to the binary 
+ *                      and may slowdown a bit the emulation.
  *
  */
 
-#ifdef CMOS_6502
+#ifdef Q6502_CMOS
 //#warning Quick6502 CMOS support is actually desactivated, desactivate it
-#undef CMOS_6502
+#undef Q6502_CMOS
 #endif
 
-#ifndef NO_DECIMAL
+#ifndef Q6502_NO_DECIMAL
 //#warning Quick6502 have actually no BCD support, fallback to no NO_DECIMAL
-#define NO_DECIMAL
+#define Q6502_NO_DECIMAL
 #endif
-
 
 #include "types.h"
 
@@ -63,6 +64,9 @@ typedef struct quick6502_cpu_
    /* Other config options */
    byte running; /* This field is used to prevent cpu free if this cpu is running */
    byte page_crossed;
+   
+   /* TODO add support for Inst/MemAccess breakpoints */
+   
 } quick6502_cpu;
 
 typedef struct quick6502_cpuconfig_
@@ -150,8 +154,10 @@ void quick6502_int(quick6502_cpu *cpu, quick6502_signal signal);
 void quick6502_dump(quick6502_cpu *cpu, FILE * fp);
 
 /** Get current instruction name at specified address and put it into buffer */
-void quick6502_getinstruction(quick6502_cpu *cpu, unsigned short addr, char *buffer); 
+#define MINE
 
+int quick6502_getinstruction(quick6502_cpu *cpu, char interpret,
+                             unsigned short addr, char *buffer, int *strlength);                        
 /**
  * Free the CPU 
  *

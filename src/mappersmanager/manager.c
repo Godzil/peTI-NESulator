@@ -31,7 +31,7 @@ typedef struct Mapper_
    MapperInit      init;
    MapperIRQ       irq;
    MapperDump      dump;
-   
+
 } Mapper;
 
 #include "mappers_list.h"
@@ -50,13 +50,14 @@ void mapper_list ()
 int mapper_init (NesCart *cart)
 {
    Mapper *ptr = &(Mappers[0]);
-   console_printf (Console_Default, "Search for a compatible mapper ID #%X:\n", cart->MapperID);
+   console_printf (Console_Default, "Search for a compatible mapper ID #%d:\n", cart->MapperID);
    while (ptr->name != NULL)
    {
       if (ptr->id == cart->MapperID)
       {
-         console_printf (Console_Default, "Found mapper ID #%X - '%s'\n", ptr->id, ptr->name);
-         ptr->init (cart);
+         console_printf (Console_Default, "Found mapper ID #%d - '%s'\n", ptr->id, ptr->name);
+         if (ptr->init)
+            ptr->init (cart);
          
          mapper_irqloop = ptr->irq;
          mapper_dump    = ptr->dump;
@@ -65,5 +66,6 @@ int mapper_init (NesCart *cart)
       }
       ptr++;
    }
+   console_printf (Console_Default, "No compatible mapper found!\n");
    return -1;
 }

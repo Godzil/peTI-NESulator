@@ -10,8 +10,6 @@
 /**     commercially. Please, notify me, if you make any    **/
 /**     changes to this file.                               **/
 /*************************************************************/
-#ifdef UNIX
-
 #include "Sound.h"
 
 #include <stdlib.h>
@@ -20,6 +18,8 @@
 #include <fcntl.h>
 #include <pthread.h>
 #include <sys/ioctl.h>
+
+#include <os_dependent.h>
 
 #ifdef SUN_AUDIO  
 
@@ -106,7 +106,7 @@ static struct
   int Count;                      /* Phase counter                    */
 } CH[SND_CHANNELS];
 
-static void UnixSetWave(int Channel,signed char *Data,int Length,int Rate);
+static void UnixSetWave(int Channel, signed char *Data,int Length,int Freq);
 static void UnixSetSound(int Channel,int NewType);
 static void UnixDrum(int Type,int Force);
 static void UnixSetChannels(int Volume,int Switch);
@@ -221,6 +221,9 @@ static void *DSPLoop(void *Arg)
   unsigned char Buf[SND_BUFSIZE];
   register int J,I,K,L,M,N,L1,L2,A1,A2,V;
   int FreqCount;
+  int ret;
+
+  L = N = A2 = 0;
 
   for(J=0;J<SND_CHANNELS;J++)
   {
@@ -421,7 +424,7 @@ static void *DSPLoop(void *Arg)
       /* We'll block here until next DMA buffer becomes free. It happens 
       ** once per (1<<SND_BITS)/SoundRate seconds.
       */
-      write(SoundFD,Buf,SND_BUFSIZE);
+      ret = write(SoundFD,Buf,SND_BUFSIZE);
 #endif
     }
   }
@@ -531,13 +534,13 @@ void UnixSetSound(int Channel,int NewType)
 /** waveform to be an instrument or set it to the waveform  **/
 /** own playback rate.                                      **/
 /*************************************************************/
-void UnixSetWave(int Channel,signed char *Data,int Length,int Rate)
+void UnixSetWave(int Channel, signed char *Data, int Length, int Freq)
 {
   if((Channel<0)||(Channel>=SND_CHANNELS)||(Length<=0)) return;
 
   CH[Channel].Type   = SND_WAVE;
   CH[Channel].Length = Length;
-  CH[Channel].Rate   = Rate;
+  CH[Channel].Rate   = Freq;
   CH[Channel].Pos    = 0;
   CH[Channel].Count  = 0;
   CH[Channel].Data   = Data;
@@ -550,5 +553,3 @@ void UnixDrum(int Type,int Force)
 {
   /* This function is currently empty */
 }
-
-#endif /* UNIX */

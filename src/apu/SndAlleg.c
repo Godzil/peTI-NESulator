@@ -43,7 +43,7 @@ static int MasterSwitch = (1<<SND_CHANNELS)-1;
 static int LoopFreq     = 25;
 static int NoiseGen     = 1;
 static int Suspended    = 0;
-
+static int SoundRun     = 0;
 static struct
 {
   int Type;                       /* Channel type (SND_*)             */
@@ -351,6 +351,7 @@ int InitSound(int Rate,int Verbose)
   pthread_detach(ThreadID);
 
   /* Done */
+  SoundRun = 1;
   if(Verbose) puts("OK");
   return(SoundRate=Rate);
 }
@@ -360,10 +361,13 @@ int InitSound(int Rate,int Verbose)
 /*************************************************************/
 void TrashSound(void)
 {
-  StopSound();
-  console_printf(Console_Default, "%s: Kill thread...\n", __func__);
-  if(ThreadID)    pthread_cancel(ThreadID);
-
+  if (SoundRun == 1)
+  {
+     StopSound();
+     console_printf(Console_Default, "%s: Kill thread...\n", __func__);
+     if(ThreadID)    pthread_cancel(ThreadID);
+  }
+  SoundRun = 0;
   SoundRate = 0;
   ThreadID  = 0;
 }

@@ -93,7 +93,7 @@ void SetChannels(int Volume,int Switch);
 /** waveform to be an instrument or set it to the waveform  **/
 /** own playback rate.                                      **/
 /*************************************************************/
-void SetWave(int Channel,const signed char *Data,int Length,int Rate);
+void SetWave(int Channel,signed char *Data,int Length,int Rate);
 
 /** GetWave() ************************************************/
 /** Get current read position for the buffer set with the   **/
@@ -225,7 +225,7 @@ struct SndDriverStruct
   void (*Drum)(int Type,int Force);
   void (*SetChannels)(int Volume,int Switch);
   void (*Sound)(int Channel,int NewFreq,int NewVolume);
-  void (*SetWave)(int Channel,const signed char *Data,int Length,int Freq);
+  void (*SetWave)(int Channel,signed char *Data,int Length,int Freq);
   const signed char *(*GetWave)(int Channel);
 };
 extern struct SndDriverStruct SndDriver;

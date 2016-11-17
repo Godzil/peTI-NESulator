@@ -40,7 +40,7 @@ byte memory_pages_attr[0x100];
 func_rdhook rdh_table[0x100];
 func_wrhook wrh_table[0x100];
 
-#define DEBUG
+//#define DEBUG
 #undef DEBUG
 
 #ifdef DEBUG

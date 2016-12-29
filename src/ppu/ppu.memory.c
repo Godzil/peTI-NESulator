@@ -3,7 +3,7 @@
  *  ppu.memory.c - Inspired from the memory manager of the Quick6502 Project.
  *
  *  Created by Manoel Trapier on 12/04/07.
- *  Copyright 2003-2008 986 Corp. All rights reserved.
+ *  Copyright (c) 2003-2016 986-Studio. All rights reserved.
  *
  *  $LastChangedDate$
  *  $Author$

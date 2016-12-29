@@ -3,7 +3,7 @@
  *  corecpu.h
  *
  *  Created by Manoel Trapier on 24/02/08
- *  Copyright 2008 986 Corp. All rights reserved.
+ *  Copyright (c) 2003-2016 986-Studio. All rights reserved.
  *
  *  $LastChangedDate$
  *  $Author$

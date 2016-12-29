@@ -3,7 +3,7 @@
  *  main.c
  *
  *  Created by Manoel TRAPIER.
- *  Copyright (c) 2003-2012 986Corp. All rights reserved.
+ *  Copyright (c) 2003-2016 986-Studio. All rights reserved.
  *
  *  $LastChangedDate$
  *  $Author$
@@ -20,21 +20,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 #include <sys/mman.h>
 #include <sys/time.h>
 #include <time.h>
 #include <ctype.h>
 
-/* Allegro includes */
-#ifdef __APPLE__
-#define USE_CONSOLE
-#include <Allegro/allegro.h>
-#else
-#define USE_CONSOLE
-#include <allegro.h>
-#endif
-
+#include <GLFW/glfw3.h>
 
 #else
 
@@ -61,23 +55,11 @@
 #include <Sound.h>
 #endif
 
-#include <palette.h>
-
-/* PAL support is broken, so force NTSC mode */
-#if ISPAL || ISNTSC
-#undef ISPAL
-#undef ISNTSC
-#endif
-#define ISNTSC 1
-
 #if ISPAL && !ISNTSC
-
 int VBLANK_TIME     = 70;
-int HBLANK_TIME     = 140;
+int HBLANK_TIME     = 103;
 double APU_BASEFREQ = 1.7734474;
-
 #elif !ISPAL && ISNTSC
-
 int VBLANK_TIME     = 20;
 int HBLANK_TIME     = 113;
 double APU_BASEFREQ = 1.7897725;
@@ -91,13 +73,16 @@ double APU_BASEFREQ = 1.7897725;
 
 /* TI-NESulator Version */
 #define V_MAJOR 0
-#define V_MINOR 40
+#define V_MINOR 70
+
+#ifdef USE_SOUND
+#undef USE_SOUND
+#endif
 
 /* SVN specific values */
-#define VS_ID              "$Id$"
+
 #define VS_REVISION        "$Revision$"
 #define VS_LASTCHANGEDDATE "$LastChangedDate$"
-#define VS_HEADURL         "$HeadURL$"
 #define VS_AUTHOR          "$Author$"
 
 /*
@@ -112,10 +97,6 @@ NesCart *Cart;
 
 byte *FDSRom;
 byte *FDSRam;
-
-/* Allegro main screen */
-BITMAP *Buffer;
-
 
 /* Command line options */
 byte START_DEBUG = 0;
@@ -138,8 +119,6 @@ struct timeval timeStart;
 struct timeval timeEnd;
 
 volatile unsigned long FPS, IPS;
-
-PALETTE pal;
 
 short IRQScanHit = -1;
 short SZHit = -1;
@@ -165,15 +144,6 @@ void CloseHook(void)
 {
    WantClosing = 1;
 }
-
-void ips_fps_counter(void)
-{
-   FPS = frame;
-   IPS = ccount;
-   frame = 0;
-   ccount = 0;
-}
-END_OF_FUNCTION(ips_fps_counter);
 
 void SaveSaveRam(char *name)
 {
@@ -216,7 +186,7 @@ void LoadSaveRam(char *name)
 }
 
 
-void LoadPalette(char *filename, PALETTE pal)
+void LoadPalette(char *filename, Palette *pal)
 {
    FILE *fp;
    int ret;
@@ -380,6 +350,7 @@ byte Page40[256];
 
 void WrHook4000Multiplexer(byte addr, byte value)
 {
+#ifdef USE_SOUND
    static byte SQ1V = 0;
    static byte SQ2V = 0;
    static byte NOIV = 0;
@@ -400,6 +371,8 @@ void WrHook4000Multiplexer(byte addr, byte value)
    static byte Sq2_reg3 = 0;
    
    double SQ = 0.0;
+#endif
+
    switch(addr)
    {
 #ifdef USE_SOUND    
@@ -655,14 +628,9 @@ int main(int argc, char *argv[])
    /* Print the banner */
    console_printf(Console_Default, "--------------------------------------------------------------------------------\n"
           "Welcome to TI-NESulator v%d.%d - by Godzil\n"
-          "Copyright 2003-2012 TRAPIER Manoel (godzil@godzil.net)\n"
-          "%s\n%s\n%s\n"
+          "Copyright 2003-2016 TRAPIER Manoel (godzil@godzil.net)\n"
           "--------------------------------------------------------------------------------\n\n", 
-          V_MAJOR,
-          V_MINOR,
-          VS_REVISION,
-          VS_LASTCHANGEDDATE,
-          VS_AUTHOR);
+          V_MAJOR, V_MINOR);
    
    console_printf(Console_Default, "Install signal handlers...\t[");
    signal(SIGABRT, signalhandler);
@@ -928,23 +896,7 @@ int main(int argc, char *argv[])
    unmap_sram();
    
    InitPaddle(&P1);
-   
-   console_printf(Console_Default, "Initializing Allegro...\t\t");
-   allegro_init();
-   install_timer();
-   install_keyboard();
-   console_printf(Console_Default, "[ OK ]\n");    
-   console_printf(Console_Default, "Set graphic mode...\t\t");
-   set_color_depth(8);
-   set_gfx_mode(GFX_AUTODETECT_WINDOWED, 512 + 256, 480, 512 + 256, 480);
-   Buffer = create_bitmap(512 + 256, 480);
-   clear_to_color(Buffer, 0x0D);
-   
-   //set_close_button_callback(CloseHook);
-   //set_window_title("TI-NESulator");
-   
-   console_printf(Console_Default, "[ OK ]\n");
-   
+
    console_printf(Console_Default, "Init PPU...\n");
    
    if (ppu_init() != 0)
@@ -970,16 +922,8 @@ int main(int argc, char *argv[])
       return -1;
    console_printf(Console_Default, "[ OK ]\n");
    
-   if (PALETTE_FILENAME == NULL)
-   {
-      set_palette(basicPalette);
-   }
-   else
-   {
-      LoadPalette(PALETTE_FILENAME, pal);    
-      set_palette(pal);
-   }
-   
+//  set_palette(basicPalette);
+
 #ifdef USE_SOUND
    InitSound(44400,!0);
    
@@ -990,7 +934,7 @@ int main(int argc, char *argv[])
 #endif
    // Actually no real debugguer...
    //console_printf(Console_Default, "Press ESC to pause emulation and jump to debugguer\n");
-   install_int(ips_fps_counter, 1000);
+
    ScanLine = 0;
    
    /* Initialize the CPU */
@@ -1027,7 +971,6 @@ int main(int argc, char *argv[])
    }
    return 0;
 }
-END_OF_MAIN()
 
 /* Access directly to Memory pages *HACKISH* */
 extern byte *memory_pages[0xFF];
@@ -1079,7 +1022,7 @@ void MemoryPageZeroWrite   (unsigned short Addr, byte Value)
 void Loop6502(quick6502_cpu *R)
 {
    byte ret;
-   short skey; 
+//   short skey;
    long WaitTime;
    static long delta=0;
    
@@ -1122,7 +1065,7 @@ void Loop6502(quick6502_cpu *R)
 #endif
       
       /* If we press Page Up, we want to accelerate "time" */
-      if ((!key[KEY_PGUP]) && (!key[KEY_Y]))
+      if (!getKeyStatus('Y'))
          if ((WaitTime >= 0) && (WaitTime < 100000))
 	         usleep(WaitTime);
       
@@ -1148,13 +1091,12 @@ void Loop6502(quick6502_cpu *R)
       ScanLine++;
    
    //console_printf(Console_Default, "SL:%d HBT:%d VbT:%d\n", ScanLine, HBLANK_TIME, VBLANK_TIME);
-   if (keypressed())
-   {
-      skey = (readkey() & 0xFF);
+
       // TODO: NO DEBUGER
-/*      if (skey == 27)
-         R->Trace = 1;*/
-      
+      if (getKeyStatus(GLFW_KEY_ESCAPE))
+         exit(0);
+
+#if 0
       if (skey == '9')
       {
          VBLANK_TIME += 2;
@@ -1178,17 +1120,16 @@ void Loop6502(quick6502_cpu *R)
          HBLANK_TIME -= 1;
          console_printf(Console_Default, "HBLT: %d\n", HBLANK_TIME);            
       }
-      
-      if ((skey == 'r') || (skey == 'R'))
+#endif
+
+      if (getKeyStatus('r') || getKeyStatus('R'))
       {
          /* Force the PPU to stop NMIs */
          MemoryWrite(0x2000, 0x00);
          quick6502_reset(R);
       }
       
-      plugin_keypress(skey);
-      
-   }
+//      plugin_keypress(skey);
 
    if (ret != 0)
       quick6502_int(R, ret);

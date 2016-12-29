@@ -10,7 +10,7 @@
 /**     commercially. Please, notify me, if you make any    **/
 /**     changes to this file.                               **/
 /*************************************************************/
-#include "Sound.h"
+//#include "Sound.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -20,7 +20,7 @@
 #include <sys/ioctl.h>
 
 #include <os_dependent.h>
-
+#if 0
 #ifdef SUN_AUDIO  
 
 #include <sys/audioio.h>
@@ -553,3 +553,4 @@ void UnixDrum(int Type,int Force)
 {
   /* This function is currently empty */
 }
+#endif

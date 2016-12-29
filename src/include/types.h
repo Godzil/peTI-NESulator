@@ -3,7 +3,7 @@
  *  types.h - Taken from the Quick6502 project
  *
  *  Created by Manoel Trapier on 18/09/06.
- *  Copyright 2003-2008 986 Corp. All rights reserved.
+ *  Copyright (c) 2003-2016 986-Studio. All rights reserved.
  *
  *  $LastChangedDate$
  *  $Author$
@@ -15,12 +15,14 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+#include <stdint.h>
+
 #ifndef BYTE_TYPE_DEFINED
 #define BYTE_TYPE_DEFINED
-typedef unsigned char byte;
+typedef uint8_t byte;
 #endif
 
-typedef unsigned char bool;
+typedef uint8_t bool;
 
 #define true  (0)
 #define false (!true)

@@ -102,4 +102,5 @@ endif()
 
 add_executable(tines main.c paddle.c NESCarts.c)
 target_link_libraries(tines apu corecpu mappermanager memorymanager pluginsmanager ppu oslib ${PTHREADLIB})
-add_test(tines_test ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/src/tines ${PROJECT_SOURCE_DIR}/data/bad_apple_2.nes)
+
+add_test(NAME tines_test COMMAND $<TARGET_FILE:tines> ${PROJECT_SOURCE_DIR}/data/bad_apple_2.nes)

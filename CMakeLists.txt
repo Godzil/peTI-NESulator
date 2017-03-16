@@ -21,4 +21,8 @@ find_package(OpenGL REQUIRED)
 
 include_directories(${OPENGL_INCLUDE_DIR})
 
+if (COVERALLS)
+ enable_testing()
+endif (COVERALLS)
+
 add_subdirectory (src)

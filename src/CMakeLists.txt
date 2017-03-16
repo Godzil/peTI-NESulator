@@ -64,8 +64,9 @@ if (USE_PROFILING)
 endif (USE_PROFILING)
 
 if (COVERALLS)
-    include(Coveralls)
-    coveralls_turn_on_coverage()
+   add_definitions (-DRUN_COVERAGE)
+   include(Coveralls)
+   coveralls_turn_on_coverage()
 endif()
 
 include_directories(include)
@@ -101,3 +102,4 @@ endif()
 
 add_executable(tines main.c paddle.c NESCarts.c)
 target_link_libraries(tines apu corecpu mappermanager memorymanager pluginsmanager ppu oslib ${PTHREADLIB})
+add_test(tines_test ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/src/tines ${PROJECT_SOURCE_DIR}/data/bad_apple_2.nes)

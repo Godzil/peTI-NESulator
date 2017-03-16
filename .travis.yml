@@ -4,9 +4,21 @@ git:
 compiler:
  - clang
  - gcc
-script: mkdir build && cd build && cmake -DUSE_ALLEGRO=OFF -DUSE_PROFILING=ON -DCOVERALLS=ON -DCMAKE_BUILD_TYPE=Debug .. && cmake --build . && cmake --build . --target coveralls
+script: 
+ - mkdir build
+ - cd build 
+ - cmake -DUSE_ALLEGRO=OFF -DUSE_PROFILING=OFF -DCOVERALLS=OFF -DCMAKE_BUILD_TYPE=Release .. 
+ - cmake --build . 
+ - cd ..
+ - mkdir coverage 
+ - cd coverage
+ - cmake -DUSE_ALLEGRO=OFF -DUSE_PROFILING=OFF -DCOVERALLS=ON -DCMAKE_BUILD_TYPE=Debug ..
+ - cmake --build .
+ - cmake --build . --target coveralls
 install: true
-
+env:
+  global:
+    - CODECOV_TOKEN=$COVERALLS_REPO_TOKEN
 addons:
   apt:
     sources:
@@ -14,3 +26,5 @@ addons:
     packages:
       - cmake
       - cmake-data
+      - lcov
+      - curl

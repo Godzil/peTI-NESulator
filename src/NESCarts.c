@@ -57,7 +57,7 @@ int LoadCart(const char *filename, NesCart * cart)
     cart->File = (byte *)LoadFilePtr((char *)filename);
     
     
-    if ((cart->File == NULL) || ((int)cart->File == -1))
+    if (cart->File == NULL)
       return -1;
     
 	sprintf(buffer, "%c%c%c%c", 0x4E, 0x45, 0x53, 0x1A);

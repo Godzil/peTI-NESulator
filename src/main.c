@@ -150,7 +150,7 @@ void SaveSaveRam(char *name)
    FILE *fp;
    int i;
    char fname[512];
-   int ret;
+
    strcpy(fname, name);
    strcat(fname, ".svt");
    if ((fp = fopen(fname, "wb")))
@@ -158,7 +158,7 @@ void SaveSaveRam(char *name)
 	 console_printf(Console_Default, "Saving savestate '%s'\n", fname);
 	 for( i = 0x60; i < 0x80; i++)
 	 {
-	    ret = fwrite(get_page_ptr(i), 1, 0x100, fp);
+	    fwrite(get_page_ptr(i), 1, 0x100, fp);
 	 }
 	 
 	 fclose(fp);
@@ -170,7 +170,7 @@ void LoadSaveRam(char *name)
    FILE *fp;
    int i;
    char fname[512];
-   int ret;
+
    strcpy(fname, name);
    strcat(fname, ".svt");
    if ((fp = fopen(fname, "rb")))
@@ -178,7 +178,7 @@ void LoadSaveRam(char *name)
 	 console_printf(Console_Default, "Loading savestate '%s'\n", fname);
 	 for( i = 0x60; i < 0x80; i++)
 	 {
-	    ret = fread(get_page_ptr(i), 1, 0x0100, fp);
+	    fread(get_page_ptr(i), 1, 0x0100, fp);
 	 }    
 	 fclose(fp);
 	 
@@ -189,7 +189,6 @@ void LoadSaveRam(char *name)
 void LoadPalette(char *filename, Palette *pal)
 {
    FILE *fp;
-   int ret;
    unsigned char r, v, b, i;
    console_printf(Console_Default, "%s: try to load pallette file '%s'", __func__, filename);
    if ((fp = fopen(filename, "rb")) != NULL)
@@ -198,9 +197,9 @@ void LoadPalette(char *filename, Palette *pal)
 	 for (i = 0; i < 64; i++)
 	 {
 	    
-	    ret = fread(&r, 1, 1, fp);
-	    ret = fread(&v, 1, 1, fp);
-	    ret = fread(&b, 1, 1, fp);
+	    fread(&r, 1, 1, fp);
+	    fread(&v, 1, 1, fp);
+	    fread(&b, 1, 1, fp);
 	    
 	    /*            r = (r * 64) / 255;
 		v = (v * 64) / 255;
@@ -258,12 +257,20 @@ void LoadPalette(char *filename, Palette *pal)
    }
 }
 
+#ifdef RUN_COVERAGE
+void alarmHandler(int sig)
+{
+   signal(SIGALRM, SIG_IGN);
+   WantClosing = 1;
+}
+#endif
+
 void signalhandler(int sig)
 {
    static int state=0;
 
    char name[512];
-   
+
    static FILE *fp = NULL;
    sprintf(name, "crashdump-%d.txt", (int)time(NULL));
    if (state != 0)
@@ -643,7 +650,11 @@ int main(int argc, char *argv[])
    console_printf(Console_Default, "S");
    signal(SIGTERM, signalhandler);
    console_printf(Console_Default, "T]\n");
-   
+
+#ifdef RUN_COVERAGE
+   signal(SIGALRM, alarmHandler);
+#endif
+  
    /*  */
    console_printf(Console_Default, "Initialize memory...\t\t");
    InitMemory();
@@ -957,6 +968,10 @@ int main(int argc, char *argv[])
  */
    
    gettimeofday(&timeStart, NULL);
+
+#ifdef RUN_COVERAGE
+   alarm(1 * 60); /* Run for 1 minutes */
+#endif
    
    while(!WantClosing)
    {

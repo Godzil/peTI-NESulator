@@ -1,0 +1,8 @@
+language: c
+git:
+ submodule: true
+compiler:
+ - clang
+ - gcc
+script: mkdir build && cd build && cmake -DCOVERALLS=ON -DCMAKE_BUILD_TYPE=Debug .. && cmake --build . && cmake --build . --target coveralls
+install: true

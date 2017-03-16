@@ -11,4 +11,4 @@
 
 add_library(oslib loadfile.c graphics.c sound.c io.c)
 
-target_link_libraries(oslib glfw ${OPENGL_glu_LIBRARY})
+target_link_libraries(oslib glfw ${OPENGL_glu_LIBRARY} ${OPENGL_gl_LIBRARY})

@@ -19,7 +19,7 @@
 #include <os_dependent.h>
 
 #include <GLFW/glfw3.h>
-#include <OpenGL/glext.h>
+//#include <OpenGL/glext.h>
 
 #include <palette.h>
 

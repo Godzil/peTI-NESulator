@@ -22,12 +22,16 @@ set(USE_PROFILING OFF CACHE BOOL "Use profiling tools? (Will slow down a lot.)")
 
 set(USE_ALLEGRO ON CACHE BOOL "Use Allegro backend")
 
+option(COVERALLS "Generate coveralls data" OFF)
+
 ##########################
 # Link & Compile flags
 ##########################
 
 set (CMAKE_C_FLAGS "-Wall -Wextra -Wno-unused-parameter -Werror ${PLATFORM_FLAGS}")
 set (CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-unused-parameter -Werror ${PLATFORM_FLAGS}")
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/external/coveralls-cmake/cmake)
 
 add_definitions (-DNO_DECIMAL)
 
@@ -59,6 +63,11 @@ if (USE_PROFILING)
    set(CMAKE_C_FLAGS -pg)
 endif (USE_PROFILING)
 
+if (COVERALLS)
+    include(Coveralls)
+    coveralls_turn_on_coverage()
+endif()
+
 include_directories(include)
 
 add_subdirectory(apu)
@@ -78,6 +87,17 @@ else (TARGET_TI68k)
 endif (TARGET_TI68k)
 
 find_library(PTHREADLIB pthread)
+
+if (COVERALLS)
+    set(COVERAGE_SRCS src/main.c src/paddle.c src/NESCarts.c ${COVERAGE_SRCS})
+
+    # Create the coveralls target.
+    coveralls_setup(
+        "${COVERAGE_SRCS}" # The source files.
+       	ON                 # If we should upload.
+        ) # (Optional) Alternate project cmake module path.
+endif()
+
 
 add_executable(tines main.c paddle.c NESCarts.c)
 target_link_libraries(tines apu corecpu mappermanager memorymanager pluginsmanager ppu oslib ${PTHREADLIB})

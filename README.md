@@ -1,7 +1,9 @@
 TI-NESulator
 ============
 
-This is a cleaned version of the TI-NESulator repository (all data has been removed)
+[![codecov](https://codecov.io/gh/Godzil/TI-NESulator/branch/master/graph/badge.svg)](https://codecov.io/gh/Godzil/TI-NESulator)
+
+This is a cleaned version of the TI-NESulator repository (all non free data has been removed)
 
 Some part of the original subversion has been lost because of harddrive crash so the 
 early stage of the project is completely lost. Or I would need to check all the

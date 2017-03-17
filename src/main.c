@@ -73,7 +73,7 @@ double APU_BASEFREQ = 1.7897725;
 
 /* TI-NESulator Version */
 #define V_MAJOR 0
-#define V_MINOR 70
+#define V_MINOR 71
 
 #ifdef USE_SOUND
 #undef USE_SOUND

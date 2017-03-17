@@ -1,7 +1,7 @@
 TI-NESulator
 ============
 
-[![codecov](https://codecov.io/gh/Godzil/TI-NESulator/branch/master/graph/badge.svg)](https://codecov.io/gh/Godzil/TI-NESulator) [![travis](https://travis-ci.org/Godzil/TI-NESulator.svg?branch=master)](https://travis-ci.org/Godzil/TI-NESulator)
+[![Coverage Status](https://coveralls.io/repos/github/Godzil/TI-NESulator/badge.svg?branch=master)](https://coveralls.io/github/Godzil/TI-NESulator?branch=master) [![codecov](https://codecov.io/gh/Godzil/TI-NESulator/branch/master/graph/badge.svg)](https://codecov.io/gh/Godzil/TI-NESulator) [![travis](https://travis-ci.org/Godzil/TI-NESulator.svg?branch=master)](https://travis-ci.org/Godzil/TI-NESulator)
 
 This is a cleaned version of the TI-NESulator repository (all non free data has been removed)
 

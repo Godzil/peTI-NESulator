@@ -28,3 +28,5 @@ addons:
       - cmake-data
       - lcov
       - curl
+after_success:
+  - bash <(curl -s https://codecov.io/bash)

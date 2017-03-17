@@ -28,8 +28,8 @@ option(COVERALLS "Generate coveralls data" OFF)
 # Link & Compile flags
 ##########################
 
-set (CMAKE_C_FLAGS "-Wall -Wextra -Wno-unused-parameter -Werror ${PLATFORM_FLAGS}")
-set (CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-unused-parameter -Werror ${PLATFORM_FLAGS}")
+set (CMAKE_C_FLAGS "-Wall -Wextra -Wno-unused-parameter -Wno-unused-result -Werror ${PLATFORM_FLAGS}")
+set (CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-unused-parameter -Wno-unused-result -Werror ${PLATFORM_FLAGS}")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/external/coveralls-cmake/cmake)
 

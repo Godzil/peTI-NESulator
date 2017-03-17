@@ -1,42 +1,36 @@
 language: c
-
-git:
- submodule: true
-
 os:
- - linux
- - osx
-
+  - linux
+  - osx
 matrix:
- include:
-  -os: linux
-    addons:
-      apt:
-        sources:
-          - george-edison55-precise-backports # cmake 3.2.3 / doxygen 1.8.3
-        packages:
-          - cmake
-          - cmake-data
-          - lcov
-          - curl
- allow_failures:
+  allow_failures:
     - os: osx
 
-compiler:
- - clang
- - gcc
+addons:
+  apt:
+    sources:
+      - george-edison55-precise-backports # cmake 3.2.3 / doxygen 1.8.3
+    packages:
+      - cmake
+      - cmake-data
+      - lcov
+      - curl
 
-script: 
- - mkdir build
- - cd build 
- - cmake -DUSE_ALLEGRO=OFF -DUSE_PROFILING=OFF -DCOVERALLS=OFF -DCMAKE_BUILD_TYPE=Release .. 
- - cmake --build . 
- - cd ..
- - mkdir coverage 
- - cd coverage
- - cmake -DUSE_ALLEGRO=OFF -DUSE_PROFILING=OFF -DCOVERALLS=ON -DCMAKE_BUILD_TYPE=Debug ..
- - cmake --build .
- - cmake --build . --target coveralls
+compiler:
+  - clang
+  - gcc
+
+script:
+  - mkdir build
+  - cd build
+  - cmake -DUSE_ALLEGRO=OFF -DUSE_PROFILING=OFF -DCOVERALLS=OFF -DCMAKE_BUILD_TYPE=Release ..
+  - cmake --build .
+  - cd ..
+  - mkdir coverage
+  - cd coverage
+  - cmake -DUSE_ALLEGRO=OFF -DUSE_PROFILING=OFF -DCOVERALLS=ON -DCMAKE_BUILD_TYPE=Debug ..
+  - cmake --build .
+  - cmake --build . --target coveralls
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update      ; fi

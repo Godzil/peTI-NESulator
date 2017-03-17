@@ -18,6 +18,9 @@ script:
  - cmake -DUSE_ALLEGRO=OFF -DUSE_PROFILING=OFF -DCOVERALLS=ON -DCMAKE_BUILD_TYPE=Debug ..
  - cmake --build .
  - cmake --build . --target coveralls
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update      ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install glew; fi
 install: true
 addons:
   apt:

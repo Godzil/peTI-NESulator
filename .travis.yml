@@ -1,6 +1,9 @@
 language: c
 git:
  submodule: true
+os:
+ - linux
+ - osx
 compiler:
  - clang
  - gcc

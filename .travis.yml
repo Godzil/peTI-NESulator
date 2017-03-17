@@ -8,6 +8,17 @@ os:
  - osx
 
 matrix:
+ include:
+  -os: linux
+    addons:
+      apt:
+        sources:
+          - george-edison55-precise-backports # cmake 3.2.3 / doxygen 1.8.3
+        packages:
+          - cmake
+          - cmake-data
+          - lcov
+          - curl
  allow_failures:
     - os: osx
 
@@ -32,16 +43,6 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install glew; fi
 
 install: true
-
-addons:
-  apt:
-    sources:
-      - george-edison55-precise-backports # cmake 3.2.3 / doxygen 1.8.3
-    packages:
-      - cmake
-      - cmake-data
-      - lcov
-      - curl
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

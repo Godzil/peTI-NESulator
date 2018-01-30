@@ -30,5 +30,10 @@ void *LoadFilePtr(char * filename)
 	
 	close(fd);
 
+	if ( RetPtr == MAP_FAILED )
+	{
+                RetPtr = NULL;
+	}
+
 	return RetPtr;
 }

@@ -73,7 +73,7 @@ double APU_BASEFREQ = 1.7897725;
 
 /* TI-NESulator Version */
 #define V_MAJOR 0
-#define V_MINOR 70
+#define V_MINOR 71
 
 #ifdef USE_SOUND
 #undef USE_SOUND
@@ -257,12 +257,20 @@ void LoadPalette(char *filename, Palette *pal)
    }
 }
 
+#ifdef RUN_COVERAGE
+void alarmHandler(int sig)
+{
+   signal(SIGALRM, SIG_IGN);
+   WantClosing = 1;
+}
+#endif
+
 void signalhandler(int sig)
 {
    static int state=0;
 
    char name[512];
-   
+
    static FILE *fp = NULL;
    sprintf(name, "crashdump-%d.txt", (int)time(NULL));
    if (state != 0)
@@ -642,7 +650,11 @@ int main(int argc, char *argv[])
    console_printf(Console_Default, "S");
    signal(SIGTERM, signalhandler);
    console_printf(Console_Default, "T]\n");
-   
+
+#ifdef RUN_COVERAGE
+   signal(SIGALRM, alarmHandler);
+#endif
+  
    /*  */
    console_printf(Console_Default, "Initialize memory...\t\t");
    InitMemory();
@@ -956,6 +968,10 @@ int main(int argc, char *argv[])
  */
    
    gettimeofday(&timeStart, NULL);
+
+#ifdef RUN_COVERAGE
+   alarm(1 * 60); /* Run for 1 minutes */
+#endif
    
    while(!WantClosing)
    {

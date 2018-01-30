@@ -20,6 +20,9 @@ add_subdirectory("external/glfw")
 find_package(OpenGL REQUIRED)
 
 include_directories(${OPENGL_INCLUDE_DIR})
-link_libraries(${OPENGL_gl_LIBRARY})
+
+if (COVERALLS)
+ enable_testing()
+endif (COVERALLS)
 
 add_subdirectory (src)

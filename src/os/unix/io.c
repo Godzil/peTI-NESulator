@@ -40,11 +40,10 @@ int console_vprintf(const ConsoleLevel level, const char *format, va_list ap)
 
 int console_printf(const ConsoleLevel level, const char *format, ...)
 {
-   int ret = 0;
    va_list ap;
    va_start(ap, format);
 
-   ret = console_vprintf(level, format, ap);
+   console_vprintf(level, format, ap);
 
    va_end(ap);
    return ret;

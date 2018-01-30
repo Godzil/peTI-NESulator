@@ -9,4 +9,8 @@
 # $HeadURL$
 # $Revision$
 
+if (COVERALLS)
+    set(COVERAGE_SRCS src/memorymanager/memory.c ${COVERAGE_SRCS} PARENT_SCOPE)
+endif()
+
 add_library(memorymanager memory.c)

@@ -14,6 +14,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+
 #if 0
 /* Allegro includes */
 #ifdef __APPLE__
@@ -21,7 +22,7 @@
 #include <Allegro/allegro.h>
 #else
 #define USE_CONSOLE
-//#include <allegro.h>
+#include <allegro.h>
 #endif
 
 #define __TINES_PPU_INTERNAL__

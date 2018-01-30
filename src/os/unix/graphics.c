@@ -18,12 +18,8 @@
 
 #include <os_dependent.h>
 
+#define GLFW_INCLUDE_GLEXT
 #include <GLFW/glfw3.h>
-#ifdef __MACOSX__
-#include <OpenGL/glext.h>
-#else
-#include <GL/glext.h>
-#endif
 
 #include <palette.h>
 
@@ -47,10 +43,6 @@ struct GLWindow_t
    int HEIGHT;
 };
 
-#ifndef GL_TEXTURE_RECTANGLE_EXT
-#define GL_TEXTURE_RECTANGLE_EXT GL_TEXTURE_RECTANGLE_NV
-#endif
-
 static int window_num = 0;
 
 void GLWindowInitEx(GLWindow *g, int w, int h)
@@ -67,10 +59,10 @@ void GLWindowInit(GLWindow *g)
 
 void ShowScreen(GLWindow *g, int w, int h)
 {
-   glBindTexture(GL_TEXTURE_RECTANGLE_EXT, g->videoTexture);
+   glBindTexture(GL_TEXTURE_RECTANGLE, g->videoTexture);
 
    // glTexSubImage2D is faster when not using a texture range
-   glTexSubImage2D(GL_TEXTURE_RECTANGLE_EXT, 0, 0, 0, w, h, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, g->videoMemory);
+   glTexSubImage2D(GL_TEXTURE_RECTANGLE, 0, 0, 0, w, h, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, g->videoMemory);
    glBegin(GL_QUADS);
 
    glTexCoord2f(0.0f, 0.0f);
@@ -108,20 +100,20 @@ void setupGL(GLWindow *g, int w, int h)
    glLoadIdentity();
 
    glDisable(GL_TEXTURE_2D);
-   glEnable(GL_TEXTURE_RECTANGLE_EXT);
-   glBindTexture(GL_TEXTURE_RECTANGLE_EXT, g->videoTexture);
+   glEnable(GL_TEXTURE_RECTANGLE);
+   glBindTexture(GL_TEXTURE_RECTANGLE, g->videoTexture);
 
    //  glTextureRangeAPPLE(GL_TEXTURE_RECTANGLE_NV_EXT, 0, NULL);
 
    //  glTexParameteri(GL_TEXTURE_RECTANGLE_NV_EXT, GL_TEXTURE_STORAGE_HINT_APPLE , GL_STORAGE_CACHED_APPLE);
    //  glPixelStorei(GL_UNPACK_CLIENT_STORAGE_APPLE, GL_TRUE);
-   glTexParameteri(GL_TEXTURE_RECTANGLE_EXT, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-   glTexParameteri(GL_TEXTURE_RECTANGLE_EXT, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-   glTexParameteri(GL_TEXTURE_RECTANGLE_EXT, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-   glTexParameteri(GL_TEXTURE_RECTANGLE_EXT, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+   glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+   glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+   glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+   glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 
-   glTexImage2D(GL_TEXTURE_RECTANGLE_EXT, 0, GL_RGBA, w,
+   glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA, w,
                 h, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, g->videoMemory);
 
    glDisable(GL_DEPTH_TEST);
@@ -144,7 +136,7 @@ void restoreGL(GLWindow *g, int w, int h)
    glLoadIdentity();
 
    glDisable(GL_TEXTURE_2D);
-   glEnable(GL_TEXTURE_RECTANGLE_EXT);
+   glEnable(GL_TEXTURE_RECTANGLE);
    glDisable(GL_DEPTH_TEST);
 }
 
@@ -222,7 +214,6 @@ void drawPixel(GLWindow *gw, int x, int y, uint32_t colour)
    g = (colour >>  8) & 0xFF;
    r = (colour >> 16) & 0xFF;
    a = (colour >> 24) & 0xFF;
-
 
    gw->videoMemory[offset + 0] = a;
    gw->videoMemory[offset + 1] = r;

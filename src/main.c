@@ -3,7 +3,7 @@
  *  main.c
  *
  *  Created by Manoel TRAPIER.
- *  Copyright (c) 2003-2016 986-Studio. All rights reserved.
+ *  Copyright (c) 2003-2018 986-Studio. All rights reserved.
  *
  *  $LastChangedDate$
  *  $Author$
@@ -72,8 +72,15 @@ double APU_BASEFREQ = 1.7897725;
 //#define MEMORY_TEST
 
 /* TI-NESulator Version */
-#define V_MAJOR 0
-#define V_MINOR 71
+#if !defined(V_MAJOR) || !defined(V_MINOR) || !defined(V_MICRO)
+#error Something wrong with your building tools
+#endif
+
+#ifndef V_TEXT
+#define V_TEXT ""
+#endif
+
+
 
 #ifdef USE_SOUND
 #undef USE_SOUND
@@ -287,18 +294,16 @@ void signalhandler(int sig)
    
    if (fp) console_printf(Console_Error, 
 			    "\n\n\n\n\n"
-			    "#sick# TI-NESulator %d.%d #sick#\n"
+			    "#sick# TI-NESulator %d.%d.%d%s #sick#\n"
 			    "see %s for more information",
-			    V_MAJOR,
-			    V_MINOR,
+			    V_MAJOR, V_MINOR, V_MICRO, V_TEXT,
 			    name);
    
    if (!fp) fp = stderr;
    
    fprintf(fp,"\n\n\n\n\n"
-		 "#sick# TI-NESulator %d.%d #sick# signal: ",
-		 V_MAJOR,
-		 V_MINOR);
+		 "#sick# TI-NESulator %d.%d.%d%s #sick# signal: ",
+		 V_MAJOR, V_MINOR, V_MICRO, V_TEXT);
    switch(sig)
    {
 	 default:
@@ -634,10 +639,10 @@ int main(int argc, char *argv[])
    console_init(Console_Debug);
    /* Print the banner */
    console_printf(Console_Default, "--------------------------------------------------------------------------------\n"
-          "Welcome to TI-NESulator v%d.%d - by Godzil\n"
-          "Copyright 2003-2016 TRAPIER Manoel (godzil@godzil.net)\n"
+          "Welcome to TI-NESulator v%d.%d.%d%s - by Godzil\n"
+          "Copyright 2003-2018 TRAPIER Manoel (godzil@godzil.net)\n"
           "--------------------------------------------------------------------------------\n\n", 
-          V_MAJOR, V_MINOR);
+          V_MAJOR, V_MINOR, V_MICRO, V_TEXT);
    
    console_printf(Console_Default, "Install signal handlers...\t[");
    signal(SIGABRT, signalhandler);

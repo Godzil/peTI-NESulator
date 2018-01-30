@@ -19,7 +19,11 @@
 #include <os_dependent.h>
 
 #include <GLFW/glfw3.h>
+#ifdef __MACOSX__
 #include <OpenGL/glext.h>
+#else
+#include <GL/glext.h>
+#endif
 
 #include <palette.h>
 
@@ -169,6 +173,10 @@ void sizeHandler(GLFWwindow* window,int xs,int ys)
    glViewport(0, 0, xs, ys);
 }
 
+static void error_callback(int error, const char* description)
+{
+   puts(description);
+}
 
 void initDisplay(GLWindow *g)
 {
@@ -178,12 +186,14 @@ void initDisplay(GLWindow *g)
    /// Initialize GLFW
    glfwInit();
 
+   glfwSetErrorCallback(error_callback);
+
    // Open screen OpenGL window
    if( !(g->windows=glfwCreateWindow( g->WIDTH, g->HEIGHT, "Main", NULL, NULL)) )
    {
       glfwTerminate();
       fprintf(stderr, "Window creation error...\n");
-      return;
+      abort();
    }
 
    glfwMakeContextCurrent(g->windows);
@@ -212,6 +222,7 @@ void drawPixel(GLWindow *gw, int x, int y, uint32_t colour)
    g = (colour >>  8) & 0xFF;
    r = (colour >> 16) & 0xFF;
    a = (colour >> 24) & 0xFF;
+
 
    gw->videoMemory[offset + 0] = a;
    gw->videoMemory[offset + 1] = r;

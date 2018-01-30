@@ -36,8 +36,8 @@
 
 extern int VBLANK_TIME;
 
-volatile extern int frame;
-volatile extern unsigned long IPS, FPS;
+extern volatile int frame;
+extern volatile unsigned long IPS, FPS;
 
 extern unsigned long ColorPalette[9 * 63];
 extern short IRQScanHit;

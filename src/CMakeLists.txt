@@ -80,4 +80,5 @@ endif (TARGET_TI68k)
 find_library(PTHREADLIB pthread)
 
 add_executable(tines main.c paddle.c NESCarts.c)
-target_link_libraries(tines apu corecpu mappermanager memorymanager pluginsmanager ppu oslib ${PTHREADLIB})
+target_compile_options(tines PRIVATE -pthread)
+target_link_libraries(tines apu corecpu mappermanager memorymanager pluginsmanager ppu oslib) #${PTHREADLIB}

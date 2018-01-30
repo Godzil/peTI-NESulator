@@ -29,6 +29,7 @@
 #include <NESCarts.h>
 #include <os_dependent.h>
 #include <mappers/manager.h>
+#include <sys/mman.h>
 
 void DumpCartProperties(FILE *out, NesCart * cart)
 {
@@ -57,7 +58,7 @@ int LoadCart(const char *filename, NesCart * cart)
     cart->File = (byte *)LoadFilePtr((char *)filename);
     
     
-    if ((cart->File == NULL) || ((int)cart->File == -1))
+    if ((cart->File == NULL) || (cart->File == MAP_FAILED))
       return -1;
     
 	sprintf(buffer, "%c%c%c%c", 0x4E, 0x45, 0x53, 0x1A);

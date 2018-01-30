@@ -14,14 +14,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
+#if 0
 /* Allegro includes */
 #ifdef __APPLE__
 #define USE_CONSOLE
 #include <Allegro/allegro.h>
 #else
 #define USE_CONSOLE
-#include <allegro.h>
+//#include <allegro.h>
 #endif
 
 #define __TINES_PPU_INTERNAL__
@@ -367,3 +367,4 @@ void ppu_dumpPalette(int x, int y)
         rectfill(Buffer, x + 91 + (i % 4) * 20, y + 21 +(i / 4) * 20, x + 91 + (i % 4) * 20 + 20, y + 21 +(i / 4) * 20 + 20, ppu_readMemory(0x3F, i+0x10));
     }
 }
+#endif

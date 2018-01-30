@@ -3,7 +3,7 @@
  *  os/macos/graphics.c
  *
  *  Created by Manoel TRAPIER on 08/05/08.
- *  Copyright (c) 2003-2016 986-Studio. All rights reserved.
+ *  Copyright (c) 2003-2018 986-Studio. All rights reserved.
  *
  *  $LastChangedDate$
  *  $Author$

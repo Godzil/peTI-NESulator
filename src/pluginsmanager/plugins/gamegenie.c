@@ -3,7 +3,7 @@
  *  gamegenie.c: Hack your games with unlimited lives of add new powers!
  *
  *  Created by Manoel Trapier.
- *  Copyright (c) 2003-2016 986-Studio. All rights reserved.
+ *  Copyright (c) 2003-2018 986-Studio. All rights reserved.
  *
  *  $LastChangedDate$
  *  $Author$

@@ -45,7 +45,7 @@ void norom_MapperWriteHook(register byte Addr, register byte Value)
    return;
 }
 
-void norom_MapperDump (FILE *fp)
+void norom_MapperDump(FILE *fp)
 {
    fprintf(fp, "norom mapper have nothing to dump");
 }

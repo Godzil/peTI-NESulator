@@ -24,17 +24,17 @@
 
 typedef struct NesCart_
 {  
-    uint32_t PROMSize, /* Size of PROM */
-             VROMSize; /* Size of VROM */
-    char     MapperID;          /* Mapper Type */
+    uint32_t PROMSize,  /* Size of PROM */
+             VROMSize;  /* Size of VROM */
+    char     MapperID;  /* Mapper Type */
     uint8_t  Flags;
     char    *FileName;
-    uint8_t *File;             /* Pointer on the file in memory */
-    uint8_t *PROMBanks;        /* Pointer on the first PROM */
-    uint8_t *VROMBanks;        /* Pointer on the first VROM */
+    uint8_t *File;      /* Pointer on the file in memory */
+    uint8_t *PROMBanks; /* Pointer on the first PROM */
+    uint8_t *VROMBanks; /* Pointer on the first VROM */
 } NesCart;
 
-void DumpCartProperties();
+void DumpCartProperties(FILE *out, NesCart * cart);
 int LoadCart(const char *filename, NesCart * cart);
 
 #endif

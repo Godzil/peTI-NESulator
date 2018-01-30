@@ -17,4 +17,4 @@
 
 int norom_InitMapper  (NesCart *cart);
 int norom_MapperIRQ   (int cycledone);
-void norom_MapperDump ();
+void norom_MapperDump (FILE *fp);

@@ -23,7 +23,7 @@ typedef int (*MapperInit)      (NesCart * cart);
 typedef int (*MapperWriteHook) (register unsigned short Addr, 
                                 register unsigned char Value);
 typedef int (*MapperIRQ)       (int cycledone);
-typedef void (*MapperDump)     ();
+typedef void (*MapperDump)     (FILE *fp);
 
 #ifdef __TINES_MAPPERS__
 
@@ -51,10 +51,12 @@ void set_prom_bank_32k(unsigned short addr,int slot);
 
 /* Available functions outside of mappers */
 
-       void mapper_list       ();
-       int  mapper_init       (NesCart *cart);
-extern int  (*mapper_irqloop) (int cyclodone);
-extern void (*mapper_dump)    (FILE *fp);
+void mapper_list();
+int  mapper_init(NesCart *cart);
+
+extern MapperIRQ       mapper_irqloop;
+extern MapperDump      mapper_dump;
+extern MapperWriteHook mapper_hook;
 
 #endif /* __TINES_MAPPERS__ */
 

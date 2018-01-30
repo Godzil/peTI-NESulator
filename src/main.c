@@ -574,8 +574,9 @@ void WrHook4000Multiplexer(byte addr, byte value)
             }
 	    
             break;
-	    //    default:
-	    //Page40[addr] = value;
+
+        default:
+	      Page40[addr] = value;
 	    // console_printf(Console_Default, "40%02X: 0x%02X\n", addr, value);       
 	    //        console_printf(Console_Default, "pAPU: 0x%X @ 0x40%X\n", value, addr);
    }

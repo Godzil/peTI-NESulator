@@ -17,4 +17,4 @@
 
 int mmc1_InitMapper  (NesCart *cart);
 int mmc1_MapperIRQ   (int cycledone);
-void mmc1_MapperDump ();
+void mmc1_MapperDump (FILE *fp);

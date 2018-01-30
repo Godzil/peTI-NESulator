@@ -33,6 +33,8 @@ set (CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-unused-parameter -Wno-unused-result -We
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/external/coveralls-cmake/cmake)
 
+add_executable(tines main.c paddle.c NESCarts.c)
+
 add_definitions (-DNO_DECIMAL)
 
 if (PPU_ISPAL)
@@ -99,8 +101,6 @@ if (COVERALLS)
         ) # (Optional) Alternate project cmake module path.
 endif()
 
-
-add_executable(tines main.c paddle.c NESCarts.c)
 target_link_libraries(tines apu corecpu mappermanager memorymanager pluginsmanager ppu oslib ${PTHREADLIB})
 
 add_test(NAME tines_test COMMAND $<TARGET_FILE:tines> ${PROJECT_SOURCE_DIR}/data/bad_apple_2.nes)

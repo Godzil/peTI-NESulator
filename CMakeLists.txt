@@ -16,6 +16,7 @@ project (TINES)
 # External cmake modules
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external/cmake ${CMAKE_MODULE_PATH})
 
+# Include GLFW
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
@@ -23,6 +24,12 @@ add_subdirectory("external/glfw")
 find_package(OpenGL REQUIRED)
 
 include_directories(${OPENGL_INCLUDE_DIR})
+
+# Include PortAudio
+set(PA_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(PA_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(PA_ENABLE_DEBUG_OUTPUT OFF CACHE BOOL "" FORCE)
+add_subdirectory("external/portaudio")
 
 if (COVERALLS)
     enable_testing()

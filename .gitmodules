@@ -4,3 +4,6 @@
 [submodule "external/coveralls-cmake"]
 	path = external/coveralls-cmake
 	url = https://github.com/JoakimSoderberg/coveralls-cmake.git
+[submodule "external/portaudio"]
+	path = external/portaudio
+	url = https://git.assembla.com/portaudio.git

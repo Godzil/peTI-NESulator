@@ -188,6 +188,8 @@ void initDisplay(GLWindow *g)
       abort();
    }
 
+   glfwSetWindowAspectRatio(g->windows, 4, 3);
+
    glfwMakeContextCurrent(g->windows);
    setupGL(g, g->WIDTH, g->HEIGHT);
 

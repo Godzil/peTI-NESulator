@@ -11,3 +11,4 @@
 
 add_library(apu SndUnixT.c Sound.c)
 #add_library(apu SndAlleg.c Sound.c)
+target_link_libraries(apu portaudio_static)

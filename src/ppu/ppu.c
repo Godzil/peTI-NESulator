@@ -377,19 +377,10 @@ _AAA BCDD DDDE EEEE
 
 int ppu_hblank(uint16_t scanline)
 {
-   uint32_t i, j;
-   uint8_t pixelColor = 0;
-   uint8_t BgColor = 0;
-   uint8_t SpriteColor = 0;
+   uint32_t j;
 
    /* Sprite to display on current scanline */
    spriteData scanSprites[8];
-
-   uint16_t addr;
-   uint8_t value;
-   uint16_t tmp_HHT = 0;
-   uint16_t tmp_VVTFV = 0;
-   uint8_t  spriteCount = 0;
    ppu_scanlineSpriteOverflow = 0;
 
    if ( scanline == 0 )
@@ -400,6 +391,9 @@ int ppu_hblank(uint16_t scanline)
 
    if ( scanline < 240 )
    {
+      int i;
+      uint8_t  spriteCount = 0;
+
       /* Search for sprites on current scanline */
       for (i = 0 ; i < 8 ; i++)
       {
@@ -434,6 +428,12 @@ int ppu_hblank(uint16_t scanline)
       /* For each PPU pixel of this scanline */
       for ( i = 0 ; i < 256 ; i++ )
       {
+         uint16_t addr;
+         uint8_t value;
+
+         uint8_t pixelColor = 0;
+         uint8_t BgColor = 0;
+
          /* Set the current pixel color to the bg color */
          pixelColor = ppu_bgColor;
          BgColor = 0;
@@ -475,6 +475,8 @@ int ppu_hblank(uint16_t scanline)
 
                if ( ( ( i + PPU_Reg_FH ) % 8 ) == 7 )
                {
+                  uint16_t tmp_HHT = 0;
+
                   tmp_HHT = ( ( PPU_Reg_Counter >> 5 ) & 0x0020 ) |
                             ( PPU_Reg_Counter & 0x001F );
                   tmp_HHT = ( tmp_HHT + 1 ) & 0x003F;
@@ -511,6 +513,8 @@ int ppu_hblank(uint16_t scanline)
 
                   if ( ( spriteRelX >= 0 ) && ( spriteRelX < 8 ) )
                   {
+                     uint8_t SpriteColor = 0;
+
                      /* Get sprite tile address */
                      if ( ppu_spriteSize == 8 )
                      {
@@ -615,6 +619,7 @@ int ppu_hblank(uint16_t scanline)
 
       if ( ppu_backgroundVisibility == 1 )
       {
+         uint16_t tmp_VVTFV = 0;
 
          tmp_VVTFV = ( ( PPU_Reg_Counter >> 3 ) & 0x0100 ) | /* V */
                      ( ( PPU_Reg_Counter >> 2 ) & 0x00F8 ) | /* VT */

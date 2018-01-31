@@ -61,12 +61,11 @@ void time_stamp_line(void)
 
 void log_real(int level, char *user, char *fmt, ...)
 {
-   int i;
-   va_list va;
-   
    /* The LOG_PANIC must always be displayed */
    if ((level <= MAX_DEBUG_LEVEL) || (level <= LOG_PANIC))
    {
+      va_list va;
+
       switch(level)
       {
       case LOG_PANIC: printf(BRED FWHITE); break;
@@ -84,6 +83,7 @@ void log_real(int level, char *user, char *fmt, ...)
 
       if (user != NULL)
       {
+         int i;
          i = strlen(user);
          if (i < 12)
          {

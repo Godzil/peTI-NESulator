@@ -150,9 +150,9 @@
    unsigned short tmp = 0; unsigned char v = read; \
    tmp = cpu->reg_A + v + (cpu->reg_P & Q6502_C_FLAG); \
    cpu->reg_P = (cpu->reg_P & ~(Q6502_C_FLAG | Q6502_N_FLAG | Q6502_Z_FLAG | Q6502_V_FLAG)) | \
-          (tmp & 0x80) | ((tmp&0xFF)?0:Q6502_Z_FLAG) | \
+          (tmp & Q6502_N_FLAG) | ((tmp&0xFF)?0:Q6502_Z_FLAG) | \
          ((tmp & 0xFF00)?Q6502_C_FLAG:0) | \
-          ( (( ~(cpu->reg_A^v)&(cpu->reg_A^tmp) ))&0x80?Q6502_V_FLAG:0 ); \
+          ( (( ~(cpu->reg_A^v)&(cpu->reg_A^tmp) )&0x80)?Q6502_V_FLAG:0 ); \
    cpu->reg_A = tmp & 0xFF; \
 } while(0)
 

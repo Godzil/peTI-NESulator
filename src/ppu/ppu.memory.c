@@ -152,7 +152,6 @@ byte ppu_readMemory(byte page, byte addr)
 
 void ppu_writeMemory(byte page, byte addr, byte value)
 {
-    byte *ptr;
     if (page == 0x3F)
     {
         /* Here we will cheat with the palette miroring, since we didn't write
@@ -168,6 +167,8 @@ void ppu_writeMemory(byte page, byte addr, byte value)
     }
     else
     {
+        byte *ptr;
+
         ptr = ppu_memoryPages[page & 0x3F];
         ptr[addr] = value;
     }

@@ -21,6 +21,11 @@
 #define GLFW_INCLUDE_GLEXT
 #include <GLFW/glfw3.h>
 
+/* "Apple" fix */
+#ifndef GL_TEXTURE_RECTANGLE
+#define GL_TEXTURE_RECTANGLE GL_TEXTURE_RECTANGLE_EXT
+#endif
+
 #include <palette.h>
 
 typedef struct GLWindow_t GLWindow;

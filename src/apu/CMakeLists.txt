@@ -9,6 +9,5 @@
 # $HeadURL$
 # $Revision$
 
-add_library(apu SndUnixT.c Sound.c)
-#add_library(apu SndAlleg.c Sound.c)
+add_library(apu apu.c apu.c)
 target_link_libraries(apu portaudio_static)

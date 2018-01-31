@@ -50,10 +50,8 @@
 #include <memory/manager.h>
 
 #include <plugins/manager.h>
+#include <apu/apu.h>
 
-#ifdef USE_SOUND
-#include <Sound.h>
-#endif
 
 #if ISPAL && !ISNTSC
 int VBLANK_TIME     = 70;
@@ -362,7 +360,6 @@ byte Page40[256];
 
 void WrHook4000Multiplexer(byte addr, byte value)
 {
-#ifdef USE_SOUND
    static byte SQ1V = 0;
    static byte SQ2V = 0;
    static byte NOIV = 0;
@@ -383,11 +380,10 @@ void WrHook4000Multiplexer(byte addr, byte value)
    static byte Sq2_reg3 = 0;
    
    double SQ = 0.0;
-#endif
+
 
    switch(addr)
    {
-#ifdef USE_SOUND    
 	 case 0x00: /* DDLE NNNN */
 	    Sq1_reg0 = value;
 	    if (Sq1_reg0 & 0x10)
@@ -406,49 +402,17 @@ void WrHook4000Multiplexer(byte addr, byte value)
 	    break;
          
 	    case 0x02:
-	    /*console_printf(Console_Default, "Sq1 reg0: 0x%02X - duty:0x%X loop:0x%X env:0x%X vol:0x%X\n", 
-		Sq1_reg0,
-		(Sq1_reg0&0xC0)>>6,
-		(Sq1_reg0&0x20)>>5,
-		(Sq1_reg0&0x10)>>4,
-		Sq1_reg0&0x0F);
-		console_printf(Console_Default, "Sq1 reg1: 0x%02X - sweep:0x%X period:0x%X neg:0x%X shift:0x%X\n", 
-		Sq1_reg1,
-		(Sq1_reg1&0x80)>>8,
-		(Sq1_reg1&0x70)>>4,
-		(Sq1_reg1&0x08)>>3,
-		Sq1_reg1&0x07);
-		console_printf(Console_Default, "Sq1 reg2: 0x%02X\n", value);               
-		console_printf(Console_Default, "Sq1 reg3: 0x%02X\n", Sq1_reg3);*/
 	    SQ1P = value | ((Sq1_reg3&0x7) << 8);
-	    SQ = APU_BASEFREQ * 1000 * 1000 / (SQ1P+1 /*+ 
-		(Sq1_reg1&0x80)?0:( (Sq1_reg1&0x08)?(SQ1P>>(Sq1_reg1&0x07)):(SQ1P<<(Sq1_reg1&0x07)) )*/);
-	    //SetSound(0,SND_MELODIC);
-	    
-	    //console_printf(Console_Default, "SQ1V = %d - SQ = %f - SQ1P = %d\n", SQ1V, SQ, SQ1P);
-	    
-#ifdef SOUND_LOG
-	 { FILE *fp = fopen("sound.log", "at"); fprintf(fp, "%d %d %d\n", 0, SQ1P, SQ1V); fclose(fp); }
-#endif
-	    Sound(0, (int) SQ/22, (0xFF/0x0F) * SQ1V);
-	    
-         //console_printf(Console_Default, "40%02X: 0x%02X (SQ1P:%d SQ:%f (%d))\n", addr, value, SQ1P, SQ, (int) SQ);
+	    SQ = APU_BASEFREQ * 1000 * 1000 / (SQ1P+1);
 	    Sq1_reg2 = value;
 	    break;
 	    
 	    case 0x03:
 	    Sq1_reg3 = value;
 	    SQ1P = Sq1_reg2 | ((value&0x7) << 8);
-	    SQ = APU_BASEFREQ * 1000 * 1000 / (SQ1P+1 /*+ 
-		(Sq1_reg1&0x80)?0:( (Sq1_reg1&0x08)?(SQ1P>>(Sq1_reg1&0x07)):(SQ1P<<(Sq1_reg1&0x07)) )*/);            
-#ifdef SOUND_LOG
-	 { FILE *fp = fopen("sound.log", "at"); fprintf(fp, "%d %d %d\n", 0, SQ1P, SQ1V); fclose(fp); }
-#endif
-	    Sound(0, (int) SQ/22, (0xFF/0x0F) * SQ1V);      
+	    SQ = APU_BASEFREQ * 1000 * 1000 / (SQ1P+1);
 	    break;
-	    
-	    
-	    
+
 	    case 0x04: 
 	    Sq2_reg0 = value;
 	    if (Sq2_reg0 & 0x10)
@@ -467,31 +431,8 @@ void WrHook4000Multiplexer(byte addr, byte value)
 	    
 	    case 0x06:
 	    Sq2_reg2 = value;
-	    
 	    SQ2P = Sq2_reg2 | ((Sq2_reg3&0x7) << 8);
-	    
-	    SQ = APU_BASEFREQ * 1000 * 1000 / (SQ2P+1 /*+ 
-		(Sq2_reg1&0x80)?0:( (Sq2_reg1&0x08)?(SQ2P>>(Sq2_reg1&0x07)):(SQ2P<<(Sq2_reg1&0x07)) )*/);
-	    
-	    /*       console_printf(Console_Default, "Sq2 reg0: 0x%02X - duty:0x%X loop:0x%X env:0x%X vol:0x%X\n", 
-		Sq2_reg0,
-		(Sq2_reg0&0xC0)>>6,
-		(Sq2_reg0&0x20)>>5,
-		(Sq2_reg0&0x10)>>4,
-		Sq2_reg0&0x0F);
-		console_printf(Console_Default, "Sq2 reg1: 0x%02X - sweep:0x%X period:0x%X neg:0x%X shift:0x%X\n", 
-		Sq2_reg1,
-		(Sq2_reg1&0x80)>>8,
-		(Sq2_reg1&0x70)>>4,
-		(Sq2_reg1&0x08)>>3,
-		Sq2_reg1&0x07);
-		console_printf(Console_Default, "Sq2 reg2: 0x%02X\n", value);               
-		console_printf(Console_Default, "Sq2 reg3: 0x%02X\n", Sq2_reg3);
-		console_printf(Console_Default, "SQ2V = %d - SQ = %f - SQ2P = %d\n", SQ2V, SQ, SQ2P);*/
-#ifdef SOUND_LOG
-	 { FILE *fp = fopen("sound.log", "at"); fprintf(fp, "%d %d %d\n", 1, SQ2P, SQ2V); fclose(fp); }
-#endif
-	    Sound(1, (int) SQ/22, (0xFF/0x0F) * SQ2V);
+	    SQ = APU_BASEFREQ * 1000 * 1000 / (SQ2P+1);
 	    break;
 	    
 	    case 0x07:
@@ -499,65 +440,36 @@ void WrHook4000Multiplexer(byte addr, byte value)
 	    
 	    SQ2P = Sq2_reg2 | ((Sq2_reg3&0x7) << 8);
 	    
-	    SQ = APU_BASEFREQ * 1000 * 1000 / (SQ2P+1 /*+ 
-		(Sq2_reg1&0x80)?0:( (Sq2_reg1&0x08)?(SQ2P>>(Sq2_reg1&0x07)):(SQ2P<<(Sq2_reg1&0x07)) )*/);
-#ifdef SOUND_LOG
-	 { FILE *fp = fopen("sound.log", "at"); fprintf(fp, "%d %d %d\n", 1, SQ2P, SQ2V); fclose(fp); }
-#endif
-	    Sound(1, (int) SQ/22, (0xFF/0x0F) * SQ2V);        
+	    SQ = APU_BASEFREQ * 1000 * 1000 / (SQ2P+1);
+
 	    break;
 	    
 	    case 0x0A:
 	    TRIP = (TRIP & 0xFF00) | value;
 	    SQ = APU_BASEFREQ * 1000 * 1000 / TRIP;
-#ifdef SOUND_LOG
-	 { FILE *fp = fopen("sound.log", "at"); fprintf(fp, "%d %d %d\n", 2, TRIP, 127); fclose(fp); }
-#endif
-	    Sound(2, (int) SQ/22, 127);
 	    break;
 	    
 	    case 0x0B:
 	    TRIP = (TRIP & 0x00FF) | ((value&0x7) << 8);;
 	    SQ = APU_BASEFREQ * 1000 * 1000 / TRIP;
-#ifdef SOUND_LOG
-	 { FILE *fp = fopen("sound.log", "at"); fprintf(fp, "%d %d %d\n", 2, TRIP, 127); fclose(fp); }
-#endif
-	    Sound(2, (int) SQ/22, 127);
 	    break;
 	    
 	    case 0x0C:
 	    NOIV = value & 0x0F;
-#ifdef SOUND_LOG
-	 { FILE *fp = fopen("sound.log", "at"); fprintf(fp, "%d %d %d\n", 3, NOIP, NOIV); fclose(fp); }
-#endif
-	    //SetSound(3, SND_NOISE);
-	    Sound(3, (int) SQ/22, (0xFF/0x0F) * NOIV);        
 	    break;
 	    
 	    case 0x0E:
 	    NOIP = value & 0x0F;
 	    SQ = APU_BASEFREQ * 1000 * 1000 / NOIP;
-#ifdef SOUND_LOG
-	 { FILE *fp = fopen("sound.log", "at"); fprintf(fp, "%d %d %d\n", 3, NOIP, NOIV); fclose(fp); }
-#endif
-	    //SetSound(3, SND_NOISE);
-	    Sound(3, (int) SQ/22,     NOIV);
 	    break;
+
 	    case 0x0F:
-	    
 	    break;
+
 	    case 0x15:
 	    /* DMC, Noise, Triangle, Sq 2, Sq 1 */
-	    //SetChannels(0, (value&0x01)?0x01:0);
-	    /*        console_printf(Console_Default, "40%02X: 0x%02X [%c%c%c%c%c]\n", addr, value,
-		(value&0x10)?'d':'.',
-		(value&0x08)?'n':'.',
-		(value&0x04)?'t':'.',
-		(value&0x02)?'2':'.',
-		(value&0x01)?'1':'.');*/
-	    
 	    break; 
-#endif   
+
 	    case 0x14:
 	    ppu_fillSprRamDMA(value);
 	    break;
@@ -577,8 +489,7 @@ void WrHook4000Multiplexer(byte addr, byte value)
 
         default:
 	      Page40[addr] = value;
-	    // console_printf(Console_Default, "40%02X: 0x%02X\n", addr, value);       
-	    //        console_printf(Console_Default, "pAPU: 0x%X @ 0x40%X\n", value, addr);
+          break;
    }
    
 }
@@ -598,7 +509,9 @@ byte RdHook4000Multiplexer(byte addr)
 	    
 	 case 0x15:
 	    ret = 0x1F;
-	 default:
+        break;
+
+   default:
 	    ret = 0x42;
    }   
    return ret;

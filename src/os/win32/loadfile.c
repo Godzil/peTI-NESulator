@@ -19,7 +19,7 @@
 void *LoadFilePtr(char * filename)
 {
 	int fd;
-	void *RetPtr = NULL;
+	void *RetPtr;
 	struct stat FileStat;
 
 	fd = open(filename, O_RDONLY);

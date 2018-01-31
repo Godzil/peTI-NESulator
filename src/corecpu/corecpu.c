@@ -152,7 +152,7 @@
    cpu->reg_P = (cpu->reg_P & ~(Q6502_C_FLAG | Q6502_N_FLAG | Q6502_Z_FLAG | Q6502_V_FLAG)) | \
           (tmp & 0x80) | ((tmp&0xFF)?0:Q6502_Z_FLAG) | \
          ((tmp & 0xFF00)?Q6502_C_FLAG:0) | \
-          ( ( ~(cpu->reg_A^v)&(cpu->reg_A^tmp) )&0x80?Q6502_V_FLAG:0 ); \
+          ( (( ~(cpu->reg_A^v)&(cpu->reg_A^tmp) ))&0x80?Q6502_V_FLAG:0 ); \
    cpu->reg_A = tmp & 0xFF; \
 } while(0)
 
@@ -162,7 +162,7 @@
    cpu->reg_P = (cpu->reg_P & ~(Q6502_C_FLAG | Q6502_N_FLAG | Q6502_Z_FLAG | Q6502_V_FLAG)) | \
           (tmp & Q6502_N_FLAG) | ((tmp&0xFF)?0:Q6502_Z_FLAG) | \
          ((tmp & 0xFF00)?0:Q6502_C_FLAG) | \
-          ( ( (cpu->reg_A^v)&(cpu->reg_A^tmp) )&0x80?Q6502_V_FLAG:0 ); \
+          ( (( (cpu->reg_A^v)&(cpu->reg_A^tmp) )&0x80)?Q6502_V_FLAG:0 ); \
    cpu->reg_A = tmp & 0xFF; \
 } while(0)
 
@@ -340,7 +340,7 @@ void quick6502_reset(quick6502_cpu *cpu)
  */
 int quick6502_run(quick6502_cpu *cpu, int cycles)
 {
-   cpu->running = !0;
+   cpu->running = true;
 
    while(cpu->cycle_done < cycles)
    {
@@ -348,7 +348,7 @@ int quick6502_run(quick6502_cpu *cpu, int cycles)
    }
    cpu->cycle_done -= cycles;
 
-   cpu->running = 0;
+   cpu->running = false;
 
    return cycles + cpu->cycle_done;
 }
@@ -356,20 +356,20 @@ int quick6502_run(quick6502_cpu *cpu, int cycles)
 /** Loop CPU until explicit quit */
 void quick6502_loop(quick6502_cpu *cpu)
 {
-   cpu->running = !0;
+   cpu->running = true;
    while(cpu->exit_loop)
    {
       quick6502_exec_one(cpu);
    }
-   cpu->running = 0;
+   cpu->running = false;
 }
 
 /** Run CPU for one instruction */
 void quick6502_exec(quick6502_cpu *cpu)
 {
-   cpu->running = !0;
+   cpu->running = true;
    quick6502_exec_one(cpu);
-   cpu->running = 0;
+   cpu->running = false;
 }
 
 /** Send IRQ/NMI/EXITLOOP signal to CPU */
@@ -425,14 +425,14 @@ void quick6502_dump(quick6502_cpu *cpu, FILE * fp)
    fprintf(fp, 
        "## Quick6502: PC:$%04X A:$%02X X:$%02X Y:$%02X S:$%02X P:$%02X [%c%c%c%c%c%c%c%c]\n",
        cpu->reg_PC, cpu->reg_A, cpu->reg_X, cpu->reg_Y, cpu->reg_S, cpu->reg_P,
-       cpu->reg_P&Q6502_N_FLAG ? 'N':'.',
-       cpu->reg_P&Q6502_V_FLAG ? 'V':'.',
-                                     '.', /* No real flag here */
-       cpu->reg_P&Q6502_B_FLAG ? 'B':'.',
-       cpu->reg_P&Q6502_D_FLAG ? 'D':'.',
-       cpu->reg_P&Q6502_I_FLAG ? 'I':'.',
-       cpu->reg_P&Q6502_Z_FLAG ? 'Z':'.',
-       cpu->reg_P&Q6502_C_FLAG ? 'C':'.'
+      (cpu->reg_P&Q6502_N_FLAG) ? 'N':'.',
+      (cpu->reg_P&Q6502_V_FLAG) ? 'V':'.',
+                                      '.', /* No real flag here */
+      (cpu->reg_P&Q6502_B_FLAG) ? 'B':'.',
+      (cpu->reg_P&Q6502_D_FLAG) ? 'D':'.',
+      (cpu->reg_P&Q6502_I_FLAG) ? 'I':'.',
+      (cpu->reg_P&Q6502_Z_FLAG) ? 'Z':'.',
+      (cpu->reg_P&Q6502_C_FLAG) ? 'C':'.'
          );
 
    /* Display stack */
@@ -450,7 +450,7 @@ void quick6502_dump(quick6502_cpu *cpu, FILE * fp)
    }
    fprintf(fp, "]\n");
 
-   quick6502_getinstruction(cpu, (1==1), cpu->reg_PC, instr, NULL);
+   quick6502_getinstruction(cpu, true, cpu->reg_PC, instr, NULL);
    fprintf(fp, "## $%04X: %s\n", cpu->reg_PC, instr);
 }
 
@@ -1923,7 +1923,7 @@ INSTRUCTION(INCzX)
  /*         00       01       02       03       04       05       06       07       08       09       0A       0B       0C       0D       0E       0F */
  };
  
-#ifdef MINE
+#if 1
 
 typedef enum InstructionType
 {
@@ -2215,7 +2215,7 @@ int quick6502_getinstruction(quick6502_cpu *cpu, char interpret,
       case IP_aBc: buffer += strlen(sprintf(buffer, IPf_aB, cpu->memory_opcode_read(cpu->reg_PC + 2), cpu->memory_opcode_read(cpu->reg_PC + 1))); break;
       case IP_aXc: buffer += strlen(sprintf(buffer, IPf_aX, cpu->memory_opcode_read(cpu->reg_PC + 2), cpu->memory_opcode_read(cpu->reg_PC + 1))); break;
       case IP_aYc: buffer += strlen(sprintf(buffer, IPf_aY, cpu->memory_opcode_read(cpu->reg_PC + 2), cpu->memory_opcode_read(cpu->reg_PC + 1))); break;
-      case IP_rEc: buffer += strlen(sprintf(buffer, IPf_rE, cpu->reg_PC + (signed char) cpu->memory_opcode_read(cpu->reg_PC) + 1)); break;
+      case IP_rEc: buffer += strlen(sprintf(buffer, IPf_rE, 0, cpu->reg_PC + (signed char) cpu->memory_opcode_read(cpu->reg_PC) + 1)); break;
    }
    
    *buffer = 0;

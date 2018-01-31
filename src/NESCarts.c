@@ -44,9 +44,9 @@ void DumpCartProperties(FILE *out, NesCart * cart)
             cart->PROMSize,
             cart->VROMSize,
             cart->MapperID,
-            cart->Flags & iNES_MIRROR?  "Horizontal" : "Vertical",
-            cart->Flags & iNES_BATTERY? "Yes": "No ",
-            cart->Flags & iNES_4SCREEN? "Yes": "No ",
+           (cart->Flags & iNES_MIRROR) ? "Horizontal" : "Vertical",
+           (cart->Flags & iNES_BATTERY)? "Yes": "No ",
+           (cart->Flags & iNES_4SCREEN)? "Yes": "No ",
             cart->PROMBanks,
             cart->VROMBanks);
 }

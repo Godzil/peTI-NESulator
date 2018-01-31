@@ -85,5 +85,14 @@ int main(int argc, char *argv[])
 	}
 	fprintf(fpout, "\n\t\t};\n");
 
+	if (fpin != stdin)
+	{
+		fclose(fpin);
+	}
+	if (fpout != stdout)
+	{
+		fclose(fpout);
+	}
+
 	return 0;
 }

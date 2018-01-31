@@ -30,7 +30,6 @@ struct KeyArray
    unsigned char lastState;
    unsigned char curState;
    unsigned char debounced;
-   GLFWwindow* window;
 };
 
 struct GLWindow_t

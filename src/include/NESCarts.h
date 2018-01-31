@@ -4,11 +4,6 @@
  *
  *  Created by Manoel TRAPIER.
  *  Copyright (c) 2003-2018 986-Studio. All rights reserved.
- *
- *  $LastChangedDate$
- *  $Author$
- *  $HeadURL$
- *  $Revision$
  */
 
 #ifndef NESCARTS_H

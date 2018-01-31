@@ -5,11 +5,6 @@
  *  Created by Manoel TRAPIER on 25/10/07.
  *  Copyright (c) 2003-2018 986-Studio. All rights reserved.
  *
- *  $LastChangedDate$
- *  $Author$
- *  $HeadURL$
- *  $Revision$
- *
  */
 
 /* This file could be generated from the mappers directory... */

@@ -5,11 +5,6 @@
  *  Created by Manoel Trapier.
  *  Copyright 2003-2008 986 Corp. All rights reserved.
  *
- *  $LastChangedDate$
- *  $Author$
- *  $HeadURL$
- *  $Revision$
- *
  */
 
 #include <stdio.h>

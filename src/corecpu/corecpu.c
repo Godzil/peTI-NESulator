@@ -5,11 +5,6 @@
  *  Created by Manoel Trapier on 24/02/08
  *  Copyright 2008 986 Corp. All rights reserved.
  *
- *  $LastChangedDate$
- *  $Author$
- *  $HeadURL$
- *  $Revision$
- *
  */
 
 /* TODO: Add Inst/MemAccess breakpoints */

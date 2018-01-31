@@ -5,11 +5,6 @@
  *  Created by Manoel Trapier on 12/04/07.
  *  Copyright 2003-2008 986 Corp. All rights reserved.
  *
- *  $LastChangedDate$
- *  $Author$
- *  $HeadURL$
- *  $Revision$
- *
  */
 
 #ifdef __TINES_PPU_INTERNAL__

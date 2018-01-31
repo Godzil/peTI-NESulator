@@ -11,12 +11,7 @@
 /**     commercially. Please, notify me, if you make any    **/
 /**     changes to this file.                               **/
 /*************************************************************/
-/*
- *  $LastChangedDate$
- *  $Author$
- *  $HeadURL$
- *  $Revision$
- */
+/*/
 
 #ifndef SOUND_H
 #define SOUND_H

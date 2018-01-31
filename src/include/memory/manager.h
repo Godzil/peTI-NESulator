@@ -5,11 +5,6 @@
  *  Created by Manoel Trapier on 18/09/06.
  *  Copyright 2003-2008 986 Corp. All rights reserved.
  *
- *  $LastChangedDate$
- *  $Author$
- *  $HeadURL$
- *  $Revision$
- *
  */
 #ifndef MEMORY_H
 #define MEMORY_H

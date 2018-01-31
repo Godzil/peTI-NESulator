@@ -5,11 +5,6 @@
  *  Created by Manoel Trapier.
  *  Copyright (c) 2003-2018 986-Studio. All rights reserved.
  *
- *  $LastChangedDate$
- *  $Author$
- *  $HeadURL$
- *  $Revision$
- *
  */
 
 /* This file could be generated from the plugins directory... */

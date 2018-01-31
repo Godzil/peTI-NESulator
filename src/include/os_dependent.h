@@ -5,11 +5,6 @@
  *  Created by Manoel TRAPIER on 08/05/08.
  *  Copyright (c) 2003-2018 986-Studio. All rights reserved.
  *
- *  $LastChangedDate$
- *  $Author$
- *  $HeadURL$
- *  $Revision$
- *
  */
 
 #ifndef OS_DEPENDENT_H

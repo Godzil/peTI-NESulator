@@ -5,11 +5,6 @@
  *  Created by Manoel Trapier on 18/09/06.
  *  Copyright (c) 2003-2018 986-Studio. All rights reserved.
  *
- *  $LastChangedDate$
- *  $Author$
- *  $HeadURL$
- *  $Revision$
- *
  */
 
 #ifndef TYPES_H

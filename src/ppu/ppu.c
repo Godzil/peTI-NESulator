@@ -377,8 +377,6 @@ _AAA BCDD DDDE EEEE
 
 int ppu_hblank(uint16_t scanline)
 {
-   uint32_t j;
-
    /* Sprite to display on current scanline */
    spriteData scanSprites[8];
    ppu_scanlineSpriteOverflow = 0;
@@ -501,6 +499,8 @@ int ppu_hblank(uint16_t scanline)
          {
             if (((!ppu_spriteClipping) && (i < 8)) || (i >= 8))
             {
+               uint32_t j;
+
                for( j = 0 ; j < 8 ; j++)
                {
                   spriteData *sprite = &scanSprites[j];

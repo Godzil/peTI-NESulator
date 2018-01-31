@@ -1,5 +1,5 @@
 /*
- *  Cart manager - The TI-NESulator Project
+ *  Cart manager - The peTI-NESulator Project
  *  NESCart.h
  *
  *  Created by Manoel TRAPIER.

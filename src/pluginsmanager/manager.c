@@ -1,5 +1,5 @@
 /*
- *  Plugins manager - The TI-NESulator Project
+ *  Plugins manager - The peTI-NESulator Project
  *  plugins.c
  *
  *  Created by Manoel TRAPIER on 02/04/07.

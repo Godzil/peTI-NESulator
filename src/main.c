@@ -1,5 +1,5 @@
 /*
- *  Main application source file - The TI-NESulator Project
+ *  Main application source file - The peTI-NESulator Project
  *  main.c
  *
  *  Created by Manoel TRAPIER.
@@ -37,7 +37,7 @@
 
 #endif
 
-/* TI-NES modules includes */
+/* peTI-NESulator modules includes */
 #include <os_dependent.h>
 
 #include <corecpu.h>
@@ -71,7 +71,7 @@ double APU_BASEFREQ = 1.7897725;
 
 //#define MEMORY_TEST
 
-/* TI-NESulator Version */
+/* peTI-NESulator Version */
 #if !defined(V_MAJOR) || !defined(V_MINOR) || !defined(V_MICRO)
 #error Something wrong with your building tools
 #endif
@@ -294,7 +294,7 @@ void signalhandler(int sig)
    
    if (fp) console_printf(Console_Error, 
 			    "\n\n\n\n\n"
-			    "#sick# TI-NESulator %d.%d.%d%s #sick#\n"
+			    "#sick# peTI-NESulator %d.%d.%d%s #sick#\n"
 			    "see %s for more information",
 			    V_MAJOR, V_MINOR, V_MICRO, V_TEXT,
 			    name);
@@ -302,7 +302,7 @@ void signalhandler(int sig)
    if (!fp) fp = stderr;
    
    fprintf(fp,"\n\n\n\n\n"
-		 "#sick# TI-NESulator %d.%d.%d%s #sick# signal: ",
+		 "#sick# peTI-NESulator %d.%d.%d%s #sick# signal: ",
 		 V_MAJOR, V_MINOR, V_MICRO, V_TEXT);
    switch(sig)
    {
@@ -640,8 +640,8 @@ int main(int argc, char *argv[])
    console_init(Console_Debug);
    /* Print the banner */
    console_printf(Console_Default, "--------------------------------------------------------------------------------\n"
-          "Welcome to TI-NESulator v%d.%d.%d%s - by Godzil\n"
-          "Copyright 2003-2018 TRAPIER Manoel (godzil@godzil.net)\n"
+          "Welcome to peTI-NESulator v%d.%d.%d%s - by Godzil`\n"
+          "Copyright 2003-2018 Manoel TRAPIER (petines@godzil.net)\n"
           "--------------------------------------------------------------------------------\n\n", 
           V_MAJOR, V_MINOR, V_MICRO, V_TEXT);
    
@@ -862,7 +862,7 @@ int main(int argc, char *argv[])
       int fd;
       console_printf(Console_Default, "Loading FDS ROM...\t\t");
 	 fd = open("../data/disksys.rom", O_RDONLY);
-	 //fd = open("TI-NESulator.app/Contents/Resources/disksys.rom", O_RDONLY);
+	 //fd = open("peTI-NESulator.app/Contents/Resources/disksys.rom", O_RDONLY);
       if (fd < 0)
       {
          console_printf(Console_Error, "Can't find FDS ROM...\n");
@@ -1100,7 +1100,7 @@ void Loop6502(quick6502_cpu *R)
       delta += (timeStart.tv_usec - timeEnd.tv_usec);
       delta = WaitTime - delta;
 
-      /* To avoid strange time warp when stoping emulation or using acceleration a lot */
+      /* To avoid strange time warp when stopping emulation or using acceleration a lot */
       if ((delta > 10000) || (delta < -10000)) 
          delta = 0;
    }

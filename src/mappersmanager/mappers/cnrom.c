@@ -1,5 +1,5 @@
 /*
- *  CNROM Mapper - The TI-NESulator Project
+ *  CNROM Mapper - The peTI-NESulator Project
  *  cnrom.c
  *
  *  Created by Manoel TRAPIER.

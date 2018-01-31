@@ -1,5 +1,5 @@
 /*
- *  IO Manager - The TI-NESulator Project
+ *  IO Manager - The peTI-NESulator Project
  *  os/macos/graphics.c
  *
  *  Created by Manoël Trapier on 04/01/09.

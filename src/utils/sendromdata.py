@@ -1,7 +1,7 @@
 """
-Simple TI-NESulator game database importer
+Simple peTI-NESulator game database importer
 
-This python application will generate a XML file on the output with all information needed to import in the TI-NESulator
+This python application will generate a XML file on the output with all information needed to import in the peTI-NESulator
 game database.
 """
 

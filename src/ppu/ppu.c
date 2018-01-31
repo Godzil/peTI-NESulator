@@ -1,5 +1,5 @@
 /*
- *  PPU emulation - The TI-NESulator Project
+ *  PPU emulation - The peTI-NESulator Project
  *  ppu.c
  *
  *  Define and emulate the PPU (Picture Processing Unit) of the real NES

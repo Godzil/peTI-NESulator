@@ -1,5 +1,5 @@
 /*
- *  Base type definitions - The TI-NESulator Project
+ *  Base type definitions - The peTI-NESulator Project
  *  types.h - Taken from the Quick6502 project
  *
  *  Created by Manoel Trapier on 18/09/06.

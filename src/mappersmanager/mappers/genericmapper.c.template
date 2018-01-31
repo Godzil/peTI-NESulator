@@ -1,5 +1,5 @@
 /*
- *  Generic mapper implementation - The TI-NESulator Project
+ *  Generic mapper implementation - The peTI-NESulator Project
  *  genericmapper.h
  *
  *  Created by Manoel TRAPIER.

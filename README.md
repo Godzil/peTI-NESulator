@@ -1,9 +1,9 @@
-TI-NESulator
+peTI-NESulator
 ============
 
-[![Coverage Status](https://coveralls.io/repos/github/Godzil/TI-NESulator/badge.svg?branch=master)](https://coveralls.io/github/Godzil/TI-NESulator?branch=master) [![codecov](https://codecov.io/gh/Godzil/TI-NESulator/branch/master/graph/badge.svg)](https://codecov.io/gh/Godzil/TI-NESulator) [![travis](https://travis-ci.org/Godzil/TI-NESulator.svg?branch=master)](https://travis-ci.org/Godzil/TI-NESulator)
+[![Coverage Status](https://coveralls.io/repos/github/Godzil/peTI-NESulator/badge.svg?branch=master)](https://coveralls.io/github/Godzil/peTI-NESulator?branch=master) [![codecov](https://codecov.io/gh/Godzil/peTI-NESulator/branch/master/graph/badge.svg)](https://codecov.io/gh/Godzil/peTI-NESulator) [![travis](https://travis-ci.org/Godzil/peTI-NESulator.svg?branch=master)](https://travis-ci.org/Godzil/peTI-NESulator)
 
-This is a cleaned version of the TI-NESulator repository (all non free data has been removed)
+This is a cleaned version of the peTI-NESulator repository (all non free data has been removed)
 
 Some part of the original subversion has been lost because of harddrive crash so the 
 early stage of the project is completely lost. Or I would need to check all the

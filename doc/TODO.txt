@@ -1,5 +1,5 @@
 25/02/2008
-      - Finish th Quick6502 C project to merge it into TI-NESulator          [ ]
+      - Finish th Quick6502 C project to merge it into peTI-NESulator          [ ]
 	 - Extract graphic primitive to be less dependent of Allegro            [ ]
 	 - Rewrite sound engine                                                 [ ]
 

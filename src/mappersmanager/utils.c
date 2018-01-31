@@ -1,5 +1,5 @@
 /*
- *  Mapper facilities - The TI-NESulator Project
+ *  Mapper facilities - The peTI-NESulator Project
  *  mappers.c
  *
  *  Created by Manoel TRAPIER.

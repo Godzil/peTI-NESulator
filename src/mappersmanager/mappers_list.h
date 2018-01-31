@@ -1,5 +1,5 @@
 /*
- *  Mapper list - The TI-NESulator Project
+ *  Mapper list - The peTI-NESulator Project
  *  mappers_list.h
  *
  *  Created by Manoel TRAPIER on 25/10/07.

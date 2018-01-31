@@ -1,5 +1,5 @@
 /*
- *  Cart manager - The TI-NESulator Project
+ *  Cart manager - The peTI-NESulator Project
  *  NESCart.c
  *
  *  Created by Manoel TRAPIER.
@@ -24,7 +24,7 @@
 #include <tigcclib.h>
 #endif
 
-/* TI-NES headers */
+/* peTI-NESulator headers */
 #include <os_dependent.h>
 #include <NESCarts.h>
 #include <os_dependent.h>

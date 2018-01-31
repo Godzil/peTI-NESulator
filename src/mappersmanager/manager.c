@@ -1,5 +1,5 @@
 /*
- *  Mapper manager - The TI-NESulator Project
+ *  Mapper manager - The peTI-NESulator Project
  *  manager.c
  *
  *  Created by Manoel TRAPIER.

@@ -1,5 +1,5 @@
 /*
- *  6502 Memory manager - The TI-NESulator Project
+ *  6502 Memory manager - The peTI-NESulator Project
  *  memory.h - Taken from the Quick6502 project
  *
  *  Created by Manoel Trapier on 18/09/06.

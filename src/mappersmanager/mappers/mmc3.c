@@ -1,5 +1,5 @@
 /*
- *  MMC3 Mapper - The TI-NESulator Project
+ *  MMC3 Mapper - The peTI-NESulator Project
  *  mmc3.h
  *
  *  Created by Manoel TRAPIER.

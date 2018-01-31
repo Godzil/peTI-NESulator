@@ -1,5 +1,5 @@
 /*
- *  TI-68k Loading external file functions - The TI-NESulator Project
+ *  TI-68k Loading external file functions - The peTI-NESulator Project
  *  ti68k/loadfile.c
  *
  *  Created by Manoel TRAPIER.

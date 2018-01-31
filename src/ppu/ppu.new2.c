@@ -1,5 +1,5 @@
 /*
- *  PPU emulation - The TI-NESulator Project
+ *  PPU emulation - The peTI-NESulator Project
  *  ppu.c
  *  
  *  Define and emulate the PPU (Picture Processing Unit) of the real NES
@@ -305,7 +305,7 @@ void NewPPUDispSprite()
         Color = ppu.Memory[0x3F10 + Color];
         if ((i == 0) && (_getpixel(Buffer,px,py) != BgColor) && (ppu.HitSpriteAt == 255))
         {
-          //Ligne utilisé pour le débuguage
+          //Ligne utilisï¿½ pour le dï¿½buguage
           //line(Buffer, 0, py+1, 256, py+1, GetColor(10));
           ppu.HitSpriteAt = py+1;
         }
@@ -837,7 +837,7 @@ unsigned char XScroll, YScroll;
     ppu.HitSpriteAt = 255;
 
 /*
-* A faires les choses qui faut faire durant un lancé de vblank,
+* A faires les choses qui faut faire durant un lancï¿½ de vblank,
 * comme dessiner par ex..
 */
 
@@ -944,7 +944,7 @@ Y = (ppu.VRAMAddrReg2.W & 0x3E0) >> 5
                 XScroll++;
                 XScroll &= 7;
                 if (XScroll == 0)
-                {    /* On incrémente le compteur de tile */
+                {    /* On incrï¿½mente le compteur de tile */
                     if ((ppu.VRAMAddrReg2.W & 0x1F) == 0x1F)
                     {    /* On met a 0 et change
                          * l'etat du bit 10 */
@@ -985,7 +985,7 @@ v:0000 0011 1110 0000
             YScroll++;
             YScroll &= 7;
             if (YScroll == 0)
-            {    /* On incrémente le compteur de tile */
+            {    /* On incrï¿½mente le compteur de tile */
                 if ((ppu.VRAMAddrReg2.W & 0x3E0) == (29<<5))
                 {    /* On met a 0 et change l'etat du bit 11 */
                     ppu.VRAMAddrReg2.W &= ~0x3E0;

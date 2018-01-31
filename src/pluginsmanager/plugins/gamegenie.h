@@ -1,5 +1,5 @@
 /*
- *  Code Breaker plugin - The TI-NESulator Project
+ *  Code Breaker plugin - The peTI-NESulator Project
  *  gamegenie.h
  *
  *  Created by Manoel Trapier.

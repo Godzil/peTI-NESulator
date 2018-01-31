@@ -1,5 +1,5 @@
 /*
- *  AOROM Mapper - The TI-NESulator Project
+ *  AOROM Mapper - The peTI-NESulator Project
  *  aorom.h
  *
  *  Created by Manoel TRAPIER.

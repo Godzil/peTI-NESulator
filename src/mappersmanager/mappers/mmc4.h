@@ -1,5 +1,5 @@
 /*
- *  MMC4 Mapper - The TI-NESulator Project
+ *  MMC4 Mapper - The peTI-NESulator Project
  *  mmc4.h
  *
  *  Created by Manoel TRAPIER.

@@ -1,5 +1,5 @@
 /*
- *  Mappers manager & facilities - The TI-NESulator Project
+ *  Mappers manager & facilities - The peTI-NESulator Project
  *  mappers.h
  *
  *  Created by Manoel TRAPIER.

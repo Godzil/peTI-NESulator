@@ -1,5 +1,5 @@
 /*
- *  NOROM Mapper - The TI-NESulator Project
+ *  NOROM Mapper - The peTI-NESulator Project
  *  norom.c
  *
  *  Created by Manoel TRAPIER.

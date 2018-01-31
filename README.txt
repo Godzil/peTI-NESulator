@@ -1,7 +1,7 @@
-TI-NESulator
+peTI-NESulator
 ============
 
-This is a cleaned version of the TI-NESulator repository (all data has been removed)
+This is a cleaned version of the peTI-NESulator repository (all data has been removed)
 
 Some part of the original subversion has been lost because of harddrive crash so the 
 early stage of the project is completely lost. Or I would need to check all the

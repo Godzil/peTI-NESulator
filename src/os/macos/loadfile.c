@@ -1,5 +1,5 @@
 /*
- *  File functions - The TI-NESulator Project
+ *  File functions - The peTI-NESulator Project
  *  os/macos/load.c
  *
  *  Copyright (c) 2003-2008 986Corp. All rights reserved.

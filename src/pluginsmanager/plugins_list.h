@@ -1,5 +1,5 @@
 /*
- *  Plugin Manager plugint list - The TI-NESulator Project
+ *  Plugin Manager plugint list - The peTI-NESulator Project
  *  plugins_list.h
  *
  *  Created by Manoel Trapier.

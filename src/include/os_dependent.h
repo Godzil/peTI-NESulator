@@ -1,5 +1,5 @@
 /*
- *  OS Dependent functions - The TI-NESulator Project
+ *  OS Dependent functions - The peTI-NESulator Project
  *  os_dependent.h
  *
  *  Created by Manoel TRAPIER on 08/05/08.

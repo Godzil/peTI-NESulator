@@ -1,5 +1,5 @@
 /*
- *  Paddle manager - The TI-NESulator Project
+ *  Paddle manager - The peTI-NESulator Project
  *  paddle.h
  *
  *  Created by Manoel TRAPIER.

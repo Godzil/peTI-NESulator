@@ -1,5 +1,5 @@
 /*
- *  UNROM Mapper - The TI-NESulator Project
+ *  UNROM Mapper - The peTI-NESulator Project
  *  unrom.h
  *
  *  Created by Manoel TRAPIER.

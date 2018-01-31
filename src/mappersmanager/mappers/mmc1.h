@@ -1,5 +1,5 @@
 /*
- *  MMC1 Mapper - The TI-NESulator Project
+ *  MMC1 Mapper - The peTI-NESulator Project
  *  mmc1.h
  *
  *  Created by Manoel TRAPIER.

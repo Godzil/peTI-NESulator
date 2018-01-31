@@ -1,5 +1,5 @@
 /*
- *  PPU Debug utilities - The TI-NESulator Project
+ *  PPU Debug utilities - The peTI-NESulator Project
  *  ppu.debug.c
  *
  *  Created by Manoel Trapier.

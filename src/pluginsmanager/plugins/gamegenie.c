@@ -1,5 +1,5 @@
 /*
- *  Code Breaker plugin - The TI-NESulator Project
+ *  Code Breaker plugin - The peTI-NESulator Project
  *  gamegenie.c: Hack your games with unlimited lives of add new powers!
  *
  *  Created by Manoel Trapier.

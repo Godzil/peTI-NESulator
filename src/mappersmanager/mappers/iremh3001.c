@@ -1,5 +1,5 @@
 /*
- *  IREMH3001 Mapper - The TI-NESulator Project
+ *  IREMH3001 Mapper - The peTI-NESulator Project
  *  iremh3001.c
  *
  *  Created by Manoel TRAPIER.

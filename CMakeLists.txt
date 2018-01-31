@@ -1,5 +1,5 @@
 #
-# TI-NES CMake
+# peTI-NESulator CMake
 #
 # Created by Manoel TRAPIER.
 # Copyright (c) 2003-2018 986Corp. All rights reserved.
@@ -11,7 +11,7 @@
 
 cmake_minimum_required (VERSION 2.8)
 
-project (TINES)
+project (peTI-NESulator)
 
 # External cmake modules
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external/cmake ${CMAKE_MODULE_PATH})

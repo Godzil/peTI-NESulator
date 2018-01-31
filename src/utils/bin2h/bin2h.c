@@ -1,5 +1,5 @@
 /*
- *  bin to header - Part of The TI-NESulator Project
+ *  bin to header - Part of The peTI-NESulator Project
  *  bin2h.c: Convert a binary file to a table of byte in a C header file.
  *
  *  Created by Manoel Trapier.

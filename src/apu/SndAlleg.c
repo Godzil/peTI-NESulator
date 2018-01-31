@@ -1,5 +1,5 @@
 /*
- *  Allegro Sound Driver for EMULib Sound system - The TI-NESulator Project
+ *  Allegro Sound Driver for EMULib Sound system - The peTI-NESulator Project
  *  SndAlleg.C
  *
  *  Created by Manoel Trapier

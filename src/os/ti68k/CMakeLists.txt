@@ -1,5 +1,5 @@
 #
-# TI-NES CMake
+# peTI-NESulator CMake
 #
 # Created by Manoel TRAPIER.
 # Copyright (c) 2003-2008 986Corp. All rights reserved.

@@ -42,8 +42,6 @@ static void unrom512_MapperWriteHook(byte Addr, byte Value)
     loaded_vbank  = (Value >> 5) & 0x03;
     loaded_pbank  = (Value     ) & 0x1F;
 
-    printf(">> P:%d | V:%d | M:%d <<\n", loaded_pbank, loaded_vbank, mirroring_set);
-
     unrom512_applyValues();
 }
 

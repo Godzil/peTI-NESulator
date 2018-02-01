@@ -32,7 +32,7 @@ script:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then make clean ; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then build-wrapper-linux-x86-64 --out-dir bw-output cmake --build . ; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cd .. ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sonar-scanner ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sonar-scanner -Dsonar.login=$SONARCLOUD_TOKEN; fi
   - mkdir coverage
   - cd coverage
   - cmake -DUSE_ALLEGRO=OFF -DUSE_PROFILING=OFF -DCOVERALLS=ON -DCMAKE_BUILD_TYPE=Debug ..

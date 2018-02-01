@@ -1,3 +1,4 @@
+dist: trusty
 language: c
 os:
   - linux
@@ -13,6 +14,10 @@ addons:
       - curl
       - xorg-dev
       - libglu1-mesa-dev
+  sonarcloud:
+    organisation: "godzil-github"
+    token:
+      secure: ${SONARCLOUD_TOKEN}
 
 compiler:
   - clang
@@ -24,11 +29,22 @@ script:
   - cmake -DUSE_ALLEGRO=OFF -DUSE_PROFILING=OFF -DCOVERALLS=OFF -DCMAKE_BUILD_TYPE=Release ..
   - cmake --build .
   - cd ..
+  - mkdir sonar
+  - cd sonar
+  - cmake -DUSE_ALLEGRO=OFF -DUSE_PROFILING=OFF -DCOVERALLS=OFF -DCMAKE_BUILD_TYPE=Release ..
+  - make clean
+  - build-wrapper-linux-x86-64 --out-dir bw-output cmake --build .
+  - cd ..
+  - sonar-scanner
   - mkdir coverage
   - cd coverage
   - cmake -DUSE_ALLEGRO=OFF -DUSE_PROFILING=OFF -DCOVERALLS=ON -DCMAKE_BUILD_TYPE=Debug ..
   - cmake --build .
   - cmake --build . --target coveralls
+
+cache:
+  directories:
+    - '$HOME/.sonar/cache'
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update      ; fi

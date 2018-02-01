@@ -86,7 +86,7 @@ if __name__ == '__main__':
                     'd': DiskDude,
                 }))
                 
-                print html
+                print(html)
         finally:
             f.close()
             

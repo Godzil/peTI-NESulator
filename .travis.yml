@@ -16,8 +16,7 @@ addons:
       - libglu1-mesa-dev
   sonarcloud:
     organisation: "godzil-github"
-    token:
-      secure: ${SONARCLOUD_TOKEN}
+    token: ${SONARCLOUD_TOKEN}
 
 compiler:
   - clang
@@ -29,13 +28,11 @@ script:
   - cmake -DUSE_ALLEGRO=OFF -DUSE_PROFILING=OFF -DCOVERALLS=OFF -DCMAKE_BUILD_TYPE=Release ..
   - cmake --build .
   - cd ..
-  - mkdir sonar
-  - cd sonar
-  - cmake -DUSE_ALLEGRO=OFF -DUSE_PROFILING=OFF -DCOVERALLS=OFF -DCMAKE_BUILD_TYPE=Release ..
-  - make clean
-  - build-wrapper-linux-x86-64 --out-dir bw-output cmake --build .
-  - cd ..
-  - sonar-scanner
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then mkdir sonar; cd sonar; cmake -DUSE_ALLEGRO=OFF -DUSE_PROFILING=OFF -DCOVERALLS=OFF -DCMAKE_BUILD_TYPE=Release ..; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then make clean ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then build-wrapper-linux-x86-64 --out-dir bw-output cmake --build . ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cd .. ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sonar-scanner ; fi
   - mkdir coverage
   - cd coverage
   - cmake -DUSE_ALLEGRO=OFF -DUSE_PROFILING=OFF -DCOVERALLS=ON -DCMAKE_BUILD_TYPE=Debug ..

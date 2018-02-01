@@ -713,7 +713,8 @@ int main(int argc, char *argv[])
       exit(-1);
    }
    
-   DumpMemoryState(stdout);
+   //DumpMemoryState(stdout);
+   //DumpCartProperties(stdout, Cart);
    
    if (Cart->Flags & iNES_4SCREEN)
    {

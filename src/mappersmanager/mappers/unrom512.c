@@ -13,6 +13,14 @@
 static byte mirroring_set;
 static byte loaded_vbank;
 static byte loaded_pbank;
+
+/*
+ * not great but as we currently don't support higher than 8K VRAM, allocate it here as we can have
+ * 32K on such a cart
+ */
+static uint8_t vram[32768];
+void ppu_setPagePtr8k(byte page, byte *ptr);
+
 static void unrom512_applyValues()
 {
     /*if (mirroring_set)
@@ -24,7 +32,7 @@ static void unrom512_applyValues()
         ppu_setMirroring(PPU_MIRROR_VERTICAL);
     }*/
 
-    //set_vrom_bank_8k(0x0000, loaded_vbank);
+    ppu_setPagePtr8k(0x00, vram + (loaded_vbank * 8 * 1024));
     set_prom_bank_16k(0x8000, loaded_pbank);
 }
 
@@ -33,6 +41,8 @@ static void unrom512_MapperWriteHook(byte Addr, byte Value)
     mirroring_set = (Value >> 7) & 0x01;
     loaded_vbank  = (Value >> 5) & 0x03;
     loaded_pbank  = (Value     ) & 0x1F;
+
+    printf(">> P:%d | V:%d | M:%d <<\n", loaded_pbank, loaded_vbank, mirroring_set);
 
     unrom512_applyValues();
 }

@@ -16,7 +16,7 @@
 
 /* Private structures */
 
-#define KBYTE * (1024)
+#define Kuint8_t * (1024)
 
 /* 
 * What inside memory manager:
@@ -29,8 +29,8 @@
 
 /* Private data */
 
-byte *memory_pages[0x100];
-byte memory_pages_attr[0x100];
+uint8_t *memory_pages[0x100];
+uint8_t memory_pages_attr[0x100];
 
 func_rdhook rdh_table[0x100];
 func_wrhook wrh_table[0x100];
@@ -45,13 +45,13 @@ func_wrhook wrh_table[0x100];
 #endif
 
 /* Public functions */
-void set_page_ptr(byte page, byte *ptr)
+void set_page_ptr(uint8_t page, uint8_t *ptr)
 {
     LOG(console_printf(Console_Default, "Set page 0x%X to ptr %p\n", page, ptr));
     memory_pages[page] = ptr;
 }
 
-void set_page_ptr_1k(byte page, byte *ptr)
+void set_page_ptr_1k(uint8_t page, uint8_t *ptr)
 {   /* 1k = 4 * 256 */
     LOG(console_printf(Console_Default, "Set page(1k) 0x%X to ptr %p\n", page, ptr));
     memory_pages[page + 0] = ptr;
@@ -60,7 +60,7 @@ void set_page_ptr_1k(byte page, byte *ptr)
     memory_pages[page + 3] = ptr + (0x100 * 3);
 }
 
-void set_page_ptr_2k(byte page, byte *ptr)
+void set_page_ptr_2k(uint8_t page, uint8_t *ptr)
 {
     LOG(console_printf(Console_Default, "Set page(2k) 0x%X to ptr %p\n", page, ptr));
     memory_pages[page + 0] = ptr;
@@ -73,33 +73,33 @@ void set_page_ptr_2k(byte page, byte *ptr)
     memory_pages[page + 7] = ptr + (0x100 * 7);
 }
 
-void set_page_ptr_4k(byte page, byte *ptr)
+void set_page_ptr_4k(uint8_t page, uint8_t *ptr)
 {
     LOG(console_printf(Console_Default, "Set page(4k) 0x%X to ptr %p\n", page, ptr));
     set_page_ptr_2k(page, ptr);
-    set_page_ptr_2k(page+((4 KBYTE / 256) / 2), ptr + 2 KBYTE);    
+    set_page_ptr_2k(page+((4 Kuint8_t / 256) / 2), ptr + 2 Kuint8_t);
 }
 
-void set_page_ptr_8k(byte page, byte *ptr)
+void set_page_ptr_8k(uint8_t page, uint8_t *ptr)
 {
     LOG(console_printf(Console_Default, "Set page(8k) 0x%X to ptr %p\n", page, ptr));
     set_page_ptr_4k(page, ptr);
-    set_page_ptr_4k(page+((8 KBYTE / 256) / 2), ptr + 4 KBYTE);        
+    set_page_ptr_4k(page+((8 Kuint8_t / 256) / 2), ptr + 4 Kuint8_t);
 }
 
-void set_page_ptr_16k(byte page, byte *ptr)
+void set_page_ptr_16k(uint8_t page, uint8_t *ptr)
 {
     set_page_ptr_8k(page, ptr);
-    set_page_ptr_8k(page+((16 KBYTE / 256) / 2), ptr + 8 KBYTE);    
+    set_page_ptr_8k(page+((16 Kuint8_t / 256) / 2), ptr + 8 Kuint8_t);
 }
 
-void set_page_ptr_32k(byte page, byte *ptr)
+void set_page_ptr_32k(uint8_t page, uint8_t *ptr)
 {
     set_page_ptr_16k(page, ptr);
-    set_page_ptr_16k(page+((32 KBYTE / 256) / 2), ptr + 16 KBYTE);    
+    set_page_ptr_16k(page+((32 Kuint8_t / 256) / 2), ptr + 16 Kuint8_t);
 }
 
-byte *get_page_ptr(byte page)
+uint8_t *get_page_ptr(uint8_t page)
 {
     return memory_pages[page];
 }
@@ -107,30 +107,30 @@ byte *get_page_ptr(byte page)
 
 /* Functions to set pages attributes */
 
-void set_page_rd_hook(byte page, func_rdhook func)
+void set_page_rd_hook(uint8_t page, func_rdhook func)
 {
     if (func == NULL)
     {
         memory_pages_attr[page] &= (~ATTR_PAGE_HAVE_RDHOOK);
-        if (memory_pages[page] == (byte *)0x01)
+        if (memory_pages[page] == (uint8_t *)0x01)
             memory_pages[page] = NULL;
     }
     else
     {
         memory_pages_attr[page] |= ATTR_PAGE_HAVE_RDHOOK;
         if (memory_pages[page] == NULL)
-            memory_pages[page] = (byte *)0x01;
+            memory_pages[page] = (uint8_t *)0x01;
     }
     
     rdh_table[page] = func;
 }
 
-void set_page_wr_hook(byte page, func_wrhook func)
+void set_page_wr_hook(uint8_t page, func_wrhook func)
 {
     if (func == NULL)
     {
         memory_pages_attr[page] &= (~ATTR_PAGE_HAVE_WRHOOK);
-        if (memory_pages[page] == (byte*)0x01)
+        if (memory_pages[page] == (uint8_t*)0x01)
             memory_pages[page] = NULL;
 
     }
@@ -138,13 +138,13 @@ void set_page_wr_hook(byte page, func_wrhook func)
     {
         memory_pages_attr[page] |= ATTR_PAGE_HAVE_WRHOOK;
         if (memory_pages[page] == NULL)
-            memory_pages[page] = (byte *)0x01;
+            memory_pages[page] = (uint8_t *)0x01;
     }
     
     wrh_table[page] = func;    
 }
 
-void set_page_readable(byte page, bool value)
+void set_page_readable(uint8_t page, uint8_t value)
 {
     if (value == true)
         memory_pages_attr[page] |= ATTR_PAGE_READABLE;
@@ -152,7 +152,7 @@ void set_page_readable(byte page, bool value)
         memory_pages_attr[page] &= (~ATTR_PAGE_READABLE);    
 }
 
-void set_page_writeable(byte page, bool value)
+void set_page_writeable(uint8_t page, uint8_t value)
 {
     if (value == true)
         memory_pages_attr[page] |= ATTR_PAGE_WRITEABLE;
@@ -160,7 +160,7 @@ void set_page_writeable(byte page, bool value)
         memory_pages_attr[page] &= (~ATTR_PAGE_WRITEABLE);        
 }
 
-void set_page_ghost(byte page, bool value, byte ghost)
+void set_page_ghost(uint8_t page, uint8_t value, uint8_t ghost)
 {
     if (value == true)
     {
@@ -171,12 +171,12 @@ void set_page_ghost(byte page, bool value, byte ghost)
     }
 }
 
-byte get_page_attributes(byte page)
+uint8_t get_page_attributes(uint8_t page)
 {
     return memory_pages_attr[page];
 }
 
-func_rdhook get_page_rdhook(byte page)
+func_rdhook get_page_rdhook(uint8_t page)
 {
     if (memory_pages_attr[page] & ATTR_PAGE_HAVE_RDHOOK)
         return rdh_table[page];
@@ -184,7 +184,7 @@ func_rdhook get_page_rdhook(byte page)
     return NULL;
 }
 
-func_wrhook get_page_wrhook(byte page)
+func_wrhook get_page_wrhook(uint8_t page)
 {
     if (memory_pages_attr[page] & ATTR_PAGE_HAVE_WRHOOK)
         return wrh_table[page];
@@ -192,11 +192,11 @@ func_wrhook get_page_wrhook(byte page)
     return NULL;
 }
 
-byte ReadMemory(byte page, byte addr)
+uint8_t ReadMemory(uint8_t page, uint8_t addr)
 {
-    static byte LastRetByte = 0xA5;
-    byte *page_ptr;
-    byte attributes;
+    static uint8_t LastRetuint8_t = 0xA5;
+    uint8_t *page_ptr;
+    uint8_t attributes;
     LOG(console_printf(Console_Default, "Read @ 0x%X-%X\n", page, addr));
     /* Est-ce que la page est mappé ? && Est-ce que la page est "readable" ? */
     if ((page_ptr = memory_pages[page]) &&
@@ -204,18 +204,18 @@ byte ReadMemory(byte page, byte addr)
     {
         LOG(console_printf(Console_Default, "Page is non null & readable\n"));
         if ( attributes & ATTR_PAGE_HAVE_RDHOOK )
-            return ( LastRetByte = rdh_table[page](addr) );
+            return ( LastRetuint8_t = rdh_table[page](addr) );
         else
-            return ( LastRetByte = page_ptr[addr] );
+            return ( LastRetuint8_t = page_ptr[addr] );
     }
     //console_printf(Console_Default, "Trying to read @ 0x%X-%X\n", page, addr);
-    return LastRetByte;
+    return LastRetuint8_t;
 }
 
-void WriteMemory(byte page, byte addr, byte value)
+void WriteMemory(uint8_t page, uint8_t addr, uint8_t value)
 {
-    byte *page_ptr;
-    byte attributes;
+    uint8_t *page_ptr;
+    uint8_t attributes;
     LOG(console_printf(Console_Default, "Write 0x%x @ 0x%X-%X\n", value, page, addr));
     /* Est-ce que la page est mappé ? && Est-ce que la page est "writable" ? */
     if ( (page_ptr = memory_pages[page]) &&

@@ -20,15 +20,15 @@
 #include <types.h>
 
 /* Simple definition only for readability */
-#define KBYTE * (1024)
+#define Kuint8_t * (1024)
 
 /* Internal representation of the PPU memory */ 
-byte *ppu_memoryPages[0x40];
+uint8_t *ppu_memoryPages[0x40];
 
-byte ppu_memoryGhostLink[0x40];
+uint8_t ppu_memoryGhostLink[0x40];
  
 /* Internal PPU Sprite Ram */
-byte ppu_SpriteRam[0x100];
+uint8_t ppu_SpriteRam[0x100];
  
 /* 
  * Memory management functions 
@@ -50,22 +50,22 @@ int ppu_initMemory()
     return 0;
 }
 
-void ppu_updateGhost(byte page)
+void ppu_updateGhost(uint8_t page)
 {    
-    byte cur_ghost;
+    uint8_t cur_ghost;
 
     cur_ghost = ppu_memoryGhostLink[page];
     if (cur_ghost < 0x40)
         ppu_memoryPages[cur_ghost] = ppu_memoryPages[page];
 }
 
-void ppu_setPagePtr  (byte page, byte *ptr)
+void ppu_setPagePtr  (uint8_t page, uint8_t *ptr)
 {
     ppu_memoryPages[page] = ptr;
     ppu_updateGhost(page);
 }
 
-void ppu_setPagePtr1k(byte page, byte *ptr)
+void ppu_setPagePtr1k(uint8_t page, uint8_t *ptr)
 {   /* 1k = 4 * 256 */
     ppu_memoryPages[page + 0] = ptr;
     ppu_memoryPages[page + 1] = ptr +  0x100;
@@ -78,7 +78,7 @@ void ppu_setPagePtr1k(byte page, byte *ptr)
     ppu_updateGhost(page + 3);
 }
 
-void ppu_setPagePtr2k(byte page, byte *ptr)
+void ppu_setPagePtr2k(uint8_t page, uint8_t *ptr)
 {
     ppu_memoryPages[page + 0] = ptr;
     ppu_memoryPages[page + 1] = ptr +  0x100;
@@ -99,19 +99,19 @@ void ppu_setPagePtr2k(byte page, byte *ptr)
     ppu_updateGhost(page + 7);
 }
 
-void ppu_setPagePtr4k(byte page, byte *ptr)
+void ppu_setPagePtr4k(uint8_t page, uint8_t *ptr)
 {
     ppu_setPagePtr2k(page, ptr);
-    ppu_setPagePtr2k(page+((4 KBYTE / 256) / 2), ptr + 2 KBYTE);    
+    ppu_setPagePtr2k(page+((4 Kuint8_t / 256) / 2), ptr + 2 Kuint8_t);
 }
 
-void ppu_setPagePtr8k(byte page, byte *ptr)
+void ppu_setPagePtr8k(uint8_t page, uint8_t *ptr)
 {
     ppu_setPagePtr4k(page, ptr);
-    ppu_setPagePtr4k(page+((8 KBYTE / 256) / 2), ptr + 4 KBYTE);        
+    ppu_setPagePtr4k(page+((8 Kuint8_t / 256) / 2), ptr + 4 Kuint8_t);
 }
 
-void ppu_setPageGhost(byte page, bool value, byte ghost)
+void ppu_setPageGhost(uint8_t page, uint8_t value, uint8_t ghost)
 {
     if (value == true)
     {  
@@ -135,9 +135,9 @@ void ppu_memoryDumpState(FILE *fp)
     }
 }
 
-byte ppu_readMemory(byte page, byte addr)
+uint8_t ppu_readMemory(uint8_t page, uint8_t addr)
 {
-    byte *ptr;
+    uint8_t *ptr;
     if (page == 0x3F)
         return ( ppu_memoryPages[0x3F][addr&0x1F] & 0x3F );
         
@@ -145,7 +145,7 @@ byte ppu_readMemory(byte page, byte addr)
     return ptr[addr];
 }
 
-void ppu_writeMemory(byte page, byte addr, byte value)
+void ppu_writeMemory(uint8_t page, uint8_t addr, uint8_t value)
 {
     if (page == 0x3F)
     {
@@ -162,7 +162,7 @@ void ppu_writeMemory(byte page, byte addr, byte value)
     }
     else
     {
-        byte *ptr;
+        uint8_t *ptr;
 
         ptr = ppu_memoryPages[page & 0x3F];
         ptr[addr] = value;

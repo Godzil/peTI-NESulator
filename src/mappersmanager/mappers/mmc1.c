@@ -44,10 +44,10 @@ uint8_t mmc1_CurrentBank;
 #define MMC1_REG2_DEFAULT 0
 #define MMC1_REG3_DEFAULT 0
 
-void mmc1_MapperWriteReg0(register byte Addr, register byte Value);
-void mmc1_MapperWriteReg1(register byte Addr, register byte Value);
-void mmc1_MapperWriteReg2(register byte Addr, register byte Value);
-void mmc1_MapperWriteReg3(register byte Addr, register byte Value);
+void mmc1_MapperWriteReg0(register uint8_t Addr, register uint8_t Value);
+void mmc1_MapperWriteReg1(register uint8_t Addr, register uint8_t Value);
+void mmc1_MapperWriteReg2(register uint8_t Addr, register uint8_t Value);
+void mmc1_MapperWriteReg3(register uint8_t Addr, register uint8_t Value);
 
 void mmc1_MapperDump(FILE *fp)
 {
@@ -181,7 +181,7 @@ uint32_t VROMBankNb;
 uint8_t Bit = 0;
 uint8_t BitBuf = 0;
 
-void mmc1_MapperWriteReg0(register byte Addr, register byte Value) 
+void mmc1_MapperWriteReg0(register uint8_t Addr, register uint8_t Value)
 {
     if (Value & 0x80) 
     {   
@@ -208,7 +208,7 @@ void mmc1_MapperWriteReg0(register byte Addr, register byte Value)
     }               
 }
 
-void mmc1_MapperWriteReg1(register byte Addr, register byte Value) 
+void mmc1_MapperWriteReg1(register uint8_t Addr, register uint8_t Value)
 {
     if (Value & 0x80) 
     {   
@@ -251,7 +251,7 @@ void mmc1_MapperWriteReg1(register byte Addr, register byte Value)
     }
 }
 
-void mmc1_MapperWriteReg2(register byte Addr, register byte Value) 
+void mmc1_MapperWriteReg2(register uint8_t Addr, register uint8_t Value)
 {
     if (Value & 0x80) 
     {   
@@ -295,7 +295,7 @@ void mmc1_MapperWriteReg2(register byte Addr, register byte Value)
     }
 }
 
-void mmc1_MapperWriteReg3(register byte Addr, register byte Value) 
+void mmc1_MapperWriteReg3(register uint8_t Addr, register uint8_t Value)
 {
     if (Value & 0x80) 
     {   

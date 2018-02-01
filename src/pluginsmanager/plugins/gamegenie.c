@@ -41,24 +41,24 @@ typedef enum gg_States_
 gg_States gg_state = GG_S00_MAIN_STATE;
 
 /* Own representation of memory */
-byte gg_MainRAM[0x800];
-byte gg_OldMainRAM[0x800];
-byte gg_SRAM[0x2000];
+uint8_t gg_MainRAM[0x800];
+uint8_t gg_OldMainRAM[0x800];
+uint8_t gg_SRAM[0x2000];
 
-/* Field used to now which byte are currently marked as pertinent or not */
-byte gg_use_MainRAM[0x800];
-byte gg_use_SRAM[0x2000];
+/* Field used to now which uint8_t are currently marked as pertinent or not */
+uint8_t gg_use_MainRAM[0x800];
+uint8_t gg_use_SRAM[0x2000];
 
 int gg_ResultNumber;
 
-byte gg_PatchUsed[10];
-byte gg_PatchedPage[10];
-byte gg_PatchedAddr[10];
-byte gg_PatchedValue[10];
+uint8_t gg_PatchUsed[10];
+uint8_t gg_PatchedPage[10];
+uint8_t gg_PatchedAddr[10];
+uint8_t gg_PatchedValue[10];
 func_rdhook gg_rdhookPtr[10];
 
 #define GG_RDHOOKPATCH(d) \
-byte gg_RdHookPatch##d(byte addr) \
+uint8_t gg_RdHookPatch##d(uint8_t addr) \
 { \
     if (addr == gg_PatchedAddr[d]) \
     { \
@@ -86,7 +86,7 @@ GG_RDHOOKPATCH(7)
 GG_RDHOOKPATCH(8)
 GG_RDHOOKPATCH(9)
 
-void gg_SetPatch(int id, byte page, byte addr, byte value)
+void gg_SetPatch(int id, uint8_t page, uint8_t addr, uint8_t value)
 {
     func_rdhook fptr;
     
@@ -200,7 +200,7 @@ void MessageBox(char *title, char *msg)
 
 }
 
-unsigned short SelectNumber(char *title, char *msg, byte size)
+uint16_t SelectNumber(char *title, char *msg, uint8_t size)
 {
 
     int sc_w, sc_h;
@@ -208,8 +208,8 @@ unsigned short SelectNumber(char *title, char *msg, byte size)
     
     char valueText[10];
     
-    unsigned short value;    
-    byte digit = 0;
+    uint16_t value;
+    uint8_t digit = 0;
     
     sc_w = screen->w;
     sc_h = screen->h;
@@ -393,14 +393,14 @@ int DispMenu(int itemc, char *itemv[], char *title)
     return selection;
 }
 
-byte AskYesNo(char *title)
+uint8_t AskYesNo(char *title)
 {
     char *YesNo[] = { "No", "Yes" };
     
     return DispMenu(2, YesNo, title);
 }
 
-byte gg_CalcChk(unsigned short addr, byte value)
+uint8_t gg_CalcChk(uint16_t addr, uint8_t value)
 {
     int chk = 0x42;
     chk += (addr  & 0xFF00) >> 8;
@@ -415,21 +415,21 @@ byte gg_CalcChk(unsigned short addr, byte value)
    VV   = value,
    CC   = cheksum
  */
-unsigned long gg_MakeCode(unsigned addr, byte value)
+uint32_t gg_MakeCode(uint16_t addr, uint8_t value)
 {
-    unsigned long code = addr << 16;
+    uint32_t code = addr << 16;
     code |= (value << 8);
     code |= (gg_CalcChk(addr, value) & 0x00FF);
     
     return code ^ 0x246FF53A;
 }
 
-byte gg_SelectPatch()
+uint8_t gg_SelectPatch()
 {
     char *Items[GG_MAX_PATCH + 1];
     char *tmp;
     int i;
-    byte ret;
+    uint8_t ret;
     
     for (i = 0; i < GG_MAX_PATCH; i++)
     {
@@ -467,7 +467,7 @@ void gg_PatchManager()
 
 void gg_InitSearch()
 {
-    unsigned short addr;
+    uint16_t addr;
     
     for(addr = 0x000; addr < 0x800; addr ++)
     {
@@ -487,11 +487,11 @@ typedef enum gg_SearchForMode_
        
 } gg_SearchForMode;
 
-void gg_SearchForValue(byte value)
+void gg_SearchForValue(uint8_t value)
 {
-    unsigned short addr;
-    //byte oldValue;
-    byte currentValue;
+    uint16_t addr;
+    //uint8_t oldValue;
+    uint8_t currentValue;
     gg_ResultNumber = 0x00;
     for(addr = 0x000; addr < 0x800; addr ++)
     {
@@ -518,9 +518,9 @@ void gg_SearchForValue(byte value)
 
 void gg_SearchFor(gg_SearchForMode mode)
 {
-    unsigned short addr;
-    byte oldValue;
-    byte currentValue;
+    uint16_t addr;
+    uint8_t oldValue;
+    uint8_t currentValue;
     gg_ResultNumber = 0x00;
     for(addr = 0x000; addr < 0x800; addr ++)
     {
@@ -585,14 +585,14 @@ void gg_SearchFor(gg_SearchForMode mode)
     }
 }
 
-byte gg_DisplayResults()
+uint8_t gg_DisplayResults()
 {
     char *Items[100];
     char *tmp;
     int i, addr = 0x0000;
-    byte ret = 0;
+    uint8_t ret = 0;
                 
-    unsigned short AddrList[21];
+    uint16_t AddrList[21];
     if (gg_ResultNumber > 20)
     {
         MessageBox("Code Breaker", "Too many results for displaying them!");
@@ -651,8 +651,8 @@ void gg_Start()
     
     char Buffer[100];
     int ret;
-    byte value;
-    unsigned short addr;
+    uint8_t value;
+    uint16_t addr;
     switch(gg_state)
     {
     default:

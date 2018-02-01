@@ -30,45 +30,41 @@ extern char MapperWantIRQ;
  Here are some fonction useful for mappers
  */
 
-void set_vrom_bank_1k(unsigned short addr,int slot)
+void set_vrom_bank_1k(uint16_t addr,int slot)
 {
 #ifdef DEBUG_VROM_BANK_SWITCH
     console_printf(Console_Default, "Change vrom 1k bank 0x%X to slot %d\n",addr,slot);
 #endif
     ppu_setPagePtr1k((addr>>8)&0xFF, Cart->VROMBanks + (slot * 1024));
-//    memcpy(ppu.Memory+addr, Cart->VROMBanks + (slot * 1024), 0x0400);
 }
 
-void set_vrom_bank_2k(unsigned short addr,int slot)
+void set_vrom_bank_2k(uint16_t addr,int slot)
 {
 #ifdef DEBUG_VROM_BANK_SWITCH
     console_printf(Console_Default, "Change vrom 2k bank 0x%X to slot %d\n",addr,slot);
 #endif
     ppu_setPagePtr2k((addr>>8)&0xFF, Cart->VROMBanks + (slot * 2 * 1024));
-//    memcpy(ppu.Memory+addr, Cart->VROMBanks + (slot * 2 * 1024), 0x0800);
 }
 
-void set_vrom_bank_4k(unsigned short addr,int slot)
+void set_vrom_bank_4k(uint16_t addr,int slot)
 {
 #ifdef DEBUG_VROM_BANK_SWITCH
     console_printf(Console_Default, "Change vrom 4k bank 0x%X to slot %d\n",addr,slot);
 #endif
     ppu_setPagePtr4k((addr>>8)&0xFF, Cart->VROMBanks + (slot * 4 * 1024));
-//    memcpy(ppu.Memory+addr, Cart->VROMBanks + (slot * 4 * 1024), 0x1000);
 }
 
-void set_vrom_bank_8k(unsigned short addr, int slot)
+void set_vrom_bank_8k(uint16_t addr, int slot)
 {
 #ifdef DEBUG_VROM_BANK_SWITCH
     console_printf(Console_Default, "Change vrom 8k bank 0x%X to slot %d\n",addr,slot);
 #endif
     ppu_setPagePtr8k(0x00, Cart->VROMBanks + (slot * 8 * 1024));
-//    memcpy(ppu.Memory, Cart->VROMBanks + (slot * 8 * 1024) , 0x2000);    
 }
 
 /*-----------*/
 
-void set_prom_bank_8k(unsigned short addr,int slot)
+void set_prom_bank_8k(uint16_t addr,int slot)
 {
 #ifdef DEBUG_PROM_BANK_SWITCH
     console_printf(Console_Default, "Change prom 8k bank 0x%X to slot %d\n",addr,slot);
@@ -76,7 +72,7 @@ void set_prom_bank_8k(unsigned short addr,int slot)
     set_page_ptr_8k(addr >> 8, Cart->PROMBanks + (slot * 8 * 1024));
 }
 
-void set_prom_bank_16k(unsigned short addr,int slot)
+void set_prom_bank_16k(uint16_t addr,int slot)
 {
 #ifdef DEBUG_PROM_BANK_SWITCH
     console_printf(Console_Default, "Change prom 16k bank @ 0x%X [0x%X] to slot 0x%X\n",addr, addr>>8,slot);
@@ -84,15 +80,13 @@ void set_prom_bank_16k(unsigned short addr,int slot)
     set_page_ptr_16k(addr >> 8, Cart->PROMBanks + (slot * 16 * 1024));
 }
 
-void set_prom_bank_32k(unsigned short addr,int slot)
+void set_prom_bank_32k(uint16_t addr,int slot)
 { /* addr may not be different from 0x8000 !*/
   /* Anyway I don't use it */
 #ifdef DEBUG_PROM_BANK_SWITCH
     console_printf(Console_Default, "Change prom 32k bank 0x%X to slot %d\n",addr,slot);
 #endif
     set_page_ptr_32k(addr >> 8, Cart->PROMBanks + (slot * 32 * 1024));
-/*    set_page_ptr_16k(0x80, Cart->PROMBanks[(slot<<1)]);
-    set_page_ptr_16k(0xC0, Cart->PROMBanks[(slot<<1)+1]);*/
 }
 
 

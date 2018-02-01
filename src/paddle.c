@@ -18,7 +18,7 @@ void InitPaddle(Paddle *pdl)
 }
 
 
-void WritePaddle(Paddle *pdl, unsigned char val)
+void WritePaddle(Paddle *pdl, uint8_t val)
 {
    if ( ( pdl->LastWrite == 1 ) && ( val == 0 ) )
       InitPaddle(pdl);
@@ -26,7 +26,7 @@ void WritePaddle(Paddle *pdl, unsigned char val)
    pdl->LastWrite = val;
 }
 
-unsigned char ReadPaddle(Paddle *pdl)
+uint8_t ReadPaddle(Paddle *pdl)
 {
    switch(pdl->Bit++)
    {

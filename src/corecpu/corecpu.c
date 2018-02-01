@@ -142,7 +142,7 @@
 #ifdef Q6502_NO_DECIMAL
 
 #define ADC_OPERATION(read) do {\
-   unsigned short tmp = 0; unsigned char v = read; \
+   uint16_t tmp = 0; uint8_t v = read; \
    tmp = cpu->reg_A + v + (cpu->reg_P & Q6502_C_FLAG); \
    cpu->reg_P = (cpu->reg_P & ~(Q6502_C_FLAG | Q6502_N_FLAG | Q6502_Z_FLAG | Q6502_V_FLAG)) | \
           (tmp & Q6502_N_FLAG) | ((tmp&0xFF)?0:Q6502_Z_FLAG) | \
@@ -152,7 +152,7 @@
 } while(0)
 
 #define SBC_OPERATION(read) do {\
-   unsigned short tmp = 0; unsigned char v = read; \
+   uint16_t tmp = 0; uint8_t v = read; \
    tmp = cpu->reg_A - v - (~cpu->reg_P & Q6502_C_FLAG); \
    cpu->reg_P = (cpu->reg_P & ~(Q6502_C_FLAG | Q6502_N_FLAG | Q6502_Z_FLAG | Q6502_V_FLAG)) | \
           (tmp & Q6502_N_FLAG) | ((tmp&0xFF)?0:Q6502_Z_FLAG) | \
@@ -170,7 +170,7 @@
 
 /* CMP is like SBC but without storing the result value */
 #define CMP_OPERATION(register, read) do { \
-   unsigned short tmp = 0; \
+   uint16_t tmp = 0; \
    tmp = register - read; \
    cpu->reg_P = (cpu->reg_P & ~(Q6502_C_FLAG | Q6502_N_FLAG | Q6502_Z_FLAG)) | \
           (tmp & Q6502_N_FLAG) | ((tmp&0xFF)?0:Q6502_Z_FLAG) | \
@@ -181,7 +181,7 @@
 #define ORA_OPERATION(read) cpu->reg_A |= read; NZ_FLAG_UPDATE(cpu->reg_A)
 
 #define BIT_OPERATION(read) do { \
-   byte tmp = read; \
+   uint8_t tmp = read; \
    cpu->reg_P = (cpu->reg_P & ~(Q6502_V_FLAG | Q6502_N_FLAG | Q6502_Z_FLAG)) | \
           (tmp & Q6502_N_FLAG) | (tmp & Q6502_V_FLAG) | \
           ((tmp & cpu->reg_A)?0:Q6502_Z_FLAG); \
@@ -199,7 +199,7 @@
                  val = val >> 1
 
 #define ROR_OPERATION(val) do {\
-   unsigned short tmp = val | (cpu->reg_P & Q6502_C_FLAG) << 8; \
+   uint16_t tmp = val | (cpu->reg_P & Q6502_C_FLAG) << 8; \
    cpu->reg_P = (cpu->reg_P & ~(Q6502_C_FLAG | Q6502_N_FLAG | Q6502_Z_FLAG)) | \
           ( tmp&Q6502_C_FLAG) |         /* Set the C flag */ \
           ((tmp&0x100) >> 1) |          /* Set the N flag */ \
@@ -208,7 +208,7 @@
 } while(0)
 
 #define ROL_OPERATION(val) do {\
-unsigned short tmp = (val << 1) | (cpu->reg_P & Q6502_C_FLAG); \
+uint16_t tmp = (val << 1) | (cpu->reg_P & Q6502_C_FLAG); \
    cpu->reg_P = (cpu->reg_P & ~(Q6502_C_FLAG | Q6502_N_FLAG | Q6502_Z_FLAG)) | \
          ((tmp&0x100)?Q6502_C_FLAG:0) | /* Set the C flag */ \
          ((tmp&0x80)) |                 /* Set the N flag */ \
@@ -494,7 +494,7 @@ int quick6502_free(quick6502_cpu *cpu)
 /*******************************************************************************
  ***                          Here start real CPU logic                      ***
  *******************************************************************************/
-static byte CycleTable[256] =
+static uint8_t CycleTable[256] =
 {
 /*        00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F */
 /* 00 */   7, 6, 0, 8, 3, 3, 5, 5, 3, 2, 2, 2, 4, 4, 6, 6,
@@ -650,8 +650,8 @@ INSTRUCTION(LDAaB)
 /** DD: LDA $xxxx,X - LoaD to A **/
 INSTRUCTION(LDAaX)
 {
-   register byte op1 = cpu->memory_opcode_read(cpu->reg_PC++);
-   register byte op2 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op1 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op2 = cpu->memory_opcode_read(cpu->reg_PC++);
    
    TRACEi(("LDA $%02X%02X,X", cpu->memory_opcode_read(cpu->reg_PC+1), cpu->memory_opcode_read(cpu->reg_PC)));
    cpu->reg_A = MEMORY_READ_AX();
@@ -662,8 +662,8 @@ INSTRUCTION(LDAaX)
 /** D9: LDA $xxxx,Y - LoaD to A **/
 INSTRUCTION(LDAaY)
 {
-   register byte op1 = cpu->memory_opcode_read(cpu->reg_PC++);
-   register byte op2 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op1 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op2 = cpu->memory_opcode_read(cpu->reg_PC++);
    cpu->reg_A = MEMORY_READ_AY();
    NZ_FLAG_UPDATE(cpu->reg_A);
    CROSS_CYCLE_UPDATE(op1 + cpu->reg_Y);
@@ -745,8 +745,8 @@ INSTRUCTION(LDXaB)
 /** BE: LDX $xxxx,Y - LoaD to X **/
 INSTRUCTION(LDXaY)
 {
-   register byte op1 = cpu->memory_opcode_read(cpu->reg_PC++);
-   register byte op2 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op1 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op2 = cpu->memory_opcode_read(cpu->reg_PC++);
    TRACEi(("LDX $%02X%02X,Y", op2, op1));
    cpu->reg_X = MEMORY_READ_AY();
    NZ_FLAG_UPDATE(cpu->reg_X);
@@ -801,8 +801,8 @@ INSTRUCTION(LDYaB)
 /** BC: LDY $xxxx,X - LoaD to Y **/
 INSTRUCTION(LDYaX)
 {
-   register byte op1 = cpu->memory_opcode_read(cpu->reg_PC++);
-   register byte op2 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op1 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op2 = cpu->memory_opcode_read(cpu->reg_PC++);
    
    TRACEi(("LDY $%02X%02X,X", cpu->memory_opcode_read(cpu->reg_PC+1), cpu->memory_opcode_read(cpu->reg_PC)));
    cpu->reg_Y = MEMORY_READ_AX();
@@ -1198,8 +1198,8 @@ INSTRUCTION(ADCaB)
 /** 7D : ADC - ADd with Carry **/
 INSTRUCTION(ADCaX)
 {
-   register byte op1 = cpu->memory_opcode_read(cpu->reg_PC++);
-   register byte op2 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op1 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op2 = cpu->memory_opcode_read(cpu->reg_PC++);
    
    TRACEi(("ADC $%02X%02X,X", cpu->memory_opcode_read(cpu->reg_PC+1), cpu->memory_opcode_read(cpu->reg_PC)));
    ADC_OPERATION(MEMORY_READ_AX());
@@ -1209,8 +1209,8 @@ INSTRUCTION(ADCaX)
 /** 79 : ADC - ADd with Carry **/
 INSTRUCTION(ADCaY)
 {
-   register byte op1 = cpu->memory_opcode_read(cpu->reg_PC++);
-   register byte op2 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op1 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op2 = cpu->memory_opcode_read(cpu->reg_PC++);
    TRACEi(("ADC $%02X%02X,Y", op2, op1));
    ADC_OPERATION(MEMORY_READ_AY());
    CROSS_CYCLE_UPDATE(op1 + cpu->reg_Y);
@@ -1262,8 +1262,8 @@ INSTRUCTION(SBCaB)
 /** FD : SBC - SuBstract with Carry **/
 INSTRUCTION(SBCaX)
 {
-   register byte op1 = cpu->memory_opcode_read(cpu->reg_PC++);
-   register byte op2 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op1 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op2 = cpu->memory_opcode_read(cpu->reg_PC++);
    
    TRACEi(("SBC $%02X%02X,X", cpu->memory_opcode_read(cpu->reg_PC+1), cpu->memory_opcode_read(cpu->reg_PC)));
    SBC_OPERATION(MEMORY_READ_AX());
@@ -1274,8 +1274,8 @@ INSTRUCTION(SBCaX)
 /** F9 : SBC - SuBstract with Carry **/
 INSTRUCTION(SBCaY)
 {
-   register byte op1 = cpu->memory_opcode_read(cpu->reg_PC++);
-   register byte op2 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op1 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op2 = cpu->memory_opcode_read(cpu->reg_PC++);
    TRACEi(("SBC $%02X%02X,Y", op2, op1));
    SBC_OPERATION(MEMORY_READ_AY());
    CROSS_CYCLE_UPDATE(op1 + cpu->reg_Y);
@@ -1327,8 +1327,8 @@ INSTRUCTION(CMPaB)
 /** DD : CMP - CoMPare **/
 INSTRUCTION(CMPaX)
 {
-   register byte op1 = cpu->memory_opcode_read(cpu->reg_PC++);
-   register byte op2 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op1 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op2 = cpu->memory_opcode_read(cpu->reg_PC++);
    
    TRACEi(("CMP $%02X%02X,X", cpu->memory_opcode_read(cpu->reg_PC+1), cpu->memory_opcode_read(cpu->reg_PC)));
    CMP_OPERATION(cpu->reg_A, MEMORY_READ_AX());
@@ -1338,8 +1338,8 @@ INSTRUCTION(CMPaX)
 /** D9 : CMP - CoMPare **/
 INSTRUCTION(CMPaY)
 {
-   register byte op1 = cpu->memory_opcode_read(cpu->reg_PC++);
-   register byte op2 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op1 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op2 = cpu->memory_opcode_read(cpu->reg_PC++);
    TRACEi(("CMP $%02X%02X,Y", op2, op1));
    CMP_OPERATION(cpu->reg_A, MEMORY_READ_AY());
    CROSS_CYCLE_UPDATE(op1 + cpu->reg_Y);
@@ -1433,8 +1433,8 @@ INSTRUCTION(ORAaB)
 /** 1D : ORA - OR with A **/
 INSTRUCTION(ORAaX)
 {
-   register byte op1 = cpu->memory_opcode_read(cpu->reg_PC++);
-   register byte op2 = cpu->memory_opcode_read(cpu->reg_PC++); 
+   register uint8_t op1 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op2 = cpu->memory_opcode_read(cpu->reg_PC++);
    
    TRACEi(("ORA $%02X%02X,X", cpu->memory_opcode_read(cpu->reg_PC+1), cpu->memory_opcode_read(cpu->reg_PC)));
    ORA_OPERATION(MEMORY_READ_AX());
@@ -1444,8 +1444,8 @@ INSTRUCTION(ORAaX)
 /** 19 : ORA - OR with A **/
 INSTRUCTION(ORAaY)
 {
-   register byte op1 = cpu->memory_opcode_read(cpu->reg_PC++);
-   register byte op2 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op1 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op2 = cpu->memory_opcode_read(cpu->reg_PC++);
    
    TRACEi(("ORA $%02X%02X,Y", op2, op1));
    ORA_OPERATION(MEMORY_READ_AY());
@@ -1499,8 +1499,8 @@ INSTRUCTION(EORaB)
 /** 5D : EOR - Exclusive OR **/
 INSTRUCTION(EORaX)
 {
-   register byte op1 = cpu->memory_opcode_read(cpu->reg_PC++);
-   register byte op2 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op1 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op2 = cpu->memory_opcode_read(cpu->reg_PC++);
    
    TRACEi(("EOR $%02X%02X,X", cpu->memory_opcode_read(cpu->reg_PC+1), cpu->memory_opcode_read(cpu->reg_PC)));
    EOR_OPERATION(MEMORY_READ_AX());
@@ -1510,8 +1510,8 @@ INSTRUCTION(EORaX)
 /** 59 : EOR - Exclusive OR **/
 INSTRUCTION(EORaY)
 {
-   register byte op1 = cpu->memory_opcode_read(cpu->reg_PC++);
-   register byte op2 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op1 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op2 = cpu->memory_opcode_read(cpu->reg_PC++);
    TRACEi(("EOR $%02X%02X,Y", op2, op1));
    EOR_OPERATION(MEMORY_READ_AY());
    CROSS_CYCLE_UPDATE(op1 + cpu->reg_Y);
@@ -1564,8 +1564,8 @@ INSTRUCTION(ANDaB)
 /** 3D : AND - Logical AND **/
 INSTRUCTION(ANDaX)
 {
-   register byte op1 = cpu->memory_opcode_read(cpu->reg_PC++);
-   register byte op2 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op1 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op2 = cpu->memory_opcode_read(cpu->reg_PC++);
    
    TRACEi(("AND $%02X%02X,X", cpu->memory_opcode_read(cpu->reg_PC+1), cpu->memory_opcode_read(cpu->reg_PC)));
    AND_OPERATION(MEMORY_READ_AX());
@@ -1576,8 +1576,8 @@ INSTRUCTION(ANDaX)
 /** 39 : AND - Logical AND **/
 INSTRUCTION(ANDaY)
 {
-   register byte op1 = cpu->memory_opcode_read(cpu->reg_PC++);
-   register byte op2 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op1 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op2 = cpu->memory_opcode_read(cpu->reg_PC++);
    TRACEi(("AND $%02X%02X,Y", op2, op1));
    AND_OPERATION(MEMORY_READ_AY());
    CROSS_CYCLE_UPDATE(op1 + cpu->reg_Y);
@@ -1631,7 +1631,7 @@ INSTRUCTION(LSRnP)
 INSTRUCTION(ROLaB)
 {
    TRACEi(("ROL $%02X%02X", cpu->memory_opcode_read(cpu->reg_PC+1), cpu->memory_opcode_read(cpu->reg_PC)));
-   byte val = MEMORY_READ_AB();
+   uint8_t val = MEMORY_READ_AB();
    cpu->reg_PC -= 2;
    ROL_OPERATION(val);
    MEMORY_WRITE_AB(val);
@@ -1641,7 +1641,7 @@ INSTRUCTION(ROLaB)
 INSTRUCTION(ROLzP)
 {
    TRACEi(("ROL $%02X", cpu->memory_opcode_read(cpu->reg_PC)));
-   byte val = MEMORY_READ_ZP();
+   uint8_t val = MEMORY_READ_ZP();
    cpu->reg_PC -= 1;
    ROL_OPERATION(val);
    MEMORY_WRITE_ZP(val);
@@ -1650,11 +1650,11 @@ INSTRUCTION(ROLzP)
 /** 3E : ROL **/
 INSTRUCTION(ROLaX)
 {
-   register byte op1 = cpu->memory_opcode_read(cpu->reg_PC++);
-   register byte op2 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op1 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op2 = cpu->memory_opcode_read(cpu->reg_PC++);
    
    TRACEi(("ROL $%02X%02X,X", cpu->memory_opcode_read(cpu->reg_PC+1), cpu->memory_opcode_read(cpu->reg_PC)));
-   byte val = MEMORY_READ_AX();
+   uint8_t val = MEMORY_READ_AX();
    cpu->reg_PC -= 2;
    ROL_OPERATION(val);
    MEMORY_WRITE_AX(val);
@@ -1664,7 +1664,7 @@ INSTRUCTION(ROLaX)
 INSTRUCTION(ROLzX)
 {
    TRACEi(("ROL $%02X,X", cpu->memory_opcode_read(cpu->reg_PC)));
-   byte val = MEMORY_READ_ZX();
+   uint8_t val = MEMORY_READ_ZX();
    cpu->reg_PC -= 1;
    ROL_OPERATION(val);
    MEMORY_WRITE_ZX(val);
@@ -1674,7 +1674,7 @@ INSTRUCTION(ROLzX)
 INSTRUCTION(RORaB)
 {
    TRACEi(("ROR $%02X%02X", cpu->memory_opcode_read(cpu->reg_PC+1), cpu->memory_opcode_read(cpu->reg_PC)));
-   byte val = MEMORY_READ_AB();
+   uint8_t val = MEMORY_READ_AB();
    cpu->reg_PC -= 2;
    ROR_OPERATION(val);
    MEMORY_WRITE_AB(val);
@@ -1684,7 +1684,7 @@ INSTRUCTION(RORaB)
 INSTRUCTION(RORzP)
 {
    TRACEi(("ROR $%02X", cpu->memory_opcode_read(cpu->reg_PC)));
-   byte val = MEMORY_READ_ZP();
+   uint8_t val = MEMORY_READ_ZP();
    cpu->reg_PC -= 1;
    ROR_OPERATION(val);
    MEMORY_WRITE_ZP(val);
@@ -1693,11 +1693,11 @@ INSTRUCTION(RORzP)
 /** 7E : ROR **/
 INSTRUCTION(RORaX)
 {
-   register byte op1 = cpu->memory_opcode_read(cpu->reg_PC++);
-   register byte op2 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op1 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op2 = cpu->memory_opcode_read(cpu->reg_PC++);
    
    TRACEi(("ROR $%02X%02X,X", cpu->memory_opcode_read(cpu->reg_PC+1), cpu->memory_opcode_read(cpu->reg_PC)));
-   byte val = MEMORY_READ_AX();
+   uint8_t val = MEMORY_READ_AX();
    cpu->reg_PC -= 2;
    ROR_OPERATION(val);
    MEMORY_WRITE_AX(val);
@@ -1707,7 +1707,7 @@ INSTRUCTION(RORaX)
 INSTRUCTION(RORzX)
 {
    TRACEi(("ROR $%02X,X", cpu->memory_opcode_read(cpu->reg_PC)));
-   byte val = MEMORY_READ_ZX();
+   uint8_t val = MEMORY_READ_ZX();
    cpu->reg_PC -= 1;
    ROR_OPERATION(val);
    MEMORY_WRITE_ZX(val);
@@ -1717,7 +1717,7 @@ INSTRUCTION(RORzX)
 INSTRUCTION(ASLaB)
 {
    TRACEi(("ASL $%02X%02X", cpu->memory_opcode_read(cpu->reg_PC+1), cpu->memory_opcode_read(cpu->reg_PC)));
-   byte val = MEMORY_READ_AB();
+   uint8_t val = MEMORY_READ_AB();
    cpu->reg_PC -= 2;
    ASL_OPERATION(val);
    MEMORY_WRITE_AB(val);
@@ -1727,7 +1727,7 @@ INSTRUCTION(ASLaB)
 INSTRUCTION(ASLzP)
 {
    TRACEi(("ASL $%02X", cpu->memory_opcode_read(cpu->reg_PC)));
-   byte val = MEMORY_READ_ZP();
+   uint8_t val = MEMORY_READ_ZP();
    cpu->reg_PC -= 1;
    ASL_OPERATION(val);
    MEMORY_WRITE_ZP(val);
@@ -1736,11 +1736,11 @@ INSTRUCTION(ASLzP)
 /** 1E : ASL **/
 INSTRUCTION(ASLaX)
 {
-   register byte op1 = cpu->memory_opcode_read(cpu->reg_PC++);
-   register byte op2 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op1 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op2 = cpu->memory_opcode_read(cpu->reg_PC++);
    
    TRACEi(("ASL $%02X%02X,X", cpu->memory_opcode_read(cpu->reg_PC+1), cpu->memory_opcode_read(cpu->reg_PC)));
-   byte val = MEMORY_READ_AX();
+   uint8_t val = MEMORY_READ_AX();
    cpu->reg_PC -= 2;
    ASL_OPERATION(val);
    MEMORY_WRITE_AX(val);
@@ -1750,7 +1750,7 @@ INSTRUCTION(ASLaX)
 INSTRUCTION(ASLzX)
 {
    TRACEi(("ASL $%02X,X", cpu->memory_opcode_read(cpu->reg_PC)));
-   byte val = MEMORY_READ_ZX();
+   uint8_t val = MEMORY_READ_ZX();
    cpu->reg_PC -= 1;
    ASL_OPERATION(val);
    MEMORY_WRITE_ZX(val);
@@ -1760,7 +1760,7 @@ INSTRUCTION(ASLzX)
 INSTRUCTION(LSRaB)
 {
    TRACEi(("LSR $%02X%02X", cpu->memory_opcode_read(cpu->reg_PC+1), cpu->memory_opcode_read(cpu->reg_PC)));
-   byte val = MEMORY_READ_AB();
+   uint8_t val = MEMORY_READ_AB();
    cpu->reg_PC -= 2;
    LSR_OPERATION(val);
    MEMORY_WRITE_AB(val);
@@ -1770,7 +1770,7 @@ INSTRUCTION(LSRaB)
 INSTRUCTION(LSRzP)
 {
    TRACEi(("LSR $%02X", cpu->memory_opcode_read(cpu->reg_PC)));
-   byte val = MEMORY_READ_ZP();
+   uint8_t val = MEMORY_READ_ZP();
    cpu->reg_PC -= 1;
    LSR_OPERATION(val);
    MEMORY_WRITE_ZP(val);
@@ -1779,11 +1779,11 @@ INSTRUCTION(LSRzP)
 /** 5E : LSR **/
 INSTRUCTION(LSRaX)
 {
-   register byte op1 = cpu->memory_opcode_read(cpu->reg_PC++);
-   register byte op2 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op1 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op2 = cpu->memory_opcode_read(cpu->reg_PC++);
    
    TRACEi(("LSR $%02X%02X,X", cpu->memory_opcode_read(cpu->reg_PC+1), cpu->memory_opcode_read(cpu->reg_PC)));
-   byte val = MEMORY_READ_AX();
+   uint8_t val = MEMORY_READ_AX();
    cpu->reg_PC -= 2;
    LSR_OPERATION(val);
    MEMORY_WRITE_AX(val);
@@ -1793,7 +1793,7 @@ INSTRUCTION(LSRaX)
 INSTRUCTION(LSRzX)
 {
    TRACEi(("LSR $%02X,X", cpu->memory_opcode_read(cpu->reg_PC)));
-   byte val = MEMORY_READ_ZX();
+   uint8_t val = MEMORY_READ_ZX();
    cpu->reg_PC -= 1;
    LSR_OPERATION(val);
    MEMORY_WRITE_ZX(val);
@@ -1803,7 +1803,7 @@ INSTRUCTION(LSRzX)
 INSTRUCTION(DECaB)
 {
    TRACEi(("DEC $%02X%02X", cpu->memory_opcode_read(cpu->reg_PC+1), cpu->memory_opcode_read(cpu->reg_PC)));
-   byte val = MEMORY_READ_AB();
+   uint8_t val = MEMORY_READ_AB();
    cpu->reg_PC -= 2;
    MEMORY_WRITE_AB(--val);
    NZ_FLAG_UPDATE(val);
@@ -1813,7 +1813,7 @@ INSTRUCTION(DECaB)
 INSTRUCTION(DECzP)
 {
    TRACEi(("DEC $%02X", cpu->memory_opcode_read(cpu->reg_PC)));
-   byte val = MEMORY_READ_ZP();
+   uint8_t val = MEMORY_READ_ZP();
    cpu->reg_PC -= 1;
    MEMORY_WRITE_ZP(--val);
    NZ_FLAG_UPDATE(val);
@@ -1822,11 +1822,11 @@ INSTRUCTION(DECzP)
 /** DE : DEC **/
 INSTRUCTION(DECaX)
 {
-   register byte op1 = cpu->memory_opcode_read(cpu->reg_PC++);
-   register byte op2 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op1 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op2 = cpu->memory_opcode_read(cpu->reg_PC++);
    
    TRACEi(("DEC $%02X%02X,X", cpu->memory_opcode_read(cpu->reg_PC+1), cpu->memory_opcode_read(cpu->reg_PC)));
-   byte val = MEMORY_READ_AX();
+   uint8_t val = MEMORY_READ_AX();
    cpu->reg_PC -= 2;
    MEMORY_WRITE_AX(--val);
    NZ_FLAG_UPDATE(val);
@@ -1836,7 +1836,7 @@ INSTRUCTION(DECaX)
 INSTRUCTION(DECzX)
 {
    TRACEi(("DEC $%02X,X", cpu->memory_opcode_read(cpu->reg_PC)));
-   byte val = MEMORY_READ_ZX();
+   uint8_t val = MEMORY_READ_ZX();
    cpu->reg_PC -= 1;
    MEMORY_WRITE_ZX(--val);
    NZ_FLAG_UPDATE(val);
@@ -1846,7 +1846,7 @@ INSTRUCTION(DECzX)
 INSTRUCTION(INCaB)
 {
    TRACEi(("INC $%02X%02X", cpu->memory_opcode_read(cpu->reg_PC+1), cpu->memory_opcode_read(cpu->reg_PC)));
-   byte val = MEMORY_READ_AB();
+   uint8_t val = MEMORY_READ_AB();
    cpu->reg_PC -= 2;
    MEMORY_WRITE_AB(++val);
    NZ_FLAG_UPDATE(val);
@@ -1856,7 +1856,7 @@ INSTRUCTION(INCaB)
 INSTRUCTION(INCzP)
 {
    TRACEi(("INC $%02X", cpu->memory_opcode_read(cpu->reg_PC)));
-   byte val = MEMORY_READ_ZP();
+   uint8_t val = MEMORY_READ_ZP();
    cpu->reg_PC -= 1;
    MEMORY_WRITE_ZP(++val);
    NZ_FLAG_UPDATE(val);
@@ -1865,11 +1865,11 @@ INSTRUCTION(INCzP)
 /** FE : INC **/
 INSTRUCTION(INCaX)
 {
-   register byte op1 = cpu->memory_opcode_read(cpu->reg_PC++);
-   register byte op2 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op1 = cpu->memory_opcode_read(cpu->reg_PC++);
+   register uint8_t op2 = cpu->memory_opcode_read(cpu->reg_PC++);
    
    TRACEi(("INC $%02X%02X,X", cpu->memory_opcode_read(cpu->reg_PC+1), cpu->memory_opcode_read(cpu->reg_PC)));
-   byte val = MEMORY_READ_AX();
+   uint8_t val = MEMORY_READ_AX();
    cpu->reg_PC -= 2;
    MEMORY_WRITE_AX(++val);
    NZ_FLAG_UPDATE(val);
@@ -1879,7 +1879,7 @@ INSTRUCTION(INCaX)
 INSTRUCTION(INCzX)
 {
    TRACEi(("INC $%02X,X", cpu->memory_opcode_read(cpu->reg_PC)));
-   byte val = MEMORY_READ_ZX();
+   uint8_t val = MEMORY_READ_ZX();
    cpu->reg_PC -= 1;
    MEMORY_WRITE_ZX(++val);
    NZ_FLAG_UPDATE(val);
@@ -1973,10 +1973,10 @@ static InstructionNameTag InstructionNameTable[256] =
 
 /** Get current instruction name at specified address and put it into buffer */
 int quick6502_getinstruction(quick6502_cpu *cpu, char interpret,
-                             unsigned short addr, char *buffer, int *strlength)
+                             uint16_t addr, char *buffer, int *strlength)
 {
    int len = 0, curlen;
-   int readbyte = 1;
+   int readuint8_t = 1;
    char *str = buffer;
 
    uint8_t opcode = cpu->memory_opcode_read(addr);
@@ -1999,7 +1999,7 @@ int quick6502_getinstruction(quick6502_cpu *cpu, char interpret,
 
       /* Nothing to interpret.. Really */
 
-      readbyte += 2;
+      readuint8_t += 2;
 
       break;
 
@@ -2020,7 +2020,7 @@ int quick6502_getinstruction(quick6502_cpu *cpu, char interpret,
          str += curlen; len += curlen;
       }
 
-      readbyte += 1;
+      readuint8_t += 1;
       break;
       
    case t_IDY:
@@ -2041,7 +2041,7 @@ int quick6502_getinstruction(quick6502_cpu *cpu, char interpret,
          str += curlen; len += curlen;
       }
 
-      readbyte += 1;
+      readuint8_t += 1;
       break;
 
    case t_ABS:
@@ -2051,7 +2051,7 @@ int quick6502_getinstruction(quick6502_cpu *cpu, char interpret,
 
       /* Nothing to interpret.. Really */
 
-      readbyte += 2;
+      readuint8_t += 2;
       break;
 
    case t_REL:
@@ -2061,7 +2061,7 @@ int quick6502_getinstruction(quick6502_cpu *cpu, char interpret,
 
       /* Nothing to interpret.. Really */
 
-      readbyte += 1;
+      readuint8_t += 1;
       break;
 
    case t_ZEP:
@@ -2070,7 +2070,7 @@ int quick6502_getinstruction(quick6502_cpu *cpu, char interpret,
 
       /* Nothing to interpret.. Really */
 
-      readbyte += 1;
+      readuint8_t += 1;
       break;
 
    case t_ZPX:
@@ -2085,7 +2085,7 @@ int quick6502_getinstruction(quick6502_cpu *cpu, char interpret,
          str += curlen; len += curlen;
       }
 
-      readbyte += 1;
+      readuint8_t += 1;
       break;
 
    case t_ZPY:
@@ -2100,7 +2100,7 @@ int quick6502_getinstruction(quick6502_cpu *cpu, char interpret,
          str += curlen; len += curlen;
       }
 
-      readbyte += 1;
+      readuint8_t += 1;
       break;
 
    case t_ABX:
@@ -2117,7 +2117,7 @@ int quick6502_getinstruction(quick6502_cpu *cpu, char interpret,
          str += curlen; len += curlen;
       }
 
-      readbyte += 2;
+      readuint8_t += 2;
       break;
 
    case t_ABY:
@@ -2134,7 +2134,7 @@ int quick6502_getinstruction(quick6502_cpu *cpu, char interpret,
          str += curlen; len += curlen;
       }
 
-      readbyte += 2;
+      readuint8_t += 2;
       break;
 
    case t_IND:
@@ -2156,14 +2156,14 @@ int quick6502_getinstruction(quick6502_cpu *cpu, char interpret,
          str += curlen; len += curlen;
       }
 
-      readbyte += 2;
+      readuint8_t += 2;
       break;
    }
    
    if (strlength != NULL)
       *strlength = len;
    
-   return readbyte;
+   return readuint8_t;
 }
 
 #else
@@ -2191,10 +2191,10 @@ static char InstructionParameters[256][10] =
 
 /** Get current instruction name at specified address and put it into buffer */
 int quick6502_getinstruction(quick6502_cpu *cpu, char interpret,
-                             unsigned short addr, char *buffer, int *strlength)
+                             uint16_t addr, char *buffer, int *strlength)
 {
-   unsigned char instr = cpu->memory_opcode_read(cpu->reg_PC);
-   unsigned char *instrText = InstructionParameters[instr];
+   uint8_t instr = cpu->memory_opcode_read(cpu->reg_PC);
+   uint8_t *instrText = InstructionParameters[instr];
    
    buffer += strlen(strcpy(buffer, instrText[1]));
    switch(instrText[0])
@@ -2220,7 +2220,7 @@ int quick6502_getinstruction(quick6502_cpu *cpu, char interpret,
 
 static inline int quick6502_exec_one(quick6502_cpu *cpu)
 {
-   register byte opcode = cpu->memory_opcode_read(cpu->reg_PC);
+   register uint8_t opcode = cpu->memory_opcode_read(cpu->reg_PC);
    
    //char instr[100];
    //quick6502_dump(cpu, stdout);

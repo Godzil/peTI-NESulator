@@ -9,11 +9,11 @@
 
 #include "aorom.h"
 
-unsigned char aorom_load_bank;
+uint8_t aorom_load_bank;
 
-void aorom_MapperWriteHook(register byte Addr, register byte Value);
+void aorom_MapperWriteHook(register uint8_t Addr, register uint8_t Value);
 
-extern byte *ppu_mem_nameTables;
+extern uint8_t *ppu_mem_nameTables;
 
 int aorom_InitMapper(NesCart * cart) 
 {    
@@ -37,7 +37,7 @@ int aorom_InitMapper(NesCart * cart)
     
 } 
 
-void aorom_MapperWriteHook(register byte Addr, register byte Value) 
+void aorom_MapperWriteHook(register uint8_t Addr, register uint8_t Value)
 {
     int BankNb;
 

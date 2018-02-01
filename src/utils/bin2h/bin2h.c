@@ -1,6 +1,6 @@
 /*
  *  bin to header - Part of The peTI-NESulator Project
- *  bin2h.c: Convert a binary file to a table of byte in a C header file.
+ *  bin2h.c: Convert a binary file to a table of uint8_t in a C header file.
  *
  *  Created by Manoel Trapier.
  *  Copyright 2003-2008 986 Corp. All rights reserved.
@@ -60,14 +60,14 @@ int main(int argc, char *argv[])
 
 	fprintf(fpout, "/* Generated data file from file '%s' */\n\n\n", infile);
 	
-	fprintf(fpout, "unsigned char data[] = {\n");
+	fprintf(fpout, "uint8_t data[] = {\n");
 	i = 0;
 	while((c = fgetc(fpin)) >= 0)
 	{
 		if (i == 0)
-			fprintf(fpout, "\t\t0x%02X", (unsigned char)c);
+			fprintf(fpout, "\t\t0x%02X", (uint8_t)c);
 		else
-			fprintf(fpout, ", 0x%02X", (unsigned char)c);
+			fprintf(fpout, ", 0x%02X", (uint8_t)c);
 			
 		i++;
 		if (i > 10)

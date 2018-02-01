@@ -32,9 +32,9 @@
 extern int VBLANK_TIME;
 
 extern volatile int frame;
-extern volatile unsigned long IPS, FPS;
+extern volatile uint32_t IPS, FPS;
 
-extern unsigned long ColorPalette[9 * 63];
+extern uint32_t ColorPalette[9 * 63];
 extern short IRQScanHit;
 extern short SZHit;
 
@@ -80,7 +80,7 @@ uint8_t PPU_Reg_V;
 uint8_t PPU_Reg_H;
 
 /* S: Playfield pattern table selection latch */
-unsigned short PPU_Reg_S;
+uint16_t PPU_Reg_S;
 
 /* PAR: Picture Address Register */
 uint8_t PPU_Reg_PAR;
@@ -88,7 +88,7 @@ uint8_t PPU_Reg_PAR;
 /* AR: Tile Attribute (palette select) value latch */
 uint8_t PPU_Reg_AR;
 
-unsigned short PPU_Reg_Counter;
+uint16_t PPU_Reg_Counter;
 
 
 /* PPU Memory Areas */

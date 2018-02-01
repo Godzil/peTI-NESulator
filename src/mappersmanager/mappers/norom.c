@@ -34,7 +34,7 @@ int norom_MapperIRQ(int cycledone)
    return 0;
 }
 
-void norom_MapperWriteHook(register byte Addr, register byte Value)
+void norom_MapperWriteHook(register uint8_t Addr, register uint8_t Value)
 {
    /* Nothing to do */
    return;

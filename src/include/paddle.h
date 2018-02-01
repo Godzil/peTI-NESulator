@@ -13,19 +13,19 @@
 typedef struct Paddle_ 
 {
     
-    unsigned char Bit;
+    uint8_t Bit;
     
-    unsigned char LastWrite;
+    uint8_t LastWrite;
     
 } Paddle;
 
 
-unsigned char ReadPaddle(Paddle * pdl);
+uint8_t ReadPaddle(Paddle * pdl);
 
 
 void InitPaddle(Paddle * pdl);
 
-void WritePaddle(Paddle * pdl, unsigned char val);
+void WritePaddle(Paddle * pdl, uint8_t val);
 
 
 #endif

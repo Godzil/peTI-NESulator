@@ -15,8 +15,8 @@
 #include <NESCarts.h>
 
 typedef int (*MapperInit)      (NesCart * cart);
-typedef int (*MapperWriteHook) (register unsigned short Addr, 
-                                register unsigned char Value);
+typedef int (*MapperWriteHook) (register uint16_t Addr,
+                                register uint8_t Value);
 typedef int (*MapperIRQ)       (int cycledone);
 typedef void (*MapperDump)     (FILE *fp);
 
@@ -33,14 +33,14 @@ extern NesCart *Cart;
 #define GETLAST16KBANK(c) ((c->PROMSize>>14)-1)
 #define GETLAST32KBANK(c) ((c->PROMSize>>15)-1)
 
-void set_vrom_bank_1k(unsigned short addr,int slot);
-void set_vrom_bank_2k(unsigned short addr,int slot);
-void set_vrom_bank_4k(unsigned short addr,int slot);
-void set_vrom_bank_8k(unsigned short addr, int slot);
+void set_vrom_bank_1k(uint16_t addr,int slot);
+void set_vrom_bank_2k(uint16_t addr,int slot);
+void set_vrom_bank_4k(uint16_t addr,int slot);
+void set_vrom_bank_8k(uint16_t addr, int slot);
 
-void set_prom_bank_8k(unsigned short addr,int slot);
-void set_prom_bank_16k(unsigned short addr,int slot);
-void set_prom_bank_32k(unsigned short addr,int slot);
+void set_prom_bank_8k(uint16_t addr,int slot);
+void set_prom_bank_16k(uint16_t addr,int slot);
+void set_prom_bank_32k(uint16_t addr,int slot);
 
 #else /* __TINES_MAPPERS__ */
 

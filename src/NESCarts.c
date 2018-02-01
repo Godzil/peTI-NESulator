@@ -50,7 +50,7 @@ int LoadCart(const char *filename, NesCart * cart)
 {
     char buffer[6];
     /* Load the cart into memory */
-    cart->File = (byte *)LoadFilePtr((char *)filename);
+    cart->File = (uint8_t *)LoadFilePtr((char *)filename);
     
     
     if ((cart->File == NULL) || (cart->File == MAP_FAILED))

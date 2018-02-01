@@ -17,7 +17,7 @@ int _InitMapper(NesCart * cart)
     
 } 
 
-int _MapperWriteHook(register word Addr, register byte Value) 
+int _MapperWriteHook(register word Addr, register uint8_t Value)
 {
     
     if (Addr > 0x7FFF)    /* Try to write to the rom */

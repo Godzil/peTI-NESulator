@@ -20,13 +20,13 @@ typedef void (*PluginKeypress) (void);
 #ifdef __TINES_PLUGINS__
 
 /* Available functions for plugins */
-int plugin_install_keypressHandler(byte key, PluginKeypress);
-int plugin_remove_keypressHandler(byte key, PluginKeypress);
+int plugin_install_keypressHandler(uint8_t key, PluginKeypress);
+int plugin_remove_keypressHandler(uint8_t key, PluginKeypress);
 
 #else /* __TINES_PLUGINS__ */
 
 /* Available functions outside of plugins */
-int plugin_keypress(byte key);
+int plugin_keypress(uint8_t key);
 
 /* Real Prototype: TBD */
 void plugin_list();

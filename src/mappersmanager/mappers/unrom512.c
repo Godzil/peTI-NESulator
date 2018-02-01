@@ -10,16 +10,16 @@
 #include <ppu/ppu.h>
 #include "unrom512.h"
 
-static byte mirroring_set;
-static byte loaded_vbank;
-static byte loaded_pbank;
+static uint8_t mirroring_set;
+static uint8_t loaded_vbank;
+static uint8_t loaded_pbank;
 
 /*
  * not great but as we currently don't support higher than 8K VRAM, allocate it here as we can have
  * 32K on such a cart
  */
 static uint8_t vram[32768];
-void ppu_setPagePtr8k(byte page, byte *ptr);
+void ppu_setPagePtr8k(uint8_t page, uint8_t *ptr);
 
 static void unrom512_applyValues()
 {
@@ -36,7 +36,7 @@ static void unrom512_applyValues()
     set_prom_bank_16k(0x8000, loaded_pbank);
 }
 
-static void unrom512_MapperWriteHook(byte Addr, byte Value)
+static void unrom512_MapperWriteHook(uint8_t Addr, uint8_t Value)
 {
     mirroring_set = (Value >> 7) & 0x01;
     loaded_vbank  = (Value >> 5) & 0x03;

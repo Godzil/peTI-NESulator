@@ -12,13 +12,6 @@
 
 #include <stdint.h>
 
-#ifndef BYTE_TYPE_DEFINED
-#define BYTE_TYPE_DEFINED
-typedef uint8_t byte;
-#endif
-
-typedef uint8_t bool;
-
 #define true  (0)
 #define false (!true)
 

@@ -162,7 +162,7 @@ void ResumeSound(void);
 /** Initialize sound. Returns Rate on success, 0 otherwise. **/
 /** Rate=0 to skip initialization (will be silent).         **/
 /*************************************************************/
-int InitSound(unsigned int Rate,unsigned int Latency);
+int InitSound(uint32_t Rate,uint32_t Latency);
 #endif /* MSDOS */
 
 #ifdef WINDOWS
@@ -181,7 +181,7 @@ int InitSound(unsigned int Rate,unsigned int Latency);
 /** synthesis (waveOut). Number of wave synthesis buffers   **/
 /** must be in 2..SND_BUFFERS range.                        **/
 /*************************************************************/
-unsigned int InitSound(unsigned int Rate,unsigned int Delay);
+uint32_t InitSound(uint32_t Rate,uint32_t Delay);
 #endif /* WINDOWS */
 
 
@@ -200,14 +200,14 @@ unsigned int InitSound(unsigned int Rate,unsigned int Delay);
 /** rate. Returns Rate on success, 0 otherwise. Pass Rate=0 **/
 /** to skip initialization and be silent.                   **/
 /*************************************************************/
-unsigned int InitSound(unsigned int Rate,unsigned int Delay);
+uint32_t InitSound(uint32_t Rate,uint32_t Delay);
 #endif
 
 /** RenderAudio() ********************************************/
 /** Render given number of melodic sound samples. Returns   **/
 /** number of samples actually rendered.                    **/
 /*************************************************************/
-unsigned int RenderAudio(unsigned int Samples);
+uint32_t RenderAudio(uint32_t Samples);
 
 /** SndDriver ************************************************/
 /** Each sound driver should fill this structure with       **/

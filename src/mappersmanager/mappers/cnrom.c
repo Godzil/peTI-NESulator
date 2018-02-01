@@ -9,9 +9,9 @@
 
 #include "cnrom.h"
 
-unsigned char cnrom_load_bank;
+uint8_t cnrom_load_bank;
 
-void cnrom_MapperWriteHook(register byte Addr, register byte Value);
+void cnrom_MapperWriteHook(register uint8_t Addr, register uint8_t Value);
 
 int cnrom_InitMapper(NesCart * cart) 
 {
@@ -32,7 +32,7 @@ int cnrom_InitMapper(NesCart * cart)
 } 
 
 
-void cnrom_MapperWriteHook(register byte Addr, register byte Value) 
+void cnrom_MapperWriteHook(register uint8_t Addr, register uint8_t Value)
 {
     set_prom_bank_16k(0x8000,Value);
     cnrom_load_bank = Value;

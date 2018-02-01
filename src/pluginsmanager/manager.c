@@ -25,7 +25,7 @@ typedef struct Plugin_
 
 typedef struct KeyHandler_
 {
-    byte key;
+    uint8_t key;
     
     PluginKeypress func;
     
@@ -83,7 +83,7 @@ int plugin_unload(int id)
 
 
 /* Available functions for plugins */
-int plugin_install_keypressHandler(byte key, PluginKeypress func)
+int plugin_install_keypressHandler(uint8_t key, PluginKeypress func)
 {
     KeyHandler *ptr;
     
@@ -115,14 +115,14 @@ int plugin_install_keypressHandler(byte key, PluginKeypress func)
     return 0;
 }
 
-int plugin_remove_keypressHandler(byte key, PluginKeypress func)
+int plugin_remove_keypressHandler(uint8_t key, PluginKeypress func)
 {   /* actually do nothing, we cant remove plugin online */
     return 0;
 }
 
 
 /* Available functions outside of plugins */
-int plugin_keypress(byte key)
+int plugin_keypress(uint8_t key)
 {
     KeyHandler *ptr = keyHandlersList;
     

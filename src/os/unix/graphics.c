@@ -27,9 +27,9 @@ typedef struct GLWindow_t GLWindow;
 
 struct KeyArray
 {
-   unsigned char lastState;
-   unsigned char curState;
-   unsigned char debounced;
+   uint8_t lastState;
+   uint8_t curState;
+   uint8_t debounced;
    GLFWwindow* window;
 };
 
@@ -37,7 +37,7 @@ struct GLWindow_t
 {
    struct KeyArray keyArray[512];
    GLFWwindow* windows;
-   unsigned char *videoMemory;
+   uint8_t *videoMemory;
    GLint videoTexture;
    int WIDTH;
    int HEIGHT;
@@ -83,8 +83,8 @@ void ShowScreen(GLWindow *g, int w, int h)
 
 void setupGL(GLWindow *g, int w, int h)
 {
-   g->videoMemory = (unsigned char*)malloc(w*h*sizeof(unsigned int));
-   memset(g->videoMemory, 0,w*h*sizeof(unsigned int));
+   g->videoMemory = (uint8_t*)malloc(w*h*sizeof(uint32_t));
+   memset(g->videoMemory, 0,w*h*sizeof(uint32_t));
    //Tell OpenGL how to convert from coordinates to pixel values
    glViewport(0, 0, w, h);
 
@@ -405,7 +405,7 @@ int graphics_init()
    return 0;
 }
 
-static unsigned long getColour(long color)
+static uint32_t getColour(long color)
 {
    Palette *pal = &basicPalette[color];
    uint8_t r, g, b, a;

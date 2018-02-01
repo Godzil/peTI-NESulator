@@ -95,18 +95,18 @@ word latestop[MAXLASTOP];
 quick6502_cpu *MainCPU;
 NesCart *Cart;
 
-byte *FDSRom;
-byte *FDSRam;
+uint8_t *FDSRom;
+uint8_t *FDSRam;
 
 /* Command line options */
-byte START_DEBUG = 0;
-byte START_WITH_FDS = 0;
+uint8_t START_DEBUG = 0;
+uint8_t START_WITH_FDS = 0;
 char *CART_FILENAME = NULL;
 char *PALETTE_FILENAME = NULL;
 
 Paddle P1, P2;
 
-unsigned short ScanLine;
+uint16_t ScanLine;
 
 volatile int frame = 0;
 volatile uint64_t ccount;
@@ -117,25 +117,25 @@ char WantClosing = 0;
 struct timeval timeStart;
 struct timeval timeEnd;
 
-volatile unsigned long FPS, IPS;
+volatile uint32_t FPS, IPS;
 
 short IRQScanHit = -1;
 short SZHit = -1;
 
 /* palette */
-unsigned long ColorPalette[ 8 * 63 ];
+uint32_t ColorPalette[ 8 * 63 ];
 
 #define SET_RGB(r,g,b) ((((r<<8)|g)<<8)|b)|0xFF000000
 
 /* Memory functions */
-byte MemoryRead            (unsigned short Addr);
-byte MemoryOpCodeRead      (unsigned short Addr);
-byte MemoryStackRead       (unsigned short Addr);
-byte MemoryPageZeroRead    (unsigned short Addr);
+uint8_t MemoryRead            (uint16_t Addr);
+uint8_t MemoryOpCodeRead      (uint16_t Addr);
+uint8_t MemoryStackRead       (uint16_t Addr);
+uint8_t MemoryPageZeroRead    (uint16_t Addr);
 
-void MemoryWrite           (unsigned short Addr, byte Value);
-void MemoryStackWrite      (unsigned short Addr, byte Value);
-void MemoryPageZeroWrite   (unsigned short Addr, byte Value);
+void MemoryWrite           (uint16_t Addr, uint8_t Value);
+void MemoryStackWrite      (uint16_t Addr, uint8_t Value);
+void MemoryPageZeroWrite   (uint16_t Addr, uint8_t Value);
 
 void Loop6502(quick6502_cpu *R);
 
@@ -188,7 +188,7 @@ void LoadSaveRam(char *name)
 void LoadPalette(char *filename, Palette *pal)
 {
    FILE *fp;
-   unsigned char r, v, b, i;
+   uint8_t r, v, b, i;
    console_printf(Console_Default, "%s: try to load pallette file '%s'", __func__, filename);
    if ((fp = fopen(filename, "rb")) != NULL)
    {
@@ -342,9 +342,9 @@ void signalhandler(int sig)
    exit(-42);
 }
 
-byte Page40[256];
+uint8_t Page40[256];
 
-void WrHook4000Multiplexer(byte addr, byte value)
+void WrHook4000Multiplexer(uint8_t addr, uint8_t value)
 {
    switch(addr)
    {
@@ -372,9 +372,9 @@ void WrHook4000Multiplexer(byte addr, byte value)
    
 }
 
-byte RdHook4000Multiplexer(byte addr)
+uint8_t RdHook4000Multiplexer(uint8_t addr)
 {
-   byte ret;
+   uint8_t ret;
    switch(addr)
    {
 	 case 0x16:
@@ -411,7 +411,7 @@ void printUsage(int argc, char *argv[])
 int main(int argc, char *argv[])
 {
    int i;
-   unsigned char *MemoryPage;
+   uint8_t *MemoryPage;
    quick6502_cpuconfig CpuConfig;
 
 #ifdef RUN_COVERAGE
@@ -514,7 +514,7 @@ int main(int argc, char *argv[])
    console_printf(Console_Default, "Allocating 6502 memory\t\t");
    
    /* Allocating first 0x7FF memory */
-   MemoryPage = (unsigned char *)malloc (0x800);
+   MemoryPage = (uint8_t *)malloc (0x800);
    set_page_ptr_2k(0,MemoryPage);
    for (i = 0; i < 0x08; i++)
    {
@@ -605,8 +605,8 @@ int main(int argc, char *argv[])
          console_printf(Console_Error, "Error opcode @ 0x%X [w:%d,r:%d]\n", i, j, k);
    }
 #endif
-   /* SRAM (0x6000 : 0x2000 bytes ) */
-   MemoryPage = (unsigned char *)malloc (0x2000);
+   /* SRAM (0x6000 : 0x2000 uint8_ts ) */
+   MemoryPage = (uint8_t *)malloc (0x2000);
    
    set_page_ptr_8k(0x60, MemoryPage);
    
@@ -668,7 +668,7 @@ int main(int argc, char *argv[])
       
       console_printf(Console_Default, "Allocating FDS RAM...\n");
       
-      FDSRam = (byte*) malloc( (8+16) * 1024);
+      FDSRam = (uint8_t*) malloc( (8+16) * 1024);
       
       if (FDSRam == NULL)
       {
@@ -781,55 +781,55 @@ int main(int argc, char *argv[])
 }
 
 /* Access directly to Memory pages *HACKISH* */
-extern byte *memory_pages[0xFF];
+extern uint8_t *memory_pages[0xFF];
 /* Memory functions */
 
 /* Read memory, general function */
-byte MemoryRead            (unsigned short Addr)
+uint8_t MemoryRead            (uint16_t Addr)
 {            
    return ReadMemory((Addr&0xFF00)>>8,Addr&0x00FF);   
 }
 
 /* Read memory for opcode (need fast access) */
-byte MemoryOpCodeRead      (unsigned short Addr)
+uint8_t MemoryOpCodeRead      (uint16_t Addr)
 {
-   byte *ptr;
-   return ((ptr = memory_pages[(Addr&0xFF00)>>8])>(byte*)1)?ptr[Addr&0x00FF]:0xEA;
+   uint8_t *ptr;
+   return ((ptr = memory_pages[(Addr&0xFF00)>>8])>(uint8_t*)1)?ptr[Addr&0x00FF]:0xEA;
 }
 
-byte MemoryStackRead       (unsigned short Addr)
+uint8_t MemoryStackRead       (uint16_t Addr)
 {
-   byte *ptr = memory_pages[1];
+   uint8_t *ptr = memory_pages[1];
    return ptr[Addr&0x00FF];
 }
 
-byte MemoryPageZeroRead    (unsigned short Addr)
+uint8_t MemoryPageZeroRead    (uint16_t Addr)
 {
-   byte *ptr = memory_pages[0];
+   uint8_t *ptr = memory_pages[0];
    return ptr[Addr&0x00FF];
 }
 
 /* Write to memory, general function */
-void MemoryWrite           (unsigned short Addr, byte Value)
+void MemoryWrite           (uint16_t Addr, uint8_t Value)
 {
    WriteMemory((Addr&0xFF00)>>8,Addr&0x00FF, Value);
 }
 
-void MemoryStackWrite      (unsigned short Addr, byte Value)
+void MemoryStackWrite      (uint16_t Addr, uint8_t Value)
 {
-   byte *ptr = memory_pages[1];
+   uint8_t *ptr = memory_pages[1];
    ptr[Addr&0x00FF] = Value;
 }
 
-void MemoryPageZeroWrite   (unsigned short Addr, byte Value)
+void MemoryPageZeroWrite   (uint16_t Addr, uint8_t Value)
 {
-   byte *ptr = memory_pages[0];
+   uint8_t *ptr = memory_pages[0];
    ptr[Addr&0x00FF] = Value;
 }
 
 void Loop6502(quick6502_cpu *R)
 {
-   byte ret;
+   uint8_t ret;
 //   short skey;
    long WaitTime;
    static long delta=0;

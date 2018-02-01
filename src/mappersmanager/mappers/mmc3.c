@@ -8,29 +8,29 @@
  */
 #include "mmc3.h"
 
-extern unsigned short ScanLine;
+extern uint16_t ScanLine;
 
-unsigned short mmc3_command;
+uint16_t mmc3_command;
 
-unsigned char mmc3_irq_counter;
-unsigned char mmc3_irq_counter_reload;
-unsigned char mmc3_irq_enable;
+uint8_t mmc3_irq_counter;
+uint8_t mmc3_irq_counter_reload;
+uint8_t mmc3_irq_enable;
 
-unsigned short mmc3_first_prom_page;
-unsigned short mmc3_second_prom_page;
+uint16_t mmc3_first_prom_page;
+uint16_t mmc3_second_prom_page;
 
-unsigned char  mmc3_use_xor;
-unsigned char mmc3_last_vrom[6];
+uint8_t  mmc3_use_xor;
+uint8_t mmc3_last_vrom[6];
 
-unsigned char mmc3_last_prom[2];
-unsigned char mmc3_last_prom_switch;
+uint8_t mmc3_last_prom[2];
+uint8_t mmc3_last_prom_switch;
 
-unsigned short dummy;
+uint16_t dummy;
 
-void mmc3_MapperWrite80Hook(byte addr, byte value);
-void mmc3_MapperWriteA0Hook(byte addr, byte value);
-void mmc3_MapperWriteC0Hook(byte addr, byte value);
-void mmc3_MapperWriteE0Hook(byte addr, byte value);
+void mmc3_MapperWrite80Hook(uint8_t addr, uint8_t value);
+void mmc3_MapperWriteA0Hook(uint8_t addr, uint8_t value);
+void mmc3_MapperWriteC0Hook(uint8_t addr, uint8_t value);
+void mmc3_MapperWriteE0Hook(uint8_t addr, uint8_t value);
 
 void mmc3_MapperDump(FILE *fp)
 {
@@ -88,7 +88,7 @@ int mmc3_InitMapper(NesCart * cart)
     return 0;
 } 
 
-void mmc3_MapperWrite80Hook(byte addr, byte Value)
+void mmc3_MapperWrite80Hook(uint8_t addr, uint8_t Value)
 {
     //console_printf(Console_Default, "%s(0x%02X, 0x%02X)\n", __func__, addr, Value);
     if (addr > 0x01)
@@ -216,7 +216,7 @@ void mmc3_MapperWrite80Hook(byte addr, byte Value)
 
 }
 
-void mmc3_MapperWriteA0Hook(byte addr, byte Value)
+void mmc3_MapperWriteA0Hook(uint8_t addr, uint8_t Value)
 {
     //console_printf(Console_Default, "%s(0x%02X, 0x%02X)\n", __func__, addr, Value);
     if (addr > 0x01)
@@ -243,7 +243,7 @@ void mmc3_MapperWriteA0Hook(byte addr, byte Value)
       
 }
 
-void mmc3_MapperWriteC0Hook(byte addr, byte Value)
+void mmc3_MapperWriteC0Hook(uint8_t addr, uint8_t Value)
 {
     //console_printf(Console_Default, "%s(0x%02X, 0x%02X)\n", __func__, addr, Value);
     if (addr > 0x01)
@@ -262,7 +262,7 @@ void mmc3_MapperWriteC0Hook(byte addr, byte Value)
     }
 }
 
-void mmc3_MapperWriteE0Hook(byte addr, byte Value)
+void mmc3_MapperWriteE0Hook(uint8_t addr, uint8_t Value)
 {
     //console_printf(Console_Default, "%s(0x%02X, 0x%02X)\n", __func__, addr, Value);
     if (addr > 0x01)

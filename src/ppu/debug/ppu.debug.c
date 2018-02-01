@@ -9,40 +9,16 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
 #if 0
-/* Allegro includes */
-#ifdef __APPLE__
-#define USE_CONSOLE
-#include <Allegro/allegro.h>
-#else
-#define USE_CONSOLE
-#include <allegro.h>
-#endif
-
-#define __TINES_PPU_INTERNAL__
-
-#include <ppu/ppu.h>
-#include <ppu/ppu.memory.h>
-#include <ppu/ppu.debug.h>
-
-#include <types.h>
-
-extern BITMAP *Buffer;
-
-extern unsigned short ppu_spritePatternTable;
-
-extern short PPU_Reg_S;
-
 void DebugColor()
 {
 #ifdef TO_MAKE
-  static unsigned short x = 128;
-  static unsigned short y = 128;
-  unsigned char OldDisplayPalette = ppu.DisplayPalette;
-  byte keyb;
-  unsigned int i;
-  unsigned long Color;
+  static uint16_t x = 128;
+  static uint16_t y = 128;
+  uint8_t OldDisplayPalette = ppu.DisplayPalette;
+  uint8_t keyb;
+  uint32_t i;
+  uint32_t Color;
 
   NOBLIT = 1;
 
@@ -120,7 +96,7 @@ void DebugColor()
 void DebugSprites()
 {
 #ifdef TO_MAKE
-  byte keyb;
+  uint8_t keyb;
   static int SelSprite = 0;
   PPUSprite sprite;
   NOBLIT = 1;
@@ -208,10 +184,10 @@ void DebugSprites()
 
 #define PPU_Rd(addr) ppu_readMemory((addr>>8)&0xFF, addr&0xFF)									
 
-void ppu_dumpOneNameTable(unsigned short nametable, int xd, int yd)
+void ppu_dumpOneNameTable(uint16_t nametable, int xd, int yd)
 {
-    byte x,y, x1, y1, Color;
-    unsigned short TileID;
+    uint8_t x,y, x1, y1, Color;
+    uint16_t TileID;
     
     for (x = 0; x < 32; x++)
         for (y = 0; y < 30; y++)
@@ -233,35 +209,35 @@ void ppu_dumpOneNameTable(unsigned short nametable, int xd, int yd)
          }
 }
 
-void ppu_dumpOneAttributeTable(unsigned short nametable, int xd, int yd)
+void ppu_dumpOneAttributeTable(uint16_t nametable, int xd, int yd)
 {
-    int x, x1, y1, Color, AttrByte;
+    int x, x1, y1, Color, Attruint8_t;
     for (x = 0; x < 0x40; x++)
     {
-        AttrByte = PPU_Rd(nametable + 0x23C0 + x);
+        Attruint8_t = PPU_Rd(nametable + 0x23C0 + x);
         x1 = x % 8;
         y1 = x / 8;
     
-        Color = AttrByte & 0x3; // Pattern 1;
+        Color = Attruint8_t & 0x3; // Pattern 1;
 //        Color = PPU_Rd(0x3F00 + (Color * 4) + 1);
         rectfill(Buffer,xd+(x1*32),yd+(y1*32),xd+15+(x1*32),yd+15+(y1*32),Color);
         
         textprintf_ex(Buffer, font, 4+xd+(x1*32), 4+yd+(y1*32), ~Color, Color, "%X", Color);
 
             
-        Color = (AttrByte>>2) & 0x3; // Pattern 2;
+        Color = (Attruint8_t>>2) & 0x3; // Pattern 2;
 //        Color = PPU_Rd(0x3F00 + (Color * 4) + 1);          
         rectfill(Buffer,16+xd+(x1*32),yd+(y1*32),16+xd+15+(x1*32),yd+15+(y1*32),Color);
 
         textprintf_ex(Buffer, font, 4+xd+(x1*32)+16, 4+yd+(y1*32), ~Color, Color, "%X", Color);
             
-        Color = (AttrByte>>4) & 0x3; // Pattern 3;
+        Color = (Attruint8_t>>4) & 0x3; // Pattern 3;
 //        Color = PPU_Rd(0x3F00 + (Color * 4) + 1);
         rectfill(Buffer,xd+(x1*32),16+yd+(y1*32),xd+15+(x1*32),16+yd+15+(y1*32),Color);
 
         textprintf_ex(Buffer, font, 4+xd+(x1*32), 4+yd+(y1*32)+16, ~Color, Color, "%X", Color);
             
-        Color = (AttrByte>>6) & 0x3; // Pattern 4;
+        Color = (Attruint8_t>>6) & 0x3; // Pattern 4;
 //        Color = PPU_Rd(0x3F00 + (Color * 4) + 1);
         rectfill(Buffer,16+xd+(x1*32),16+yd+(y1*32),16+xd+15+(x1*32),16+yd+15+(y1*32),Color);
 
@@ -273,7 +249,7 @@ void ppu_dumpOneAttributeTable(unsigned short nametable, int xd, int yd)
         
     }
 }
-extern byte *ppu_mem_nameTables;
+extern uint8_t *ppu_mem_nameTables;
 extern int ppu_screenMode;
 void ppu_dumpNameTable(int xd, int yd)
 {
@@ -363,4 +339,5 @@ void ppu_dumpPalette(int x, int y)
         rectfill(Buffer, x + 91 + (i % 4) * 20, y + 21 +(i / 4) * 20, x + 91 + (i % 4) * 20 + 20, y + 21 +(i / 4) * 20 + 20, ppu_readMemory(0x3F, i+0x10));
     }
 }
+
 #endif

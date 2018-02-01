@@ -9,9 +9,9 @@
 
 #include "unrom.h"
 
-unsigned char unrom_load_vbank;
+uint8_t unrom_load_vbank;
 
-void unrom_MapperWriteHook(byte Addr, byte Value);
+void unrom_MapperWriteHook(uint8_t Addr, uint8_t Value);
 
 int unrom_InitMapper(NesCart * cart) 
 {
@@ -36,7 +36,7 @@ int unrom_InitMapper(NesCart * cart)
 } 
 
 
-void unrom_MapperWriteHook(byte Addr, byte Value) 
+void unrom_MapperWriteHook(uint8_t Addr, uint8_t Value)
 {    
     set_vrom_bank_8k(0x0000,Value);
     unrom_load_vbank = Value;

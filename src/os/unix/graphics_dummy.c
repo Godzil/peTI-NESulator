@@ -22,16 +22,16 @@ typedef struct GLWindow_t GLWindow;
 
 struct KeyArray
 {
-   unsigned char lastState;
-   unsigned char curState;
-   unsigned char debounced;
+   uint8_t lastState;
+   uint8_t curState;
+   uint8_t debounced;
 };
 
 struct GLWindow_t
 {
    struct KeyArray keyArray[512];
    GLFWwindow* windows;
-   unsigned char *videoMemory;
+   uint8_t *videoMemory;
    GLint videoTexture;
    int WIDTH;
    int HEIGHT;

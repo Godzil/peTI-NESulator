@@ -9,9 +9,9 @@
 
 #include "iremh3001.h"
 
-unsigned short iremh3001_prom_slot[3];
+uint16_t iremh3001_prom_slot[3];
 
-unsigned short iremh3001_vrom_slot[8];
+uint16_t iremh3001_vrom_slot[8];
 
 int iremh3001_InitMapper(NesCart * cart) 
 {
@@ -38,7 +38,7 @@ int iremh3001_InitMapper(NesCart * cart)
     
 } 
 
-int iremh3001_MapperWriteHook(register byte Addr, register byte Value) 
+int iremh3001_MapperWriteHook(register uint8_t Addr, register uint8_t Value)
 {
 #if 0
   switch(Addr)

@@ -32,15 +32,15 @@
 
 #include "types.h"
 
-typedef byte (*quick6502_MemoryReadFunction)(unsigned short addr);
-typedef void (*quick6502_MemoryWriteFunction)(unsigned short addr, byte value);
+typedef uint8_t (*quick6502_MemoryReadFunction)(uint16_t addr);
+typedef void (*quick6502_MemoryWriteFunction)(uint16_t addr, uint8_t value);
 
 typedef struct quick6502_cpu_
 {
    /* 6502 registers */
-   byte reg_A, reg_X, reg_Y;
-   byte reg_P, reg_S;
-   unsigned short reg_PC;
+   uint8_t reg_A, reg_X, reg_Y;
+   uint8_t reg_P, reg_S;
+   uint16_t reg_PC;
 
    /* Read/Write memory functions */
    quick6502_MemoryReadFunction  memory_read;
@@ -53,12 +53,12 @@ typedef struct quick6502_cpu_
 
    /* Timing related */
    long cycle_done;
-   byte exit_loop;
-   byte int_pending;
+   uint8_t exit_loop;
+   uint8_t int_pending;
 
    /* Other config options */
-   byte running; /* This field is used to prevent cpu free if this cpu is running */
-   byte page_crossed;
+   uint8_t running; /* This field is used to prevent cpu free if this cpu is running */
+   uint8_t page_crossed;
    
    /* TODO add support for Inst/MemAccess breakpoints */
    
@@ -152,7 +152,7 @@ void quick6502_dump(quick6502_cpu *cpu, FILE * fp);
 #define MINE
 
 int quick6502_getinstruction(quick6502_cpu *cpu, char interpret,
-                             unsigned short addr, char *buffer, int *strlength);                        
+                             uint16_t addr, char *buffer, int *strlength);
 /**
  * Free the CPU 
  *

@@ -9,12 +9,12 @@
 
 #include "mmc4.h"
 
-byte mmc4_RegA;
-byte mmc4_RegB;
-byte mmc4_RegC;
-byte mmc4_RegD;
-byte mmc4_RegE;
-byte mmc4_RegF;
+uint8_t mmc4_RegA;
+uint8_t mmc4_RegB;
+uint8_t mmc4_RegC;
+uint8_t mmc4_RegD;
+uint8_t mmc4_RegE;
+uint8_t mmc4_RegF;
 
 #ifdef DEBUG
 #define LOG(s) printf s
@@ -24,7 +24,7 @@ byte mmc4_RegF;
 
 /* MAPPER WARNING: This mapper need to attach to the PPU memory... Need more work on this parts.. */
 
-void mmc4_MapperWriteRegA(register byte Addr, register byte Value)
+void mmc4_MapperWriteRegA(register uint8_t Addr, register uint8_t Value)
 {
     LOG(("%s(%02X, %02X)\n", __func__, Addr, Value));
     mmc4_RegA = Value;
@@ -33,7 +33,7 @@ void mmc4_MapperWriteRegA(register byte Addr, register byte Value)
     
 }
 
-void mmc4_MapperWriteRegB(register byte Addr, register byte Value)
+void mmc4_MapperWriteRegB(register uint8_t Addr, register uint8_t Value)
 {
     LOG(("%s(%02X, %02X)\n", __func__, Addr, Value));
     mmc4_RegB = Value;    
@@ -41,28 +41,28 @@ void mmc4_MapperWriteRegB(register byte Addr, register byte Value)
     set_vrom_bank_4k(0x0000, Value & 0x1F);
 }
 
-void mmc4_MapperWriteRegC(register byte Addr, register byte Value)
+void mmc4_MapperWriteRegC(register uint8_t Addr, register uint8_t Value)
 {
     LOG(("%s(%02X, %02X)\n", __func__, Addr, Value));
     mmc4_RegC = Value;    
     set_vrom_bank_4k(0x0000, Value & 0x1F);
 }
 
-void mmc4_MapperWriteRegD(register byte Addr, register byte Value)
+void mmc4_MapperWriteRegD(register uint8_t Addr, register uint8_t Value)
 {
     LOG(("%s(%02X, %02X)\n", __func__, Addr, Value));
     mmc4_RegD = Value;    
     set_vrom_bank_4k(0x1000, Value & 0x1F);
 }
 
-void mmc4_MapperWriteRegE(register byte Addr, register byte Value)
+void mmc4_MapperWriteRegE(register uint8_t Addr, register uint8_t Value)
 {
     LOG(("%s(%02X, %02X)\n", __func__, Addr, Value));
     mmc4_RegE = Value;  
     set_vrom_bank_4k(0x1000, Value & 0x1F);  
 }
 
-void mmc4_MapperWriteRegF(register byte Addr, register byte Value)
+void mmc4_MapperWriteRegF(register uint8_t Addr, register uint8_t Value)
 {
     LOG(("%s(%02X, %02X)\n", __func__, Addr, Value));
     mmc4_RegF = Value;    

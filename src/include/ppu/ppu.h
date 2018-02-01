@@ -54,7 +54,7 @@ void ppu_setScreenMode(uint8_t mode);
 
 PPU_Sprite ppu_getSprite(uint16_t i);
 
-unsigned char ppu_memoryRead(uint8_t page, uint8_t addr);
+uint8_t ppu_memoryRead(uint8_t page, uint8_t addr);
 void          ppu_memoryWrite(uint8_t page, uint8_t addr, uint8_t value);
 
 void ppu_debugSprites();

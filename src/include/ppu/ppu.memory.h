@@ -11,18 +11,18 @@
 
 int ppu_initMemory();
 
-void ppu_setPagePtr  (byte page, byte *ptr);
-void ppu_setPagePtr1k(byte page, byte *ptr);
-void ppu_setPagePtr2k(byte page, byte *ptr);
-void ppu_setPagePtr4k(byte page, byte *ptr);
-void ppu_setPagePtr8k(byte page, byte *ptr);
+void ppu_setPagePtr  (uint8_t page, uint8_t *ptr);
+void ppu_setPagePtr1k(uint8_t page, uint8_t *ptr);
+void ppu_setPagePtr2k(uint8_t page, uint8_t *ptr);
+void ppu_setPagePtr4k(uint8_t page, uint8_t *ptr);
+void ppu_setPagePtr8k(uint8_t page, uint8_t *ptr);
 
 void ppu_memoryDumpState(FILE *fp);
 
-byte ppu_readMemory(byte page, byte addr);
-void ppu_writeMemory(byte page, byte addr, byte value);
+uint8_t ppu_readMemory(uint8_t page, uint8_t addr);
+void ppu_writeMemory(uint8_t page, uint8_t addr, uint8_t value);
 
-void ppu_setPageGhost(byte page, bool value, byte ghost);
+void ppu_setPageGhost(uint8_t page, uint8_t value, uint8_t ghost);
 
 #else
 #error Must only be included inside the PPU code

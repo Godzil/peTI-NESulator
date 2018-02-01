@@ -6,15 +6,15 @@
  *  Copyright (c) 2003-2008 986Corp. All rights reserved.
  *
  */
-unsigned char MMC1_reg0;
+uint8_t MMC1_reg0;
 
-unsigned char MMC1_reg1;
+uint8_t MMC1_reg1;
 
-unsigned char MMC1_reg2;
+uint8_t MMC1_reg2;
 
-unsigned char MMC1_reg3;
+uint8_t MMC1_reg3;
 
-unsigned char mmc1_CurrentBank;
+uint8_t mmc1_CurrentBank;
 
 #define MMC1_R0_MIRROR    0x01
 #define MMC1_R0_ONESCREEN  0x02
@@ -42,10 +42,10 @@ unsigned char mmc1_CurrentBank;
 #define MMC1_REG3_DEFAULT 0
 
 
-void mmc1_MapperWriteReg0(register byte Addr, register byte Value);
-void mmc1_MapperWriteReg1(register byte Addr, register byte Value);
-void mmc1_MapperWriteReg2(register byte Addr, register byte Value);
-void mmc1_MapperWriteReg3(register byte Addr, register byte Value);
+void mmc1_MapperWriteReg0(register uint8_t Addr, register uint8_t Value);
+void mmc1_MapperWriteReg1(register uint8_t Addr, register uint8_t Value);
+void mmc1_MapperWriteReg2(register uint8_t Addr, register uint8_t Value);
+void mmc1_MapperWriteReg3(register uint8_t Addr, register uint8_t Value);
 
 void mmc1_MapperDump(FILE *fp)
 {
@@ -128,7 +128,7 @@ Reg 0
 void mmc1_ApplyReg0Mod() 
 {
     
-    static unsigned char OldSwitchArea = MMC1_R0_PRGAREA;
+    static uint8_t OldSwitchArea = MMC1_R0_PRGAREA;
     
     
        
@@ -176,10 +176,10 @@ void mmc1_ApplyReg0Mod()
 } 
 
 int VROMBankNb;
-unsigned char Bit = 0;
-unsigned char BitBuf = 0;
+uint8_t Bit = 0;
+uint8_t BitBuf = 0;
 
-void mmc1_MapperWriteReg0(register byte Addr, register byte Value) 
+void mmc1_MapperWriteReg0(register uint8_t Addr, register uint8_t Value)
 {
     if (Value & 0x80) 
     {   
@@ -206,7 +206,7 @@ void mmc1_MapperWriteReg0(register byte Addr, register byte Value)
     }               
 }
 
-void mmc1_MapperWriteReg1(register byte Addr, register byte Value) 
+void mmc1_MapperWriteReg1(register uint8_t Addr, register uint8_t Value)
 {
     if (Value & 0x80) 
     {   
@@ -249,7 +249,7 @@ void mmc1_MapperWriteReg1(register byte Addr, register byte Value)
     }
 }
 
-void mmc1_MapperWriteReg2(register byte Addr, register byte Value) 
+void mmc1_MapperWriteReg2(register uint8_t Addr, register uint8_t Value)
 {
     if (Value & 0x80) 
     {   
@@ -293,7 +293,7 @@ void mmc1_MapperWriteReg2(register byte Addr, register byte Value)
     }
 }
 
-void mmc1_MapperWriteReg3(register byte Addr, register byte Value) 
+void mmc1_MapperWriteReg3(register uint8_t Addr, register uint8_t Value)
 {
     if (Value & 0x80) 
     {   

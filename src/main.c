@@ -109,8 +109,7 @@ Paddle P1, P2;
 unsigned short ScanLine;
 
 volatile int frame = 0;
-volatile int ccount;
-
+volatile uint64_t ccount;
 char MapperWantIRQ = 0;
 
 char WantClosing = 0;
@@ -256,14 +255,6 @@ void LoadPalette(char *filename, Palette *pal)
 	 exit(-1);
    }
 }
-
-#ifdef RUN_COVERAGE
-void alarmHandler(int sig)
-{
-   signal(SIGALRM, SIG_IGN);
-   WantClosing = 1;
-}
-#endif
 
 void signalhandler(int sig)
 {
@@ -415,12 +406,18 @@ void printUsage(int argc, char *argv[])
    exit(0);
 }
 
+#define Value(_s) (((_s)%0xFF) + (rand()%0xFF-128) )%0xFF)
+
 int main(int argc, char *argv[])
-{    
+{
    int i;
    unsigned char *MemoryPage;
    quick6502_cpuconfig CpuConfig;
-   
+
+#ifdef RUN_COVERAGE
+   uint64_t coverage_loops = 500000000UL;
+#endif
+
    /* Here we will fill the memory */
    /*
     --------------------------------------- $10000
@@ -456,10 +453,6 @@ int main(int argc, char *argv[])
    console_printf(Console_Default, "S");
    signal(SIGTERM, signalhandler);
    console_printf(Console_Default, "T]\n");
-
-#ifdef RUN_COVERAGE
-   signal(SIGALRM, alarmHandler);
-#endif
   
    /*  */
    console_printf(Console_Default, "Initialize memory...\t\t");
@@ -580,8 +573,6 @@ int main(int argc, char *argv[])
    }
    
    console_printf(Console_Default, "[ OK ]\n");
-   
-#define Value(s) (((s%0xFF) + (rand()%0xFF-128) )%0xFF)
    
 #ifdef MEMORY_TEST
    console_printf(Console_Default, "Testing memory validity...\n");
@@ -741,14 +732,6 @@ int main(int argc, char *argv[])
    
 //  set_palette(basicPalette);
 
-#ifdef USE_SOUND
-   InitSound(44400,!0);
-   
-   SetSound(0, SND_RECTANGLE);
-   SetSound(1, SND_RECTANGLE);
-   SetSound(2, SND_TRIANGLE);
-   SetSound(3, SND_NOISE);
-#endif
    // Actually no real debugguer...
    //console_printf(Console_Default, "Press ESC to pause emulation and jump to debugguer\n");
 
@@ -774,16 +757,19 @@ int main(int argc, char *argv[])
  */
    
    gettimeofday(&timeStart, NULL);
-
-#ifdef RUN_COVERAGE
-   alarm(1 * 60); /* Run for 1 minutes */
-#endif
    
    while(!WantClosing)
    {
       ccount += quick6502_run(MainCPU, HBLANK_TIME);
 
       Loop6502(MainCPU);
+
+#ifdef RUN_COVERAGE
+      if (ccount > coverage_loops)
+      {
+         WantClosing = 1;
+      }
+#endif
    }
    
    if (Cart->Flags & iNES_BATTERY)
@@ -878,6 +864,7 @@ void Loop6502(quick6502_cpu *R)
       WaitTime = (timeEnd.tv_sec) - (timeStart.tv_sec);           
       WaitTime *= 1000000;
       WaitTime += (timeEnd.tv_usec - timeStart.tv_usec);
+
 #if !ISPAL && ISNTSC
       /* Calculate the waiting time, 16666 is the time of one frame in microseconds at a 60Hz rate) */
       WaitTime = 16666 - WaitTime + delta;
@@ -886,10 +873,12 @@ void Loop6502(quick6502_cpu *R)
 #endif
       
       /* If we press Page Up, we want to accelerate "time" */
+#ifndef RUN_COVERAGE
       if (!getKeyStatus('Y'))
          if ((WaitTime >= 0) && (WaitTime < 100000))
 	         usleep(WaitTime);
-      
+#endif
+
       /* Now get the time after sleep */
       gettimeofday(&timeStart, NULL);
       

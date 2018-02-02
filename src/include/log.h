@@ -2,18 +2,13 @@
  *  Log Facility - The Quick6502 Project
  *  include/log.h
  *
- *  Created by Manoel Trapier on 19/05/10
+ *  Created by Manoël Trapier on 19/05/10
  *  Copyright (c) 2003-2018 986-Studio. All rights reserved.
- *
- *  $LastChangedDate:$
- *  $Author:$
- *  $HeadURL:$
- *  $Revision:$
  *
  */
 
 #ifndef _LOG_H
-#define	_LOG_H
+#define _LOG_H
 
 enum
 {
@@ -38,5 +33,5 @@ void log_real(int level, char *user, char *fmt, ...);
     if ((_level <= MAX_DEBUG_LEVEL) || (_level <= LOG_PANIC)) \
        do { _code; printf("\n"); } while(0)
 
-#endif	/* _LOG_H */
+#endif /* _LOG_H */
 

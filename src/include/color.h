@@ -2,18 +2,13 @@
  *  ANSI Color definition - The Quick6502 Project
  *  include/color.h
  *
- *  Created by Manoel Trapier on 25/06/10
+ *  Created by Manoël Trapier on 25/06/10
  *  Copyright (c) 2003-2018 986-Studio. All rights reserved.
- *
- *  $LastChangedDate:$
- *  $Author:$
- *  $HeadURL:$
- *  $Revision:$
  *
  */
 
 #ifndef COLOR_H
-#define	COLOR_H
+#define COLOR_H
 
 #define ALLOW_COLORS
 
@@ -44,5 +39,5 @@
 
 #define CNORMAL ANSI_COLOR("0")
 
-#endif	/* COLOR_H */
+#endif    /* COLOR_H */
 

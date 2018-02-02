@@ -16,24 +16,24 @@
 
 
 /* Map a file in memory */
-void *LoadFilePtr(char * filename)
+void *LoadFilePtr(char *filename)
 {
-	int fd;
-	void *RetPtr;
-	struct stat FileStat;
+    int fd;
+    void *RetPtr;
+    struct stat FileStat;
 
-	fd = open(filename, O_RDONLY);
+    fd = open(filename, O_RDONLY);
 
-	fstat(fd, &FileStat);
+    fstat(fd, &FileStat);
 
-	RetPtr = mmap(NULL, FileStat.st_size, PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 0);
-	
-	close(fd);
+    RetPtr = mmap(NULL, FileStat.st_size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
 
-	if ( RetPtr == MAP_FAILED )
-	{
-                RetPtr = NULL;
-	}
+    close(fd);
 
-	return RetPtr;
+    if (RetPtr == MAP_FAILED)
+    {
+        RetPtr = NULL;
+    }
+
+    return RetPtr;
 }

@@ -12,46 +12,48 @@
 
 #include <os_dependent.h>
 
-char LevelChar[] = { 'E', 'W', 'A', 'N', 'V',  'D'};
+char LevelChar[] = { 'E', 'W', 'A', 'N', 'V', 'D' };
 
 ConsoleLevel console_ActualLevel = Console_Default;
 
 /* Actually nothing to do */
 int console_init(ConsoleLevel DefaultLevel)
 {
-   console_ActualLevel = DefaultLevel;
-   return 0;
+    console_ActualLevel = DefaultLevel;
+    return 0;
 }
 
 /* Actually a simple printf with levels */
 int console_vprintf(const ConsoleLevel level, const char *format, va_list ap)
 {
-   if (console_ActualLevel >= level)
-      vprintf(format, ap);
-   
-   return 0;
+    if (console_ActualLevel >= level)
+    {
+        vprintf(format, ap);
+    }
+
+    return 0;
 }
 
 
 int console_printf(const ConsoleLevel level, const char *format, ...)
 {
-   va_list ap;
-   va_start(ap, format);
+    va_list ap;
+    va_start(ap, format);
 
-   console_vprintf(level, format, ap);
+    console_vprintf(level, format, ap);
 
-   va_end(ap);
-   return 0;
+    va_end(ap);
+    return 0;
 }
 
 int console_printf_d(const char *format, ...)
 {
-   va_list ap;
-   va_start(ap, format);
-   
-   console_vprintf (Console_Debug, format, ap);
+    va_list ap;
+    va_start(ap, format);
 
-   va_end(ap);
+    console_vprintf(Console_Debug, format, ap);
 
-   return 0;
+    va_end(ap);
+
+    return 0;
 }

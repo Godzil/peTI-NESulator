@@ -4,7 +4,7 @@
  *
  *  Define and emulate the PPU (Picture Processing Unit) of the real NES
  *
- *  Created by Manoel TRAPIER.
+ *  Created by Manoël TRAPIER.
  *  Copyright (c) 2003-2018 986-Studio. All rights reserved.
  *
  */
@@ -55,12 +55,6 @@ typedef struct spriteData
 
 /* PPU registers */
 
-/* NT: Name Table */
-uint8_t PPU_Reg_NT;
-
-/* AT: Attribute/Color Table */
-uint8_t PPU_Reg_AT;
-
 /* FV: Fine Vertical Scroll latch/counter */
 uint8_t PPU_Reg_FV;
 
@@ -79,7 +73,7 @@ uint8_t PPU_Reg_V;
 /* H: Horizontal Name Table Selection latch/counter */
 uint8_t PPU_Reg_H;
 
-/* S: Playfield pattern table selection latch */
+/* S: Play-field pattern table selection latch */
 uint16_t PPU_Reg_S;
 
 /* PAR: Picture Address Register */

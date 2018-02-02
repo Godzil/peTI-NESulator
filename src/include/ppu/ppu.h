@@ -4,7 +4,7 @@
  *  
  *  Define and emulate the PPU (Picture Processing Unit) of the real NES
  * 
- *  Created by Manoel TRAPIER.
+ *  Created by Manoël TRAPIER.
  *  Copyright (c) 2003-2018 986-Studio. All rights reserved.
  *
  */
@@ -26,13 +26,9 @@ typedef struct PPU_Sprite_
 PPU must be initialized after memory initialisation..
 */
 int ppu_init();
-
 int ppu_hblank(uint16_t scanline);
-
 uint8_t ppu_readReg(uint8_t id);
-
 void ppu_writeReg(uint8_t id, uint8_t val);
-
 void ppu_fillSprRamDMA(uint8_t value);
 
 #define PPU_MIRROR_HORIZTAL 0
@@ -50,13 +46,9 @@ void ppu_fillSprRamDMA(uint8_t value);
 void ppu_setMirroring(uint8_t direction);
 void ppu_setSingleScreen(uint8_t screen);
 void ppu_setScreenMode(uint8_t mode);
-
-
 PPU_Sprite ppu_getSprite(uint16_t i);
-
 uint8_t ppu_memoryRead(uint8_t page, uint8_t addr);
-void          ppu_memoryWrite(uint8_t page, uint8_t addr, uint8_t value);
-
+void ppu_memoryWrite(uint8_t page, uint8_t addr, uint8_t value);
 void ppu_debugSprites();
 void ppu_debugColor();
 

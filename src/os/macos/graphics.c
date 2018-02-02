@@ -2,8 +2,8 @@
  *  Graphic Manager - The peTI-NESulator Project
  *  os/macos/graphics.c
  *
- *  Created by Manoel TRAPIER on 08/05/08.
- *  Copyright (c) 2003-2008 986Corp. All rights reserved.
+ *  Created by Manoël TRAPIER on 08/05/08.
+ *  Copyright (c) 2003-2018 986-Studio. All rights reserved.
  *
  */
 #include <os_dependent.h>

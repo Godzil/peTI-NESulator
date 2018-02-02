@@ -2,7 +2,7 @@
  *  UNROM Mapper - The peTI-NESulator Project
  *  unrom.h
  *
- *  Created by Manoel TRAPIER.
+ *  Created by Manoël TRAPIER.
  *  Copyright (c) 2003-2018 986-Studio. All rights reserved.
  *
  */
@@ -19,6 +19,7 @@ static uint8_t loaded_pbank;
  * 32K on such a cart
  */
 static uint8_t vram[32768];
+
 void ppu_setPagePtr8k(uint8_t page, uint8_t *ptr);
 
 static void unrom512_applyValues()
@@ -39,13 +40,13 @@ static void unrom512_applyValues()
 static void unrom512_MapperWriteHook(uint8_t Addr, uint8_t Value)
 {
     mirroring_set = (Value >> 7) & 0x01;
-    loaded_vbank  = (Value >> 5) & 0x03;
-    loaded_pbank  = (Value     ) & 0x1F;
+    loaded_vbank = (Value >> 5) & 0x03;
+    loaded_pbank = (Value) & 0x1F;
 
     unrom512_applyValues();
 }
 
-int unrom512_InitMapper(NesCart * cart)
+int unrom512_InitMapper(NesCart *cart)
 {
     int i;
 
@@ -54,18 +55,18 @@ int unrom512_InitMapper(NesCart * cart)
     set_prom_bank_16k(0xC000, GETLAST16KBANK(cart));
 
     unrom512_applyValues();
-    
+
     /* Register the write hook */
-    for (i = 0x80; i < 0x100; i++)
+    for (i = 0x80 ; i < 0x100 ; i++)
     {
         set_page_wr_hook(i, unrom512_MapperWriteHook);
         set_page_writeable(i, true);
     }
-    
+
     return 0;
-} 
+}
 
 void unrom512_MapperDump(FILE *fp)
 {
-    fprintf(fp,"unrom512: vbank:%d pbank:%d\n", loaded_vbank, loaded_pbank);
+    fprintf(fp, "unrom512: vbank:%d pbank:%d\n", loaded_vbank, loaded_pbank);
 }

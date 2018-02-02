@@ -1,8 +1,8 @@
 #
 # peTI-NESulator CMake
 #
-# Created by Manoel TRAPIER.
-# Copyright (c) 2003-2008 986Corp. All rights reserved.
+# Created by Manoël TRAPIER.
+# Copyright (c) 2003-2018 986-Studio. All rights reserved.
 #
 # $LastChangedDate$
 # $Author$

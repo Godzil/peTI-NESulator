@@ -2,7 +2,7 @@
  *  Plugins manager - The peTI-NESulator Project
  *  plugins.c
  *
- *  Created by Manoel TRAPIER on 02/04/07.
+ *  Created by Manoël TRAPIER on 02/04/07.
  *  Copyright (c) 2003-2018 986-Studio. All rights reserved.
  *
  */
@@ -15,9 +15,9 @@
 #include <plugins/manager.h>
 
 typedef struct Plugin_
-{   
+{
     char *name;
-    
+
     PluginInit init;
     PluginDeinit deinit;
 
@@ -26,11 +26,11 @@ typedef struct Plugin_
 typedef struct KeyHandler_
 {
     uint8_t key;
-    
+
     PluginKeypress func;
-    
+
     struct KeyHandler_ *next;
-    
+
 } KeyHandler;
 
 KeyHandler *keyHandlersList = NULL;
@@ -42,10 +42,11 @@ void plugin_list()
     Plugin *ptr = &(Plugins[0]);
     int i = 1;
     console_printf(Console_Default, "Available plugins:\n");
-    while(ptr->name != NULL)
+    while (ptr->name != NULL)
     {
         console_printf(Console_Default, "%d - %s\n", i, ptr->name);
-        ptr++; i++;
+        ptr++;
+        i++;
     }
 }
 
@@ -53,17 +54,19 @@ int plugin_load(int id)
 {
     Plugin *ptr = &(Plugins[0]);
     int i = id;
-    
+
     console_printf(Console_Default, "%s(%d)", __func__, id);
-    
-    for ( ; i > 1 && ptr->name != NULL; i -- )
+
+    for (; i > 1 && ptr->name != NULL ; i--)
     {
         console_printf(Console_Default, "%d - %s\n", i, ptr->name);
-        ptr ++;        
+        ptr++;
     }
 
     if (ptr == NULL)
+    {
         return -1;
+    }
 
     return ptr->init();
 }
@@ -71,12 +74,16 @@ int plugin_load(int id)
 int plugin_unload(int id)
 {
     Plugin *ptr = &(Plugins[0]);
-    
-    for ( ; id == 0 && ptr != NULL; id -- )
-        ptr ++;
+
+    for (; id == 0 && ptr != NULL ; id--)
+    {
+        ptr++;
+    }
 
     if (ptr == NULL)
+    {
         return -1;
+    }
 
     return ptr->deinit();
 }
@@ -86,32 +93,34 @@ int plugin_unload(int id)
 int plugin_install_keypressHandler(uint8_t key, PluginKeypress func)
 {
     KeyHandler *ptr;
-    
+
     if (keyHandlersList == NULL)
     {
-        keyHandlersList = (KeyHandler*) malloc(sizeof(KeyHandler));
-        
+        keyHandlersList = (KeyHandler *)malloc(sizeof(KeyHandler));
+
         keyHandlersList->key = key;
         keyHandlersList->func = func;
         keyHandlersList->next = NULL;
     }
     else
-    { 
+    {
         ptr = keyHandlersList;
-        
-        while(ptr->next != NULL)
+
+        while (ptr->next != NULL)
+        {
             ptr = ptr->next;
-        
-        ptr->next = (KeyHandler*) malloc(sizeof(KeyHandler));
-        
+        }
+
+        ptr->next = (KeyHandler *)malloc(sizeof(KeyHandler));
+
         ptr = ptr->next;
-        
+
         ptr->key = key;
         ptr->func = func;
         ptr->next = NULL;
 
     }
-    
+
     return 0;
 }
 
@@ -125,8 +134,8 @@ int plugin_remove_keypressHandler(uint8_t key, PluginKeypress func)
 int plugin_keypress(uint8_t key)
 {
     KeyHandler *ptr = keyHandlersList;
-    
-    while(ptr != NULL)
+
+    while (ptr != NULL)
     {
         if (ptr->key == key)
         {
@@ -134,6 +143,6 @@ int plugin_keypress(uint8_t key)
         }
         ptr = ptr->next;
     }
-    
+
     return 0;
 }

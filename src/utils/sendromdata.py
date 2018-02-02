@@ -12,6 +12,7 @@ import sys
 import hashlib.md5 as md5
 import hashlib.sha as sha
 
+
 def get_page(theurl, post_data=None):
     """
     Helper method that gets the given URL
@@ -37,25 +38,25 @@ if __name__ == '__main__':
                 DiskDude = 0
                 if fs[7:16] == "DiskDude!":
                     DiskDude = 1
-                    
+
                 mapperID = ord(fs[6]) >> 4
                 if DiskDude == 0:
                     mapperID = mapperID | (ord(fs[7]) & 0xF0)
-                    
+
                 prgsize = ord(fs[4]) * 16 * 1024
-                chrsize = ord(fs[5]) *  8 * 1024
+                chrsize = ord(fs[5]) * 8 * 1024
                 mirror = 0
                 if Flags & 0x01:
                     mirror = 1
-                    
+
                 sram = 0
                 if Flags & 0x02:
                     sram = 1
-                    
-                Trainer = 0               
+
+                Trainer = 0
                 if Flags & 0x04:
                     Trainer = 1
-                
+
                 print(" <game>")
                 print("  <name>{filename}</name>".format(filename=filename))
                 print("  <sha>{sha}</sha>".format(sha=sha.new(fs).hexdigest()))
@@ -68,11 +69,10 @@ if __name__ == '__main__':
                 print("  <trainer>{trainer}</trainer>".format(trainer=Trainer))
                 print("  <diskdude>{diskdude}</diskdude>".format(diskdude=DiskDude))
                 print(" </game>")
-                 
-                 
-                #will fill the DB :
+
+                # will fill the DB :
                 url = "http://127.0.0.1/nesstat/add.php"
-                
+
                 html = get_page(url, urllib.urlencode({
                     'n': filename,
                     'md5': md5.new(fs).hexdigest(),
@@ -85,9 +85,9 @@ if __name__ == '__main__':
                     't': Trainer,
                     'd': DiskDude,
                 }))
-                
+
                 print(html)
         finally:
             f.close()
-            
-    #print("</gamelist>")
+
+    # print("</gamelist>")

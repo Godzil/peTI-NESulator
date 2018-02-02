@@ -2,7 +2,7 @@
  *  Base type definitions - The peTI-NESulator Project
  *  types.h - Taken from the Quick6502 project
  *
- *  Created by Manoel Trapier on 18/09/06.
+ *  Created by Manoël Trapier on 18/09/06.
  *  Copyright (c) 2003-2018 986-Studio. All rights reserved.
  *
  */

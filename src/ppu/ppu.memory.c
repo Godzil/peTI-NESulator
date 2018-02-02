@@ -2,7 +2,7 @@
  *  PPU Memory manager - The peTI-NESulator Project
  *  ppu.memory.c - Inspired from the memory manager of the Quick6502 Project.
  *
- *  Created by Manoel Trapier on 12/04/07.
+ *  Created by Manoël Trapier on 12/04/07.
  *  Copyright (c) 2003-2018 986-Studio. All rights reserved.
  *
  */
@@ -20,7 +20,7 @@
 #include <types.h>
 
 /* Simple definition only for readability */
-#define Kuint8_t * (1024)
+#define KByte * (1024)
 
 /* Internal representation of the PPU memory */ 
 uint8_t *ppu_memoryPages[0x40];
@@ -102,13 +102,13 @@ void ppu_setPagePtr2k(uint8_t page, uint8_t *ptr)
 void ppu_setPagePtr4k(uint8_t page, uint8_t *ptr)
 {
     ppu_setPagePtr2k(page, ptr);
-    ppu_setPagePtr2k(page+((4 Kuint8_t / 256) / 2), ptr + 2 Kuint8_t);
+    ppu_setPagePtr2k(page+((4 KByte / 256) / 2), ptr + 2 KByte);
 }
 
 void ppu_setPagePtr8k(uint8_t page, uint8_t *ptr)
 {
     ppu_setPagePtr4k(page, ptr);
-    ppu_setPagePtr4k(page+((8 Kuint8_t / 256) / 2), ptr + 4 Kuint8_t);
+    ppu_setPagePtr4k(page+((8 KByte / 256) / 2), ptr + 4 KByte);
 }
 
 void ppu_setPageGhost(uint8_t page, uint8_t value, uint8_t ghost)
@@ -149,7 +149,7 @@ void ppu_writeMemory(uint8_t page, uint8_t addr, uint8_t value)
 {
     if (page == 0x3F)
     {
-        /* Here we will cheat with the palette miroring, since we didn't write
+        /* Here we will cheat with the palette mirroring, since we didn't write
            as often as we read the palette, we will mirror here */
         //console_printf(Console_Default, "%s palette: color %02X new value : %02d (0x%02X%02X)\n", ((addr&0x10)< 0x10) ? "Bgnd" : "Sprt", addr&0x1F, value & 0x3F, page, addr);
         if ((addr & 0xEF) == 0x00)

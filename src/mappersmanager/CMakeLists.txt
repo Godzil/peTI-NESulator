@@ -1,7 +1,7 @@
 #
 # peTI-NESulator CMake
 #
-# Created by Manoel TRAPIER.
+# Created by Manoël TRAPIER.
 # Copyright (c) 2003-2018 986-Studio. All rights reserved.
 #
 # $LastChangedDate$

@@ -2,7 +2,7 @@
  *  CoreCPU - The Quick6502 Project
  *  corecpu.h
  *
- *  Created by Manoel Trapier on 24/02/08
+ *  Created by Manoël Trapier on 24/02/08
  *  Copyright (c) 2003-2018 986-Studio. All rights reserved.
  *
  */
@@ -37,52 +37,52 @@ typedef void (*quick6502_MemoryWriteFunction)(uint16_t addr, uint8_t value);
 
 typedef struct quick6502_cpu_
 {
-   /* 6502 registers */
-   uint8_t reg_A, reg_X, reg_Y;
-   uint8_t reg_P, reg_S;
-   uint16_t reg_PC;
+    /* 6502 registers */
+    uint8_t reg_A, reg_X, reg_Y;
+    uint8_t reg_P, reg_S;
+    uint16_t reg_PC;
 
-   /* Read/Write memory functions */
-   quick6502_MemoryReadFunction  memory_read;
-   quick6502_MemoryWriteFunction memory_write;
-   quick6502_MemoryReadFunction  memory_page0_read;
-   quick6502_MemoryWriteFunction memory_page0_write;
-   quick6502_MemoryReadFunction  memory_stack_read;
-   quick6502_MemoryWriteFunction memory_stack_write;
-   quick6502_MemoryReadFunction  memory_opcode_read;
+    /* Read/Write memory functions */
+    quick6502_MemoryReadFunction memory_read;
+    quick6502_MemoryWriteFunction memory_write;
+    quick6502_MemoryReadFunction memory_page0_read;
+    quick6502_MemoryWriteFunction memory_page0_write;
+    quick6502_MemoryReadFunction memory_stack_read;
+    quick6502_MemoryWriteFunction memory_stack_write;
+    quick6502_MemoryReadFunction memory_opcode_read;
 
-   /* Timing related */
-   long cycle_done;
-   uint8_t exit_loop;
-   uint8_t int_pending;
+    /* Timing related */
+    long cycle_done;
+    uint8_t exit_loop;
+    uint8_t int_pending;
 
-   /* Other config options */
-   uint8_t running; /* This field is used to prevent cpu free if this cpu is running */
-   uint8_t page_crossed;
-   
-   /* TODO add support for Inst/MemAccess breakpoints */
-   
+    /* Other config options */
+    uint8_t running; /* This field is used to prevent cpu free if this cpu is running */
+    uint8_t page_crossed;
+
+    /* TODO add support for Inst/MemAccess breakpoints */
+
 } quick6502_cpu;
 
 typedef struct quick6502_cpuconfig_
 {
-   /* Read/Write memory functions */
-   quick6502_MemoryReadFunction  memory_read;
-   quick6502_MemoryWriteFunction memory_write;
-   quick6502_MemoryReadFunction  memory_page0_read;
-   quick6502_MemoryWriteFunction memory_page0_write;
-   quick6502_MemoryReadFunction  memory_stack_read;
-   quick6502_MemoryWriteFunction memory_stack_write;
-   quick6502_MemoryReadFunction  memory_opcode_read;
+    /* Read/Write memory functions */
+    quick6502_MemoryReadFunction memory_read;
+    quick6502_MemoryWriteFunction memory_write;
+    quick6502_MemoryReadFunction memory_page0_read;
+    quick6502_MemoryWriteFunction memory_page0_write;
+    quick6502_MemoryReadFunction memory_stack_read;
+    quick6502_MemoryWriteFunction memory_stack_write;
+    quick6502_MemoryReadFunction memory_opcode_read;
 } quick6502_cpuconfig;
 
 /*** Signal that we can send to the CPU ***/
 typedef enum
 {
-   Q6502_NO_SIGNAL = 0,
-   Q6502_IRQ_SIGNAL,
-   Q6502_NMI_SIGNAL,
-   Q6502_STOPLOOP_SIGNAL
+    Q6502_NO_SIGNAL = 0,
+    Q6502_IRQ_SIGNAL,
+    Q6502_NMI_SIGNAL,
+    Q6502_STOPLOOP_SIGNAL
 } quick6502_signal;
 
 /*** Some 6502 related definitions ***/
@@ -134,7 +134,7 @@ void quick6502_reset(quick6502_cpu *cpu);
  *
  * int: (Number of cycle really done) - (Number of cycle asked)
  */
-int quick6502_run(quick6502_cpu *cpu, int cycles);
+uint32_t quick6502_run(quick6502_cpu *cpu, uint32_t cycles);
 
 /** Loop CPU until explicit quit */
 void quick6502_loop(quick6502_cpu *cpu);
@@ -146,13 +146,14 @@ void quick6502_exec(quick6502_cpu *cpu);
 void quick6502_int(quick6502_cpu *cpu, quick6502_signal signal);
 
 /** Dump CPU State to the given file */
-void quick6502_dump(quick6502_cpu *cpu, FILE * fp);
+void quick6502_dump(quick6502_cpu *cpu, FILE *fp);
 
 /** Get current instruction name at specified address and put it into buffer */
 #define MINE
 
 int quick6502_getinstruction(quick6502_cpu *cpu, char interpret,
                              uint16_t addr, char *buffer, int *strlength);
+
 /**
  * Free the CPU 
  *

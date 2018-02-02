@@ -2,7 +2,7 @@
  *  PPU Debug utilities - The peTI-NESulator Project
  *  ppu.debug.c
  *
- *  Created by Manoel Trapier.
+ *  Created by Manoël Trapier.
  *  Copyright 2003-2008 986 Corp. All rights reserved.
  *
  */

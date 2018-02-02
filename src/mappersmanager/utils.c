@@ -2,7 +2,7 @@
  *  Mapper facilities - The peTI-NESulator Project
  *  mappers.c
  *
- *  Created by Manoel TRAPIER.
+ *  Created by Manoël TRAPIER.
  *  Copyright (c) 2003-2018 986-Studio. All rights reserved.
  *
  */ 
@@ -27,7 +27,7 @@ extern NesCart *Cart;
 extern char MapperWantIRQ;
 
 /*
- Here are some fonction useful for mappers
+ * Here are some function useful for mappers
  */
 
 void set_vrom_bank_1k(uint16_t addr,int slot)

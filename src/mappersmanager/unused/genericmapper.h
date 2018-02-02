@@ -2,8 +2,8 @@
  *  Generic mapper implementation - The peTI-NESulator Project
  *  genericmapper.h
  *
- *  Created by Manoel TRAPIER.
- *  Copyright (c) 2003-2008 986Corp. All rights reserved.
+ *  Created by Manoël TRAPIER.
+ *  Copyright (c) 2003-2018 986-Studio. All rights reserved.
  *
  */
  
@@ -22,7 +22,7 @@ int _MapperWriteHook(register word Addr, register uint8_t Value)
     
     if (Addr > 0x7FFF)    /* Try to write to the rom */
     {
-        set_vrom_bank_8k(0x0000,Value) 
+        set_vrom_bank_8k(0x0000,Value);
         
         return 1;
     } 

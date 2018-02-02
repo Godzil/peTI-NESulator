@@ -2,7 +2,7 @@
  *  OS Dependent functions - The peTI-NESulator Project
  *  os_dependent.h
  *
- *  Created by Manoel TRAPIER on 08/05/08.
+ *  Created by Manoël TRAPIER on 08/05/08.
  *  Copyright (c) 2003-2018 986-Studio. All rights reserved.
  *
  */
@@ -21,7 +21,7 @@ int graphics_drawline(long x, long y, long x1, long y1, long color);
 
 typedef struct Palette_t
 {
-   uint8_t r,g,b,a;
+    uint8_t r, g, b, a;
 } Palette;
 
 int getKeyStatus(int key);
@@ -29,17 +29,17 @@ int getKeyStatus(int key);
 /* Sound related functions */
 
 /* IO functions */
-void *LoadFilePtr(char * filename);
+void *LoadFilePtr(char *filename);
 
 /* Console functions */
 typedef enum ConsoleLevel_t
 {
-   Console_Error = 0,
-   Console_Warning,
-   Console_Alert,
-   Console_Default,
-   Console_Verbose,
-   Console_Debug,
+    Console_Error = 0,
+    Console_Warning,
+    Console_Alert,
+    Console_Default,
+    Console_Verbose,
+    Console_Debug,
 } ConsoleLevel;
 
 int console_init(ConsoleLevel DefaultLevel);

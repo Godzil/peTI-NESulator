@@ -6,7 +6,7 @@
 #include <string.h>
 #include <signal.h>
 
-#include <sys/mman.h>
+//#include <sys/mman.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -26,7 +26,8 @@ void *LoadFilePtr(char * filename)
 
 	fstat(fd, &FileStat);
 
-	RetPtr = mmap(NULL, FileStat.st_size, PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 0);
+	RetPtr = NULL;
+//	RetPtr = mmap(NULL, FileStat.st_size, PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 0);
 	
 	close(fd);
 

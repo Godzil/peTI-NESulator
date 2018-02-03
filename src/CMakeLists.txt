@@ -89,7 +89,7 @@ else (TARGET_TI68k)
     add_subdirectory(os/unix)
 endif (TARGET_TI68k)
 
-find_library(PTHREADLIB pthread)
+#find_library(PTHREADLIB pthread)
 
 if (COVERALLS)
     set(COVERAGE_SRCS src/main.c src/paddle.c src/NESCarts.c ${COVERAGE_SRCS})
@@ -101,7 +101,7 @@ if (COVERALLS)
     ) # (Optional) Alternate project cmake module path.
 endif ()
 
-target_link_libraries(petines apu corecpu mappermanager memorymanager pluginsmanager ppu oslib ${PTHREADLIB})
+target_link_libraries(petines apu corecpu mappermanager memorymanager pluginsmanager ppu oslib)# ${PTHREADLIB})
 
 add_test(NAME petines_test_1 COMMAND $<TARGET_FILE:petines> ${PROJECT_SOURCE_DIR}/data/bad_apple_2.nes)
 add_test(NAME petines_test_2 COMMAND $<TARGET_FILE:petines> ${PROJECT_SOURCE_DIR}/data/trollburner_demo.nes)

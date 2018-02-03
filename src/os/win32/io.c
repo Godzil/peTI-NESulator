@@ -38,7 +38,7 @@ int console_printf(const ConsoleLevel level, const char *format, ...)
    va_list ap;
    va_start(ap, format);
 
-   ret = console_vprintf(level, format, ap);
+   console_vprintf(level, format, ap);
 
    va_end(ap);
    return 0;

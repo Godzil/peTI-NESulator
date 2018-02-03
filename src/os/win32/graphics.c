@@ -13,8 +13,13 @@
 
 #include <os_dependent.h>
 
+#define GLFW_INCLUDE_GLEXT
 #include <GLFW/glfw3.h>
-#include <OpenGL/glext.h>
+
+/* "Apple" fix */
+#ifndef GL_TEXTURE_RECTANGLE
+#define GL_TEXTURE_RECTANGLE GL_TEXTURE_RECTANGLE_EXT
+#endif
 
 #include <palette.h>
 
@@ -22,25 +27,21 @@ typedef struct GLWindow_t GLWindow;
 
 struct KeyArray
 {
-   uint8_t lastState;
-   uint8_t curState;
-   uint8_t debounced;
-   GLFWwindow* window;
+    uint8_t lastState;
+    uint8_t curState;
+    uint8_t debounced;
+    GLFWwindow* window;
 };
 
 struct GLWindow_t
 {
-   struct KeyArray keyArray[512];
-   GLFWwindow* windows;
-   uint8_t *videoMemory;
-   GLint videoTexture;
-   int WIDTH;
-   int HEIGHT;
+    struct KeyArray keyArray[512];
+    GLFWwindow* windows;
+    uint8_t *videoMemory;
+    GLint videoTexture;
+    int WIDTH;
+    int HEIGHT;
 };
-
-#ifndef GL_TEXTURE_RECTANGLE_EXT
-#define GL_TEXTURE_RECTANGLE_EXT GL_TEXTURE_RECTANGLE_NV
-#endif
 
 static int window_num = 0;
 
@@ -58,10 +59,10 @@ void GLWindowInit(GLWindow *g)
 
 void ShowScreen(GLWindow *g, int w, int h)
 {
-   glBindTexture(GL_TEXTURE_RECTANGLE_EXT, g->videoTexture);
+   glBindTexture(GL_TEXTURE_RECTANGLE, g->videoTexture);
 
    // glTexSubImage2D is faster when not using a texture range
-   glTexSubImage2D(GL_TEXTURE_RECTANGLE_EXT, 0, 0, 0, w, h, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, g->videoMemory);
+   glTexSubImage2D(GL_TEXTURE_RECTANGLE, 0, 0, 0, w, h, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, g->videoMemory);
    glBegin(GL_QUADS);
 
    glTexCoord2f(0.0f, 0.0f);
@@ -99,20 +100,20 @@ void setupGL(GLWindow *g, int w, int h)
    glLoadIdentity();
 
    glDisable(GL_TEXTURE_2D);
-   glEnable(GL_TEXTURE_RECTANGLE_EXT);
-   glBindTexture(GL_TEXTURE_RECTANGLE_EXT, g->videoTexture);
+   glEnable(GL_TEXTURE_RECTANGLE);
+   glBindTexture(GL_TEXTURE_RECTANGLE, g->videoTexture);
 
    //  glTextureRangeAPPLE(GL_TEXTURE_RECTANGLE_NV_EXT, 0, NULL);
 
    //  glTexParameteri(GL_TEXTURE_RECTANGLE_NV_EXT, GL_TEXTURE_STORAGE_HINT_APPLE , GL_STORAGE_CACHED_APPLE);
    //  glPixelStorei(GL_UNPACK_CLIENT_STORAGE_APPLE, GL_TRUE);
-   glTexParameteri(GL_TEXTURE_RECTANGLE_EXT, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-   glTexParameteri(GL_TEXTURE_RECTANGLE_EXT, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-   glTexParameteri(GL_TEXTURE_RECTANGLE_EXT, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-   glTexParameteri(GL_TEXTURE_RECTANGLE_EXT, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+   glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+   glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+   glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+   glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 
-   glTexImage2D(GL_TEXTURE_RECTANGLE_EXT, 0, GL_RGBA, w,
+   glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA, w,
                 h, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, g->videoMemory);
 
    glDisable(GL_DEPTH_TEST);
@@ -135,7 +136,7 @@ void restoreGL(GLWindow *g, int w, int h)
    glLoadIdentity();
 
    glDisable(GL_TEXTURE_2D);
-   glEnable(GL_TEXTURE_RECTANGLE_EXT);
+   glEnable(GL_TEXTURE_RECTANGLE);
    glDisable(GL_DEPTH_TEST);
 }
 
@@ -164,6 +165,10 @@ void sizeHandler(GLFWwindow* window,int xs,int ys)
    glViewport(0, 0, xs, ys);
 }
 
+static void error_callback(int error, const char* description)
+{
+   puts(description);
+}
 
 void initDisplay(GLWindow *g)
 {
@@ -173,13 +178,17 @@ void initDisplay(GLWindow *g)
    /// Initialize GLFW
    glfwInit();
 
+   glfwSetErrorCallback(error_callback);
+
    // Open screen OpenGL window
    if( !(g->windows=glfwCreateWindow( g->WIDTH, g->HEIGHT, "Main", NULL, NULL)) )
    {
       glfwTerminate();
       fprintf(stderr, "Window creation error...\n");
-      return;
+      abort();
    }
+
+   glfwSetWindowAspectRatio(g->windows, 4, 3);
 
    glfwMakeContextCurrent(g->windows);
    setupGL(g, g->WIDTH, g->HEIGHT);
@@ -198,7 +207,7 @@ void drawPixel(GLWindow *gw, int x, int y, uint32_t colour)
 {
    uint8_t r,g,b,a;
 
-   uint32_t offset = (y*gw->WIDTH*4)+4*x;
+   uint32_t offset = (y*gw->WIDTH*4U)+4U*x;
 
    if ((x < 0) || (x > gw->WIDTH) || (y < 0) || (y > gw->HEIGHT))
       return;
@@ -288,7 +297,7 @@ void drawLine(GLWindow *g, int x0, int y0, int x1, int y1, uint32_t colour)
       }
    }
 
-   exit:
+    exit:
    return;
 }
 

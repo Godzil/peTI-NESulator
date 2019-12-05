@@ -3,7 +3,7 @@
  *  corecpu.c
  *
  *  Created by Manoël Trapier on 24/02/08
- *  Copyright 2008 986 Corp. All rights reserved.
+ *  Copyright (c) 2002-2019 986-Studio.
  *
  */
 

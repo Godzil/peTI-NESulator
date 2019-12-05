@@ -1,14 +1,9 @@
 #
 # peTI-NESulator CMake
 #
-# Created by Manoël TRAPIER.
-# Copyright (c) 2003-2018 986-Studio. All rights reserved.
+# Created by Manoël Trapier.
+# Copyright (c) 2002-2019 986-Studio.
 #
-# $LastChangedDate$
-# $Author$
-# $HeadURL$
-# $Revision$
-
 if (COVERALLS)
     set(COVERAGE_SRCS src/os/unix/loadfile.c src/os/unix/graphics_dummy.c src/os/unix/sound.c src/os/unix/io.c ${COVERAGE_SRCS} PARENT_SCOPE)
     add_library(oslib loadfile.c graphics_dummy.c sound.c io.c)

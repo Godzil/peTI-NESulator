@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003-2018 986-Studio. All rights reserved.
+ * Copyright (c) 2002-2019 986-Studio.
  */
 #include <stdio.h>
 #include <stdlib.h>

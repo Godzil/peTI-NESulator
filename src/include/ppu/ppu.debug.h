@@ -3,7 +3,7 @@
  *  ppu.debug.h
  *
  *  Created by Manoël Trapier on 12/04/07.
- *  Copyright 2003-2008 986 Corp. All rights reserved.
+ *  Copyright (c) 2002-2019 986-Studio.
  *
  */
 

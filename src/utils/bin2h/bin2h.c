@@ -3,7 +3,7 @@
  *  bin2h.c: Convert a binary file to a table of uint8_t in a C header file.
  *
  *  Created by Manoël Trapier.
- *  Copyright 2003-2008 986 Corp. All rights reserved.
+ *  Copyright (c) 2002-2019 986-Studio.
  *
  */
 

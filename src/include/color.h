@@ -3,7 +3,7 @@
  *  include/color.h
  *
  *  Created by Manoël Trapier on 25/06/10
- *  Copyright (c) 2003-2018 986-Studio. All rights reserved.
+ *  Copyright (c) 2002-2019 986-Studio.
  *
  */
 

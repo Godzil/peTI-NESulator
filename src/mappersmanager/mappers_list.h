@@ -2,8 +2,8 @@
  *  Mapper list - The peTI-NESulator Project
  *  mappers_list.h
  *
- *  Created by Manoël TRAPIER on 25/10/07.
- *  Copyright (c) 2003-2018 986-Studio. All rights reserved.
+ *  Created by Manoël Trapier on 25/10/07.
+ *  Copyright (c) 2002-2019 986-Studio.
  *
  */
 

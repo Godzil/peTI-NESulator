@@ -2,8 +2,8 @@
  *  Main application source file - The peTI-NESulator Project
  *  main.c
  *
- *  Created by Manoël TRAPIER.
- *  Copyright (c) 2003-2018 986-Studio. All rights reserved.
+ *  Created by Manoël Trapier.
+ *  Copyright (c) 2002-2019 986-Studio.
  *
  */
 
@@ -450,7 +450,7 @@ int main(int argc, char *argv[])
     /* Print the banner */
     console_printf(Console_Default, "--------------------------------------------------------------------------------\n"
                            "Welcome to peTI-NESulator v%d.%d.%d%s - by Godzil`\n"
-                           "Copyright 2003-2018 Manoël TRAPIER (petines@godzil.net)\n"
+                           "Copyright (c) 2002-2019 986-Studio / Manoël Trapier (petines@godzil.net)\n"
                            "--------------------------------------------------------------------------------\n\n",
                    V_MAJOR, V_MINOR, V_MICRO, V_TEXT);
 
@@ -927,6 +927,7 @@ void Loop6502(quick6502_cpu *R)
 
     if (getKeyStatus('r') || getKeyStatus('R'))
     {
+        console_printf(Console_Default, "-- Reset triggered\n");
         /* Force the PPU to stop NMIs */
         MemoryWrite(0x2000, 0x00);
         quick6502_reset(R);

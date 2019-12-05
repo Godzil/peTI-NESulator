@@ -3,7 +3,7 @@
  *  os/macos/graphics.c
  *
  *  Created by Manoël Trapier on 04/01/09.
- *  Copyright (c) 2003-2009 986 Corp. All rights reserved.
+ *  Copyright (c) 2003-2009 986-Studio.
  *
  */
 

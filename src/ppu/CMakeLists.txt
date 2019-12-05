@@ -1,14 +1,9 @@
 #
 # peTI-NESulator CMake
 #
-# Created by Manoël TRAPIER.
-# Copyright (c) 2003-2018 986-Studio. All rights reserved.
+# Created by Manoël Trapier.
+# Copyright (c) 2002-2019 986-Studio.
 #
-# $LastChangedDate$
-# $Author$
-# $HeadURL$
-# $Revision$
-
 file(GLOB ppu_debug_list debug/*.c)
 
 if (COVERALLS)

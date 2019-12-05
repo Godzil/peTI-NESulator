@@ -2,13 +2,8 @@
 # peTI-NESulator CMake
 #
 # Created by Manoel TRAPIER.
-# Copyright (c) 2003-2018 986-Studio. All rights reserved.
+# Copyright (c) 2002-2019 986-Studio.
 #
-# $LastChangedDate$
-# $Author$
-# $HeadURL$
-# $Revision$
-
 cmake_minimum_required (VERSION 2.8)
 
 project (peTI-NESulator)

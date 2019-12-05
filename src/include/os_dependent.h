@@ -2,8 +2,8 @@
  *  OS Dependent functions - The peTI-NESulator Project
  *  os_dependent.h
  *
- *  Created by Manoël TRAPIER on 08/05/08.
- *  Copyright (c) 2003-2018 986-Studio. All rights reserved.
+ *  Created by Manoël Trapier on 08/05/08.
+ *  Copyright (c) 2002-2019 986-Studio.
  *
  */
 

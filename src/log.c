@@ -3,7 +3,7 @@
  *  log.c
  *
  *  Created by Manoël Trapier on 19/05/10
- *  Copyright 2010 986 Corp. All rights reserved.
+ *  Copyright (c) 2002-2019 986-Studio.
  *
  */
 

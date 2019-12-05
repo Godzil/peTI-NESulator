@@ -12,4 +12,4 @@ honest, and there is virtually nothing to gain from that.
 
 This software is released under a three clauses BSD.
 
-If you plan to use that project in a commercial situation, I would be glad if you could just send me a message, I love to know where my work is used!
+If you plan to use that project in your projects, I would be glad if you could just send me a message, I love to know where my work is used!

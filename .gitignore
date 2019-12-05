@@ -1,5 +1,10 @@
 #Temp files
 /build*
+cmake-*/
+sonar/
+.idea/
+.scannerwork/
+venv/
 
 *~
 *.swp

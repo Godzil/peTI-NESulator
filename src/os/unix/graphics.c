@@ -194,7 +194,7 @@ void initDisplay(GLWindow *g)
     glfwMakeContextCurrent(g->windows);
     setupGL(g, g->WIDTH, g->HEIGHT);
 
-    glfwSwapInterval(0);            // Disable VSYNC
+    glfwSwapInterval(1);            // We need vsync
 
     glfwGetWindowSize(g->windows, &w, &h);
 
@@ -443,11 +443,18 @@ int graphics_drawline(long x, long y, long x1, long y1, long color)
 
 int graphics_blit(long x, long y, long w, long h)
 {
-    updateScreen(&mainWindow);
+    /* Just pool for events, no graphic thing to be done ATM */
+    glfwPollEvents();
     return 0;
 }
 
 int getKeyStatus(int key)
 {
     return mainWindow.keyArray[key].curState;
+}
+
+/* Sync with 60Hz (or try to) */
+void vsync(void)
+{
+    updateScreen(&mainWindow);
 }

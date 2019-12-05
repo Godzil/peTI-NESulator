@@ -18,6 +18,7 @@ int graphics_init();
 int graphics_drawpixel(long x, long y, long color);
 int graphics_blit(long x, long y, long w, long h);
 int graphics_drawline(long x, long y, long x1, long y1, long color);
+void vsync(void);
 
 typedef struct Palette_t
 {

@@ -18,9 +18,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#include <sys/mman.h>
 #include <sys/time.h>
 #include <time.h>
+#include <sys/mman.h>
 #include <ctype.h>
 
 #include <GLFW/glfw3.h>
@@ -847,8 +847,6 @@ void Loop6502(quick6502_cpu *R)
 {
     quick6502_signal cpuSignal;
 //   short skey;
-    long WaitTime;
-    static long delta = 0;
 
     cpuSignal = Q6502_NO_SIGNAL;
 
@@ -875,47 +873,12 @@ void Loop6502(quick6502_cpu *R)
         frame++;
         SZHit = -1;
         IRQScanHit = -1;
-        /* Sync at 60FPS */
-        /* Get current time in microseconds */
-        gettimeofday(&timeEnd, NULL);
 
-        WaitTime = (timeEnd.tv_sec) - (timeStart.tv_sec);
-        WaitTime *= 1000000;
-        WaitTime += (timeEnd.tv_usec - timeStart.tv_usec);
-
-#if !ISPAL && ISNTSC
-        /* Calculate the waiting time, 16666 is the time of one frame in microseconds at a 60Hz rate) */
-        WaitTime = 16666 - WaitTime + delta;
-#elif ISPAL && !ISNTSC
-        WaitTime = 20000 - WaitTime + delta;
-#endif
-
-        /* If we press Page Up, we want to accelerate "time" */
-#ifndef RUN_COVERAGE
         if (!getKeyStatus('Y'))
         {
-            if ((WaitTime >= 0) && (WaitTime < 100000))
-            {
-                usleep(WaitTime);
-            }
+            vsync();
         }
-#endif
 
-        /* Now get the time after sleep */
-        gettimeofday(&timeStart, NULL);
-
-        /* Now calculate How many microseconds we really spend in sleep and
-         calculate a delta for next iteration */
-        delta = (timeStart.tv_sec) - (timeEnd.tv_sec);
-        delta *= 1000000;
-        delta += (timeStart.tv_usec - timeEnd.tv_usec);
-        delta = WaitTime - delta;
-
-        /* To avoid strange time warp when stopping emulation or using acceleration a lot */
-        if ((delta > 10000) || (delta < -10000))
-        {
-            delta = 0;
-        }
     }
 
     /* There is Two dummy scanline */

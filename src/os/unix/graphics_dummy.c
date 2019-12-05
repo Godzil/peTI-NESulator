@@ -138,6 +138,8 @@ int getKeyStatus(int key)
 /* Sync with 60Hz (or try to) */
 void vsync(void)
 {
+#if 0
+    /* For now don't do anything there */
     long WaitTime;
     static long delta = 0;
 
@@ -180,4 +182,5 @@ void vsync(void)
     {
         delta = 0;
     }
+#endif
 }

@@ -158,6 +158,8 @@ void kbHandler(GLFWwindow *window, int key, int scan, int action, int mod)
     }
     keyArray[key].debounced |= (keyArray[key].lastState == GLFW_RELEASE) && (keyArray[key].curState == GLFW_PRESS);
     keyArray[key].window = window;
+    printf("key:%d, state:%d debounce:%d, laststate:%d\n", key, keyArray[key].curState,
+           keyArray[key].debounced, keyArray[key].lastState);
 }
 
 void sizeHandler(GLFWwindow *window, int xs, int ys)
@@ -422,9 +424,9 @@ static uint32_t getColour(long color)
 {
     Palette *pal = &basicPalette[color];
     uint8_t r, g, b, a;
-    r = pal->r;
-    b = pal->b;
-    g = pal->g;
+    r = pal->r << 2;
+    b = pal->b << 2;
+    g = pal->g << 2;
     a = 255;//pal->a;
     return (b << 24) | (g << 16) | (r << 8) | a;
 }

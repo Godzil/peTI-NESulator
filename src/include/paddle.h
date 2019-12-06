@@ -12,8 +12,8 @@
 
 typedef struct Paddle_
 {
-    uint8_t Bit;
-    uint8_t LastWrite;
+    uint8_t bitPos;
+    uint8_t strobeState;
 } Paddle;
 
 uint8_t ReadPaddle(Paddle *pdl);

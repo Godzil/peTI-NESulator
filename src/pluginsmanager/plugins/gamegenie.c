@@ -9,6 +9,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 #include <os_dependent.h>
 
@@ -17,11 +19,10 @@
 #include <plugins/manager.h>
 
 #undef  __TINES_PLUGINS_
+#include <os_dependent.h>
 
 #include <memory/manager.h>
 #include <types.h>
-
-#if 0
 
 typedef enum gg_States_
 {
@@ -51,7 +52,7 @@ uint8_t gg_PatchedValue[10];
 func_rdhook gg_rdhookPtr[10];
 
 #define GG_RDHOOKPATCH(d) \
-uint8_t gg_RdHookPatch##d(uint8_t addr) \
+static uint8_t gg_RdHookPatch##d(uint8_t addr) \
 { \
     if (addr == gg_PatchedAddr[d]) \
     { \
@@ -67,30 +68,22 @@ uint8_t gg_RdHookPatch##d(uint8_t addr) \
 }
 
 #define GG_MAX_PATCH 10
-/* Defines the rdhook patches */
+/* Defines the read hook patches */
 GG_RDHOOKPATCH(0)
-
 GG_RDHOOKPATCH(1)
-
 GG_RDHOOKPATCH(2)
-
 GG_RDHOOKPATCH(3)
-
 GG_RDHOOKPATCH(4)
-
 GG_RDHOOKPATCH(5)
-
 GG_RDHOOKPATCH(6)
-
 GG_RDHOOKPATCH(7)
-
 GG_RDHOOKPATCH(8)
-
 GG_RDHOOKPATCH(9)
 
 void gg_SetPatch(int id, uint8_t page, uint8_t addr, uint8_t value)
 {
     func_rdhook fptr;
+    func_rdhook cur_ptr;
 
     if (id >= GG_MAX_PATCH)
     {
@@ -154,30 +147,28 @@ void gg_SetPatch(int id, uint8_t page, uint8_t addr, uint8_t value)
         break;
     }
 
-    set_page_rd_hook(page, fptr);
+    cur_ptr = get_page_rdhook(page);
+    if (cur_ptr != fptr)
+    {
+        set_page_rd_hook(page, fptr);
+    }
 }
-
-
-/* Access to the bitmap Buffer */
-extern BITMAP *Buffer;
-BITMAP *gg_Buffer;
 
 void MessageBox(char *title, char *msg)
 {
-
     int sc_w, sc_h;
     int box_h, box_t, box_l, box_w;
 
-    sc_w = screen->w;
-    sc_h = screen->h;
+    sc_w = 640; //screen->w;
+    sc_h = 480; //screen->h;
 
-    gg_Buffer = create_bitmap(sc_w, sc_h);
+    /*gg_Buffer = create_bitmap(sc_w, sc_h);
 
-    blit(Buffer, gg_Buffer, 0, 0, 0, 0, 512 + 256, 480);
+    blit(Buffer, gg_Buffer, 0, 0, 0, 0, 512 + 256, 480);*/
 
-    box_w = text_length(font, title) + 10;
+    box_w = 0;// text_length(font, title) + 10;
 
-    box_w = (box_w > text_length(font, msg)) ? box_w : text_length(font, msg);
+    //box_w = (box_w > text_length(font, msg)) ? box_w : text_length(font, msg);
 
     box_w += 15 * 2; /*sc_w/2;*/
     box_h = 15 * 2 + 10;
@@ -186,70 +177,72 @@ void MessageBox(char *title, char *msg)
     box_t = (sc_h - box_h) / 2;
     box_l = (sc_w - box_w) / 2;
 
-    rectfill(gg_Buffer, box_l, box_t, box_l + box_w, box_t + box_h, 60);
-    rect(gg_Buffer, box_l + 5, box_t + 5, box_l + box_w - 5, box_t + box_h - 5, 34);
+    graphics_drawFillrect(box_l, box_t, box_l + box_w, box_t + box_h, 60);
+    graphics_drawRect(box_l + 5, box_t + 5, box_l + box_w - 5, box_t + box_h - 5, 34);
 
     /* Display the title */
-    textout_centre_ex(gg_Buffer, font, title, box_w / 2 + box_l, box_t + 2, 34, 60);
+    //textout_centre_ex(gg_Buffer, font, title, box_w / 2 + box_l, box_t + 2, 34, 60);
 
     /* Display the message */
-    textout_centre_ex(gg_Buffer, font, msg, box_w / 2 + box_l, 15 + box_t + 2, 34, 60);
+    //textout_centre_ex(gg_Buffer, font, msg, box_w / 2 + box_l, 15 + box_t + 2, 34, 60);
 
-    blit(gg_Buffer, screen, 0, 0, 0, 0, 512 + 256, 480);
+    //blit(gg_Buffer, screen, 0, 0, 0, 0, 512 + 256, 480);
 
-    sleep(1);
+    sleep(1000);
 
-    release_bitmap(gg_Buffer);
+    //release_bitmap(gg_Buffer);
 
 }
 
 uint16_t SelectNumber(char *title, char *msg, uint8_t size)
 {
 
-    int sc_w, sc_h;
-    int box_h, box_t, box_l, box_w;
+    //int sc_w, sc_h;
+    //int box_h;
+    int box_w;
+    //int box_t, box_l;
 
     char valueText[10];
 
     uint16_t value;
     uint8_t digit = 0;
 
-    sc_w = screen->w;
-    sc_h = screen->h;
+    //sc_w = 640; //screen->w;
+    //sc_h = 480; //screen->h;
 
-    gg_Buffer = create_bitmap(sc_w, sc_h);
+    //gg_Buffer = create_bitmap(sc_w, sc_h);
 
-    blit(Buffer, gg_Buffer, 0, 0, 0, 0, 512 + 256, 480);
+    //blit(Buffer, gg_Buffer, 0, 0, 0, 0, 512 + 256, 480);
 
-    box_w = text_length(font, title) + 10;
+    //box_w = text_length(font, title) + 10;
 
-    box_w = (box_w > text_length(font, msg)) ? box_w : text_length(font, msg);
+    box_w = 0; //(box_w > text_length(font, msg)) ? box_w : text_length(font, msg);
 
     sprintf(valueText, "0000");
 
-    box_w = (box_w > text_length(font, valueText)) ? box_w : text_length(font, msg);
+    //box_w = (box_w > text_length(font, valueText)) ? box_w : text_length(font, msg);
 
     box_w += 15 * 2; /*sc_w/2;*/
-    box_h = 15 * 2 + 30;
+    //box_h = 15 * 2 + 30;
 
     /* Set the box center */
-    box_t = (sc_h - box_h) / 2;
-    box_l = (sc_w - box_w) / 2;
+    //box_t = (sc_h - box_h) / 2;
+    //box_l = (sc_w - box_w) / 2;
 
 
     value = 0;
 
-    while (!key[KEY_ENTER])
+    while (getKeyStatus(KEY_ENTER)) // ENTER
     {
 
-        rectfill(gg_Buffer, box_l, box_t, box_l + box_w, box_t + box_h, 60);
-        rect(gg_Buffer, box_l + 5, box_t + 5, box_l + box_w - 5, box_t + box_h - 5, 34);
+        //rectfill(gg_Buffer, box_l, box_t, box_l + box_w, box_t + box_h, 60);
+        //rect(gg_Buffer, box_l + 5, box_t + 5, box_l + box_w - 5, box_t + box_h - 5, 34);
 
         /* Display the title */
-        textout_centre_ex(gg_Buffer, font, title, box_w / 2 + box_l, box_t + 2, 34, 60);
+        //textout_centre_ex(gg_Buffer, font, title, box_w / 2 + box_l, box_t + 2, 34, 60);
 
         /* Display the message */
-        textout_centre_ex(gg_Buffer, font, msg, box_w / 2 + box_l, 15 + box_t + 2, 34, 60);
+        //textout_centre_ex(gg_Buffer, font, msg, box_w / 2 + box_l, 15 + box_t + 2, 34, 60);
 
         if (size == 2)
         {
@@ -260,44 +253,44 @@ uint16_t SelectNumber(char *title, char *msg, uint8_t size)
             sprintf(valueText, "%04X", value);
         }
 
-        textout_centre_ex(gg_Buffer, font, valueText, box_w / 2 + box_l, 15 + box_t + 2 + 10, 34, 60);
+        //textout_centre_ex(gg_Buffer, font, valueText, box_w / 2 + box_l, 15 + box_t + 2 + 10, 34, 60);
 
         switch (digit)
         {
         default:
         case 0:
-            textout_centre_ex(gg_Buffer, font, "   ^", box_w / 2 + box_l, 15 + box_t + 2 + 20, 34, 60);
+            //textout_centre_ex(gg_Buffer, font, "   ^", box_w / 2 + box_l, 15 + box_t + 2 + 20, 34, 60);
             break;
         case 1:
-            textout_centre_ex(gg_Buffer, font, "  ^ ", box_w / 2 + box_l, 15 + box_t + 2 + 20, 34, 60);
+            //textout_centre_ex(gg_Buffer, font, "  ^ ", box_w / 2 + box_l, 15 + box_t + 2 + 20, 34, 60);
             break;
 
         case 2:
-            textout_centre_ex(gg_Buffer, font, " ^  ", box_w / 2 + box_l, 15 + box_t + 2 + 20, 34, 60);
+            //textout_centre_ex(gg_Buffer, font, " ^  ", box_w / 2 + box_l, 15 + box_t + 2 + 20, 34, 60);
             break;
 
         case 3:
-            textout_centre_ex(gg_Buffer, font, "^   ", box_w / 2 + box_l, 15 + box_t + 2 + 20, 34, 60);
+            //textout_centre_ex(gg_Buffer, font, "^   ", box_w / 2 + box_l, 15 + box_t + 2 + 20, 34, 60);
             break;
         }
 
-        blit(gg_Buffer, screen, 0, 0, 0, 0, 512 + 256, 480);
+        //blit(gg_Buffer, screen, 0, 0, 0, 0, 512 + 256, 480);
 
-        if (key[KEY_UP])
+        if (getKeyStatus(KEY_UP)) // UP
         {
             usleep(100000);
             value += ((digit == 0) ? 0x0001 : ((digit == 1) ? 0x0010 : ((digit == 2) ? 0x0100 : 0x1000)));
             value &= (size == 2) ? 0xFF : 0xFFFF;
         }
 
-        if (key[KEY_DOWN])
+        if (getKeyStatus(KEY_DOWN)) // DOWN
         {
             usleep(100000);
             value -= ((digit == 0) ? 0x0001 : ((digit == 1) ? 0x0010 : ((digit == 2) ? 0x0100 : 0x1000)));
             value &= (size == 2) ? 0xFF : 0xFFFF;
         }
 
-        if (key[KEY_RIGHT])
+        if (getKeyStatus(KEY_RIGHT)) // RIGHT
         {
             usleep(100000);
             if (digit <= 0)
@@ -310,7 +303,7 @@ uint16_t SelectNumber(char *title, char *msg, uint8_t size)
             }
         }
 
-        if (key[KEY_LEFT])
+        if (getKeyStatus(KEY_LEFT))
         {
             usleep(100000);
             if (digit >= size - 1)
@@ -324,8 +317,8 @@ uint16_t SelectNumber(char *title, char *msg, uint8_t size)
         }
 
     }
-    release_bitmap(gg_Buffer);
-    while (key[KEY_ENTER])
+    //release_bitmap(gg_Buffer);
+    while (getKeyStatus(KEY_ENTER))
     {
     }
     return value;
@@ -338,20 +331,27 @@ int DispMenu(int itemc, char *itemv[], char *title)
     int selection = 0;
     int i;
     int sc_w, sc_h;
-    int box_h, box_t, box_l, box_w;
+    int32_t box_h, box_t, box_l, box_w;
+    int32_t text_h;
 
-    sc_w = screen->w;
-    sc_h = screen->h;
+    graphics_getScreenSize(&sc_w, &sc_h);
 
-    gg_Buffer = create_bitmap(sc_w, sc_h);
+    //gg_Buffer = create_bitmap(sc_w, sc_h);
 
-    blit(Buffer, gg_Buffer, 0, 0, 0, 0, 512 + 256, 480);
+    //blit(Buffer, gg_Buffer, 0, 0, 0, 0, 512 + 256, 480);
 
-    box_w = text_length(font, title) + 10;
+    graphics_get_text_size(&box_w, &text_h, NULL, title);
+    box_w += 10;
+
 
     for (i = 0 ; i < itemc ; i++)
     {
-        box_w = (box_w > text_length(font, itemv[i])) ? box_w : text_length(font, itemv[i]);
+        int32_t tmp;
+        graphics_get_text_size(&tmp, NULL, NULL, itemv[i]);
+        if (box_w < tmp)
+        {
+            box_w = tmp;
+        }
     }
 
     box_w += 15 * 2; /*sc_w/2;*/
@@ -362,36 +362,51 @@ int DispMenu(int itemc, char *itemv[], char *title)
     box_l = (sc_w - box_w) / 2;
 
 
-    while (!key[KEY_ENTER])
+    while (!getKeyStatus(KEY_ENTER))
     {
         /* Draw the box and highlight the selected item */
-        rectfill(gg_Buffer, box_l, box_t, box_l + box_w, box_t + box_h, 60);
-        rect(gg_Buffer, box_l + 5, box_t + 5, box_l + box_w - 5, box_t + box_h - 5, 34);
+        int i;
+        for (i = 0; i < box_h; i++)
+        {
+            graphics_drawline(box_l, box_t+i, box_w, box_t + i, 1);
+        }
+        graphics_drawline(5, 121, 251, 121, 41);
+
+        //graphics_drawFillrect(box_l, box_t, box_w, box_h, 5);
+        //graphics_drawRect(box_l + 5, box_t + 5, box_w - 5, box_h - 5, 1);
 
         /* Display the title */
-        textout_centre_ex(gg_Buffer, font, title, box_w / 2 + box_l, box_t + 2, 34, 60);
+        graphics_text_ex(box_l, box_t + 2, box_w, text_h,
+                         NULL,
+                         34, 60,
+                         TEXT_VALIGN_CENTER, TEXT_HALIGN_CENTER,
+                         0,
+                         title);
+        //textout_centre_ex(gg_Buffer, font, title, box_w / 2 + box_l, box_t + 2, 34, 60);
 
         /* Display the highlight item */
-        rectfill(gg_Buffer, box_l + 15, 15 + box_t + (selection * 10), box_l + box_w - 15,
-                 15 + box_t + (selection * 10) + 10, 34);
-        textout_centre_ex(gg_Buffer, font, itemv[selection], box_w / 2 + box_l, 15 + box_t + (selection * 10) + 2, 60,
-                          34);
+        //graphics_drawFillrect(box_l + 15, 15 + box_t + (selection * 10), box_l + box_w - 15,
+        //        15 + box_t + (selection * 10) + 10, 34);
+        graphics_draw_text(box_w / 2 + box_l, 15 + box_t + (selection * 10) + 2, 60, NULL, itemv[selection]);
+        //textout_centre_ex(gg_Buffer, font, itemv[selection], box_w / 2 + box_l, 15 + box_t + (selection * 10) + 2, 60,
+        //                  34);
 
         /* Display other items */
         for (i = 0 ; i < itemc ; i++)
         {
             if (i != selection)
             {
-                textout_centre_ex(gg_Buffer, font, itemv[i], box_w / 2 + box_l, 15 + box_t + (i * 10) + 2, 34, 60);
+                //textout_centre_ex(gg_Buffer, font, itemv[i], box_w / 2 + box_l, 15 + box_t + (i * 10) + 2, 34, 60);
             }
         }
 
 
         /* Blit the screen buffer */
-        blit(gg_Buffer, screen, 0, 0, 0, 0, 512 + 256, 480);
+        vsync();
+        //blit(gg_Buffer, screen, 0, 0, 0, 0, 512 + 256, 480);
 
         /* Now get the keyboard state */
-        if (key[KEY_UP])
+        if (getKeyStatus(KEY_UP))
         {
             usleep(100000);
             if (selection <= 0)
@@ -404,7 +419,7 @@ int DispMenu(int itemc, char *itemv[], char *title)
             }
         }
 
-        if (key[KEY_DOWN])
+        if (getKeyStatus(KEY_DOWN))
         {
             usleep(100000);
             if (selection >= (itemc - 1))
@@ -419,9 +434,10 @@ int DispMenu(int itemc, char *itemv[], char *title)
 
     }
 
-    release_bitmap(gg_Buffer);
-    while (key[KEY_ENTER])
+    //release_bitmap(gg_Buffer);
+    while (getKeyStatus(KEY_ENTER))
     {
+        vsync();
     }
     return selection;
 }
@@ -474,7 +490,7 @@ uint8_t gg_SelectPatch()
         }
         else
         {
-            sprintf(tmp, "Patch %d: Put 0x%02X on address 0x%02X%02X (Code: %08lX)",
+            sprintf(tmp, "Patch %d: Put 0x%02X on address 0x%02X%02X (Code: %08X)",
                     i, gg_PatchedValue[i], gg_PatchedPage[i], gg_PatchedAddr[i],
                     gg_MakeCode((gg_PatchedPage[i] << 8) | gg_PatchedAddr[i], gg_PatchedValue[i]));
         }
@@ -698,6 +714,9 @@ void gg_Start()
     int ret;
     uint8_t value;
     uint16_t addr;
+
+    console_printf(Console_Default, "Open GG plugin...\n");
+
     switch (gg_state)
     {
     default:
@@ -863,7 +882,7 @@ int gg_Init()
     int i;
     console_printf(Console_Default, "Initializing GG plugin...\n");
 
-    plugin_install_keypressHandler('g', gg_Start);
+    plugin_install_keypressHandler('G', gg_Start);
 
     for (i = 0 ; i < GG_MAX_PATCH ; i++)
     {
@@ -878,5 +897,3 @@ int gg_Deinit()
 {
     return 0;
 }
-
-#endif

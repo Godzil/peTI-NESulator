@@ -55,11 +55,11 @@ int plugin_load(int id)
     Plugin *ptr = &(Plugins[0]);
     int i = id;
 
-    console_printf(Console_Default, "%s(%d)", __func__, id);
+    //console_printf(Console_Default, "%s(%d)", __func__, id);
 
     for (; i > 1 && ptr->name != NULL ; i--)
     {
-        console_printf(Console_Default, "%d - %s\n", i, ptr->name);
+        //console_printf(Console_Default, "%d - %s\n", i, ptr->name);
         ptr++;
     }
 
@@ -131,14 +131,15 @@ int plugin_remove_keypressHandler(uint8_t key, PluginKeypress func)
 
 
 /* Available functions outside of plugins */
-int plugin_keypress(uint8_t key)
+int plugin_keypress()
 {
     KeyHandler *ptr = keyHandlersList;
 
     while (ptr != NULL)
     {
-        if (ptr->key == key)
+        if (getKeyStatus(ptr->key))
         {
+            console_printf(Console_Default, "Keyrrr [%d].....\n", ptr->key);
             ptr->func();
         }
         ptr = ptr->next;

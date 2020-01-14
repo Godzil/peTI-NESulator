@@ -12,7 +12,7 @@
 #include "plugins/gamegenie.h"
 
 Plugin Plugins[] = {
-        //    { "Game Genie", gg_Init, gg_Deinit },
+        { "Game Genie", gg_Init, gg_Deinit },
 
 /* EOL tag */
         { NULL, NULL, NULL }

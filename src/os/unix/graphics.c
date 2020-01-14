@@ -158,8 +158,8 @@ void kbHandler(GLFWwindow *window, int key, int scan, int action, int mod)
     }
     keyArray[key].debounced |= (keyArray[key].lastState == GLFW_RELEASE) && (keyArray[key].curState == GLFW_PRESS);
     keyArray[key].window = window;
-    printf("key:%d, state:%d debounce:%d, laststate:%d\n", key, keyArray[key].curState,
-           keyArray[key].debounced, keyArray[key].lastState);
+    /*printf("key:%d, state:%d debounce:%d, laststate:%d\n", key, keyArray[key].curState,
+           keyArray[key].debounced, keyArray[key].lastState);*/
 }
 
 void sizeHandler(GLFWwindow *window, int xs, int ys)
@@ -206,13 +206,13 @@ void initDisplay(GLWindow *g)
     glfwSetWindowSizeCallback(g->windows, sizeHandler);
 }
 
-void drawPixel(GLWindow *gw, int x, int y, uint32_t colour)
+static void drawPixel(GLWindow *gw, uint32_t x, uint32_t y, uint32_t colour)
 {
     uint8_t r, g, b, a;
 
     uint32_t offset = (y * gw->WIDTH * 4U) + 4U * x;
 
-    if ((x < 0) || (x > gw->WIDTH) || (y < 0) || (y > gw->HEIGHT))
+    if ((x > (uint32_t)gw->WIDTH) || (y > (uint32_t)gw->HEIGHT))
     {
         return;
     }
@@ -228,9 +228,13 @@ void drawPixel(GLWindow *gw, int x, int y, uint32_t colour)
     gw->videoMemory[offset + 3] = b;
 }
 
-void drawLine(GLWindow *g, int x0, int y0, int x1, int y1, uint32_t colour)
+static void drawLine(GLWindow *g, uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1, uint32_t colour)
 {
-    int d, dx, dy, aincr, bincr, xincr, yincr, x, y;
+    printf("%s:%s(%p, %d, %d, %d, %d, %d) @ %d\n", __FILE__, __func__,
+            g, x0, y0, x1, y1, colour,
+            __LINE__);
+    int32_t d, dx, dy, aincr, bincr, xincr, yincr;
+    uint32_t x, y;
     if (abs(x1 - x0) < abs(y1 - y0))
     {
         /* parcours par l'axe vertical */
@@ -306,7 +310,7 @@ exit:
     return;
 }
 
-void drawCircle(GLWindow *g, int xc, int yc, int radius, uint32_t colour)
+static void drawCircle(GLWindow *g, int xc, int yc, int radius, uint32_t colour)
 {
     int f = 1 - radius;
     int ddF_x = 0;
@@ -364,17 +368,24 @@ void drawCircle(GLWindow *g, int xc, int yc, int radius, uint32_t colour)
     }
 }
 
-void drawRect(GLWindow *g, int x0, int y0, int w, int h, uint32_t colour)
+static void drawRect(GLWindow *g, uint32_t x0, uint32_t y0, uint32_t w, uint32_t h, uint32_t colour)
 {
+    printf("%s:%s(%p, %d, %d, %d, %d, %d) @ %d\n", __FILE__, __func__,
+           g, x0, y0, w, h, colour,
+           __LINE__);
     drawLine(g, x0, y0, x0 + w, y0, colour);
     drawLine(g, x0 + w, y0, x0 + w, y0 + h, colour);
     drawLine(g, x0 + w, y0 + h, x0, y0 + h, colour);
     drawLine(g, x0, y0 + h, x0, y0, colour);
 }
 
-void drawFillrect(GLWindow *g, int x0, int y0, int w, int h, uint32_t colour)
+static void drawFillrect(GLWindow *g, uint32_t x0, uint32_t y0, uint32_t w, uint32_t h, uint32_t colour)
 {
-    int i;
+    printf("%s:%s(%p, %d, %d, %d, %d, %d) @ %d\n", __FILE__, __func__,
+           g, x0, y0, w, h, colour,
+           __LINE__);
+    uint32_t i;
+
     for (i = 0 ; i < h ; i++)
     {
         drawLine(g, x0, y0 + i, x0 + w, y0 + i, colour);
@@ -388,7 +399,7 @@ void clearScreen(GLWindow *g)
 
 void updateScreen(GLWindow *g)
 {
-    /*Update windows code */
+    /* Update windows code */
     glfwMakeContextCurrent(g->windows);
     ShowScreen(g, g->WIDTH, g->HEIGHT);
     glfwSwapBuffers(g->windows);
@@ -431,15 +442,49 @@ static uint32_t getColour(long color)
     return (b << 24) | (g << 16) | (r << 8) | a;
 }
 
+int graphics_getScreenSize(int *w, int *h)
+{
+    *w = mainWindow.WIDTH;
+    *h = mainWindow.HEIGHT;
+    return 0;
+}
+
+int graphics_drawRect(uint32_t x0, uint32_t y0, uint32_t w, uint32_t h, uint32_t colour)
+{
+    printf("%s:%s(%d, %d, %d, %d, %d) @ %d\n", __FILE__, __func__,
+           x0, y0, w, h, colour,
+           __LINE__);
+    drawRect(&mainWindow, x0, y0, w, h, colour);
+    return 0;
+}
+
+int graphics_drawFillrect(int x0, int y0, int w, int h, uint32_t colour)
+{
+    printf("%s:%s(%d, %d, %d, %d, %d) @ %d\n", __FILE__, __func__,
+           x0, y0, w, h, colour,
+           __LINE__);
+    drawFillrect(&mainWindow, x0, y0, w, h, colour);
+    return 0;
+}
+
 int graphics_drawpixel(long x, long y, long color)
 {
     drawPixel(&mainWindow, x, y, getColour(color));
     return 0;
 }
 
-int graphics_drawline(long x, long y, long x1, long y1, long color)
+int graphics_drawCircle(int xc, int yc, int radius, uint32_t colour)
 {
-    drawLine(&mainWindow, x, y, x1, y1, getColour(color));
+    drawCircle(&mainWindow, xc, yc, radius, colour);
+    return 0;
+}
+
+int graphics_drawline(uint32_t x, uint32_t y, uint32_t x1, uint32_t y1, uint32_t colour)
+{
+    printf("%s:%s(%d, %d, %d, %d, %d) @ %d\n", __FILE__, __func__,
+           x, y, x1, y1, colour,
+           __LINE__);
+    drawLine(&mainWindow, x, y, x1, y1, getColour(colour));
     return 0;
 }
 

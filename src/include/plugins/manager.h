@@ -26,7 +26,7 @@ int plugin_remove_keypressHandler(uint8_t key, PluginKeypress);
 #else /* __TINES_PLUGINS__ */
 
 /* Available functions outside of plugins */
-int plugin_keypress(uint8_t key);
+int plugin_keypress();
 
 /* Real Prototype: TBD */
 void plugin_list();

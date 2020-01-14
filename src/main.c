@@ -740,12 +740,12 @@ int main(int argc, char *argv[])
         ppu_setMirroring((Cart->Flags & iNES_MIRROR) ? PPU_MIRROR_VERTICAL : PPU_MIRROR_HORIZTAL);
     }
 
-    console_printf(Console_Default, "Init mapper...\t\t\t");
+    //console_printf(Console_Default, "Init mapper...\n");
     if (mapper_init(Cart) == -1)
     {
         return -1;
     }
-    console_printf(Console_Default, "[ OK ]\n");
+    //console_printf(Console_Default, "[ OK ]\n");
 
 //  set_palette(basicPalette);
 
@@ -933,7 +933,7 @@ void Loop6502(quick6502_cpu *R)
         quick6502_reset(R);
     }
 
-//      plugin_keypress(skey);
+    plugin_keypress();
 
     if (cpuSignal != 0)
     {

@@ -4,27 +4,31 @@
 # Created by Manoel TRAPIER.
 # Copyright (c) 2002-2019 986-Studio.
 #
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required (VERSION 3.1)
 
 project (peTI-NESulator)
 
 # External cmake modules
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external/cmake ${CMAKE_MODULE_PATH})
 
-# Include GLFW
-set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-add_subdirectory("external/glfw")
-find_package(OpenGL REQUIRED)
+if (USE_GLFW)
+    message("Coucou ${USE_GLFW}")
+    # Include GLFW
+    set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+    set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+    set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+    add_subdirectory("external/glfw")
+    find_package(OpenGL REQUIRED)
+    include_directories(${OPENGL_INCLUDE_DIR})
+endif (USE_GLFW)
 
-include_directories(${OPENGL_INCLUDE_DIR})
-
-# Include PortAudio
-set(PA_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-set(PA_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(PA_ENABLE_DEBUG_OUTPUT OFF CACHE BOOL "" FORCE)
-add_subdirectory("external/portaudio")
+if (USE_PORTAUDIO)
+    # Include PortAudio
+    set(PA_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+    set(PA_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+    set(PA_ENABLE_DEBUG_OUTPUT OFF CACHE BOOL "" FORCE)
+    add_subdirectory("external/portaudio")
+endif (USE_PORTAUDIO)
 
 if (COVERALLS)
     enable_testing()

@@ -15,18 +15,17 @@ set(DETECT_BUS_CONFLICT OFF CACHE BOOL "Activate the bus conflit detector? (Coul
 set(USE_EFENCE OFF CACHE BOOL "Use electricfence memory debugger?")
 set(USE_PROFILING OFF CACHE BOOL "Use profiling tools? (Will slow down a lot.)")
 
-set(USE_ALLEGRO ON CACHE BOOL "Use Allegro backend")
-
 option(COVERALLS "Generate coveralls data" OFF)
 
 ##########################
 # Link & Compile flags
 ##########################
 
-set(CMAKE_C_FLAGS "-Wall -Wextra -Wno-unused-parameter -Wno-unused-result -Werror ${PLATFORM_FLAGS}")
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-unused-parameter -Wno-unused-result -Werror ${PLATFORM_FLAGS}")
+#set(CMAKE_C_FLAGS "-Wall -Wextra -Wno-unused-parameter -Wno-unused-result -Werror ${PLATFORM_FLAGS}")
+#set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-unused-parameter -Wno-unused-result -Werror ${PLATFORM_FLAGS}")
+set(CMAKE_C_FLAGS "-Wall -Wextra -Wno-unused-parameter -Wno-unused-result  ${PLATFORM_FLAGS}")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-unused-parameter -Wno-unused-result ${PLATFORM_FLAGS}")
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/external/coveralls-cmake/cmake)
 
 add_executable(petines main.c paddle.c NESCarts.c)
 
@@ -68,6 +67,20 @@ endif ()
 
 include_directories(include)
 
+set(OS_TARGET "UNIX" CACHE STRING "Select target to build against")
+set_property(CACHE OS_TARGET PROPERTY STRINGS TI68K WIN32 UNIX 32BLIT)
+
+
+if ("${OS_TARGET}" STREQUAL "TI68K")
+    add_subdirectory(os/ti68k)
+elseif ("${OS_TARGET}" STREQUAL "WIN32")
+    add_subdirectory(os/win32)
+elseif ("${OS_TARGET}" STREQUAL "UNIX")
+    add_subdirectory(os/unix)
+elseif ("${OS_TARGET}" STREQUAL "32BLIT")
+    add_subdirectory(os/32blit)
+endif ()
+
 add_subdirectory(apu)
 add_subdirectory(corecpu)
 add_subdirectory(mappersmanager)
@@ -76,14 +89,9 @@ add_subdirectory(pluginsmanager)
 add_subdirectory(ppu)
 
 
-if (TARGET_TI68k)
-    add_subdirectory(os/ti68k)
-elseif (WIN32)
-    add_subdirectory(os/win32)
-else (TARGET_TI68k)
-    add_subdirectory(os/unix)
-endif (TARGET_TI68k)
-
+if ( (NOT ${OS_TARGET} STREQUAL "TI68K") AND (NOT ${OS_TARGET} STREQUAL "32BLIT") )
+    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/external/coveralls-cmake/cmake)
+endif ()
 #find_library(PTHREADLIB pthread)
 
 if (COVERALLS)

@@ -120,8 +120,25 @@ int graphics_drawpixel(long x, long y, long color)
     return 0;
 }
 
-int graphics_drawline(long x, long y, long x1, long y1, long color)
+int graphics_drawline(uint32_t x, uint32_t y, uint32_t x1, uint32_t y1, uint32_t colour)
 {
+    return 0;
+}
+
+int graphics_drawRect(uint32_t x0, uint32_t y0, uint32_t w, uint32_t h, uint32_t colour)
+{
+    return 0;
+}
+
+int graphics_drawFillrect(int x0, int y0, int w, int h, uint32_t colour)
+{
+    return 0;
+}
+
+int graphics_getScreenSize(int *w, int *h)
+{
+    *w = 640;
+    *h = 320;
     return 0;
 }
 

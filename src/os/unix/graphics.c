@@ -228,14 +228,14 @@ static void drawPixel(GLWindow *gw, uint32_t x, uint32_t y, uint32_t colour)
     gw->videoMemory[offset + 3] = b;
 }
 
-static void drawLine(GLWindow *g, uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1, uint32_t colour)
+static void drawLine(GLWindow *g, int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t colour)
 {
     printf("%s:%s(%p, %d, %d, %d, %d, %d) @ %d\n", __FILE__, __func__,
             g, x0, y0, x1, y1, colour,
             __LINE__);
     int32_t d, dx, dy, aincr, bincr, xincr, yincr;
-    uint32_t x, y;
-    if (abs(x1 - x0) < abs(y1 - y0))
+    int32_t x, y;
+    if (abs((int32_t)x1 - x0) < abs((int32_t)y1 - y0))
     {
         /* parcours par l'axe vertical */
         if (y0 > y1)
@@ -246,9 +246,9 @@ static void drawLine(GLWindow *g, uint32_t x0, uint32_t y0, uint32_t x1, uint32_
 
         xincr = x1 > x0 ? 1 : -1;
         dy = y1 - y0;
-        dx = abs(x1 - x0);
+        dx = abs((int32_t)x1 - x0);
         d = 2 * dx - dy;
-        aincr = 2 * (dx - dy);
+        aincr = 2 * ((int32_t)dx - dy);
         bincr = 2 * dx;
         x = x0;
         y = y0;
@@ -281,7 +281,7 @@ static void drawLine(GLWindow *g, uint32_t x0, uint32_t y0, uint32_t x1, uint32_
         }
         yincr = y1 > y0 ? 1 : -1;
         dx = x1 - x0;
-        dy = abs(y1 - y0);
+        dy = abs((int32_t)y1 - y0);
         d = 2 * dy - dx;
         aincr = 2 * (dy - dx);
         bincr = 2 * dy;

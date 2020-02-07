@@ -7,3 +7,6 @@
 [submodule "external/portaudio"]
 	path = external/portaudio
 	url = https://git.assembla.com/portaudio.git
+[submodule "external/nanogui"]
+	path = external/nanogui
+	url = https://github.com/Godzil/nanogui.git

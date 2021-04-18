@@ -19,12 +19,19 @@ set(USE_ALLEGRO ON CACHE BOOL "Use Allegro backend")
 
 option(COVERALLS "Generate coveralls data" OFF)
 
+option(WARN_AS_ERROR "Enable warning as error" OFF)
+
 ##########################
 # Link & Compile flags
 ##########################
 
-set(CMAKE_C_FLAGS "-Wall -Wextra -Wno-unused-parameter -Wno-unused-result -Werror ${PLATFORM_FLAGS}")
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-unused-parameter -Wno-unused-result -Werror ${PLATFORM_FLAGS}")
+set(COMP_FLAGS "-march=native -Wall -Wextra -Wno-unused-parameter -Wno-unused-result -Wno-write-strings ${PLATFORM_FLAGS}")
+if (WARN_AS_ERROR)
+    set(COMP_FLAGS "${COMP_FLAGS} -Werror")
+endif()
+
+set(CMAKE_C_FLAGS ${COMP_FLAGS})
+set(CMAKE_CXX_FLAGS ${COMP_FLAGS})
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/external/coveralls-cmake/cmake)
 
